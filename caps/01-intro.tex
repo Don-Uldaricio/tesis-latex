@@ -1,0 +1,90 @@
+% Archivo de ejemplo para colocar introducción
+\chapter{Introducción}
+
+\section{Antecedentes y motivación}
+En la última década, el aprendizaje profundo (Deep Learning) ha revolucionado la inteligencia artificial \cite{dean2022golden}, sin embargo, este avance ha conllevado un costo computacional y energético insostenible. Sin ir más lejos, un computador estándar que usa redes profundas para reconocer 1000 tipos de objetos diferentes, requiere alrededor de 250W \cite{roy2019spike}, necesitando un consumo energético superior a los 20W que necesita el cerebro humano para realizar simultáneamente tareas de razonamiento, reconocimiento y control \cite{roy2019spike}.\\
+
+Frente a esto, la Computación Neuromórfica y las Redes Neuronales de Espigas (SNN) emergen como una alternativa eficiente, inspirada en el cerebro humano \cite{Schuman2022Opportunities}, donde la información no se procesa de forma continua, sino que se transmite mediante impulsos discretos, o espigas. A diferencia de las Redes Neuronales Artificiales (ANN), las SNN emulan la forma en que las neuronas del cerebro generan y responden a estos impulsos, operando de manera asíncrona y dispersa (event-driven), lo que teóricamente permite un consumo energético drásticamente menor \cite{Schuman2022Opportunities}. Al igual que el cerebro humano, que ajusta su actividad neuronal en función de estímulos, las SNN ajustan sus conexiones solamente cuando son requeridas \cite{kabilan_neuromorphic}, lo que las convierte en una opción más viable para sistemas con limitaciones de energía y recursos computacionales. Sin embargo, el despliegue masivo de SNNs enfrenta una barrera crítica: la dificultad de su entrenamiento.
+
+
+\section{Descripción del problema}
+Uno de los principales obstáculos técnicos para entrenar las SNN es que las funciones de activación de las neuronas no son diferenciables, lo que impide el uso directo del algoritmo de \textit{Backpropagation} (estándar en ANN) para su entrenamiento. Sin embargo, existen alternativas a este problema, como el uso de \textit{surrogate gradients}, que aunque efectivas, son computacionalmente costosas y biológicamente poco plausibles. Por otro lado, técnicas como STDP (Spike-Timing-Dependent Plasticity) a menudo no escalan bien para tareas complejas de clasificación. Existe, por tanto, la necesidad de métodos de entrenamiento que:
+
+\begin{enumerate}
+    \item No dependan de gradientes (diferenciabilidad).
+    \item Aprovechen la naturaleza discreta de las SNN.
+    \item Optimicen no solo los pesos sinápticos, sino también la arquitectura (topología) para crear redes eficientes.
+\end{enumerate}
+
+Se propone la siguiente pregunta de investigación: ¿cómo entrenar SNN sin depender de gradientes, aprovechando la naturaleza discreta de los spikes, modificando simultáneamente la estructura y los pesos de la red, para minimizar la cantidad de conexiones activas y el error en tareas de clasificación, equilibrando ambos objetivos sin sacrificar significativamente el rendimiento?
+
+\section{Solución propuesta}
+\subsection{Enfoques de solución}
+
+En el contexto de la computación neuromórfica, el entrenamiento de Redes Neuronales de Espigas (SNN) presenta desafíos únicos debido a la naturaleza discreta y no diferenciable de los spikes. Para determinar la estrategia de entrenamiento más adecuada para este proyecto, se han evaluado cinco enfoques considerando tres criterios críticos para el desarrollo de sistemas neuromórficos eficientes:
+
+\begin{enumerate}
+    \item \textbf{Precisión (Accuracy):} capacidad del modelo para clasificar correctamente en benchmarks estándar.
+    \item \textbf{Costo Computacional de Entrenamiento:} recursos de memoria y procesamiento requeridos para encontrar la solución óptima.
+    \item \textbf{Eficiencia Estructural (Sparsity):} capacidad intrínseca del método para generar topologías dispersas (menos conexiones) que reduzcan el consumo energético en la inferencia.
+\end{enumerate}
+
+Estos criterios permiten realizar una comparación adecuada para posteriormente seleccionar el enfoque más adecuado para la solución del problema. \\
+
+\textbf{Aprendizaje con gradientes sustitutos:} los métodos de \textit{surrogate gradient} adaptan el \textit{Backpropagation} a SNN reemplazando la función de activación no diferenciable por una aproximación suave, permitiendo entrenar SNN profundas \cite{Schuman2022Opportunities}. Sin embargo, requieren almacenar la dinámica temporal de las neuronas, lo que incrementa el costo de memoria y cómputo \cite{Neftci2019SurrogateGradient}.\\
+
+\textbf{Mapeo de redes profundas pre-entrenadas:} este enfoque convierte ANN en SNN ajustando pesos y umbrales, obteniendo buenos resultados en benchmarks como CIFAR-10 e ImageNet \cite{deng2021optimal}. Sin embargo, genera redes densas, lo que puede reducir la eficiencia de la red \cite{deng2021optimal}.\\
+
+\textbf{Neuroevolución:} usa algoritmos evolutivos para optimizar arquitecturas y parámetros de redes neuronales, incluidas las SNN, sin requerir gradientes \cite{risi2025neuroevolution}. Es útil para diseñar topologías eficientes y enfrentar dinámicas no lineales. Sin embargo, la escalabilidad sigue siendo un reto \cite{Yue2025CNEA, Shen2024EvolutionarySNN}.\\
+
+\textbf{Computación de reservorio:} utiliza SNN recurrentes no entrenadas para proyectar entradas a espacios de alta dimensión espacio-tiempo, facilitando el procesamiento de secuencias con un costo de entrenamiento bajo. Sin embargo, el desempeño depende del diseño del reservorio, y para tareas complejas se requieren reservorios grandes \cite{Duran2025CMOSSNNReservoir,Polydoros2015ReservoirComputing}.\\
+
+\textbf{Plasticidad dependiente del tiempo de disparo (STDP):} es una regla de aprendizaje local que modifica los pesos sinápticos según la relación temporal entre los disparos neuronales. Aunque es eficiente en hardware neuromórfico, su rendimiento en tareas de clasificación es inferior a las técnicas supervisadas modernas \cite{Liu2021SSTDP, Schuman2022Opportunities}. \\
+
+En la Tabla \ref{tab:enfoques-comp} del Anexo A se presenta una comparación entre los cinco enfoques, considerando los criterios antes mencionados.
+
+\subsection{Justificación del enfoque seleccionado}
+Considerando los enfoques anteriores, se propone usar un enfoque evolutivo, implementando específicamente una variante de neuroevolución mediante optimización dispersa multiobjetivo a gran escala. La elección se justifica por las siguientes razones críticas para el proyecto:
+
+\begin{itemize}
+    \item \textbf{Modificación simultánea de estructura y pesos de la red:} este enfoque permite mantener una población de soluciones candidatas que explora múltiples regiones en paralelo, modificando tanto estructura y pesos de las redes, permitiendo que la exploración global y flexible, evitando óptimos locales y teniendo en cuenta un gran espacio de búsqueda y soluciones que minimizen la cantidad de conexiones de la red.
+
+    \item \textbf{Superación de la No-Diferenciabilidad:} a diferencia del enfoque de \textit{surrogate gradient}, la neuroevolución no requiere aproximaciones matemáticas artificiales para el gradiente.
+
+    \item \textbf{Brecha de Investigación (Novedad):} aunque los enfoques evolutivos pueden ser lentos, investigaciones recientes \cite{MOEA/CKF} demuestran que separar la evolución de la estructura y los pesos puede acelerar la convergencia y producir redes extremadamente ligeras \cite{MOEA/CKF, Yue2025CNEA}. Aplicar estas estrategia cooperativas moderna específicamente al dominio de las SNNs es una oportunidad para mitigar las desventajas históricas de este enfoque.
+\end{itemize}
+
+
+\section{Objetivos y alcances del proyecto}
+
+\subsection{Objetivo general}
+Evaular un algoritmo evolutivo de optimización esparsa multiobjetivo a gran escala para Redes Neuronales de Espigas (SNN), con el fin de optimizar simultáneamente la precisión de clasificación y la eficiencia estructural (sparsity) del modelo.
+
+\subsection{Objetivos específicos}
+A continuación se enumeran los objetivos específicos necesarios para cumplir con el objetivo general:
+\begin{enumerate}
+    \item Seleccionar al menos un algoritmo evolutivo que cumpla con enfoque en esparsidad, multiobjetivo y a gran escala, para asegurar su aplicación al entrenamiento de SNN en tareas de clasificación, mediante el análisis comparativo de enfoques evolutivos existentes en la literatura.
+    \item Seleccionar un framework de simulación para SNN que permita la ejecución eficiente del modelo neuronal Izhikevich y su interacción con el algoritmo evolutivo, mediante un análisis comparativo de frameworks existentes (ANNarchy, NEST, Brian2 y alternativas en C++), considerando criterios de rendimiento computacional y compatibilidad con C++, para la ejecución de tareas de optimización multiobjetivo esparsas a gran escala.
+    \item Implementar un algoritmo evolutivo para SNN que permita optimizar simultáneamente la topología y los pesos sinápticos, para mejorar el equilibrio entre precisión de clasificación y esparsidad, mediante neuroevolución y técnicas de optimización esparsa multiobjetivo.
+    \item Evaluar el desempeño del algoritmo evolutivo propuesto en tareas de clasificación, para verificar su capacidad de generalización y convergencia, mediante su validación experimental en al menos tres datasets utilizando un simulador de SNN.
+    \item Comparar los resultados obtenidos por el enfoque evolutivo en SNN frente a modelos equivalentes basados en ANN, para identificar ventajas y desventajas en términos de rendimiento y eficiencia estructural, mediante alguna métrica multiobjetivo como Hipervolumen (HV).
+\end{enumerate}
+
+Los alcances del proyecto se centrarán en: 
+\begin{enumerate}
+    \item Lograr la convergencia del algoritmo y su capacidad para reducir el número de conexiones (sparsity) sin sacrificar excesiva precisión en comparación con el método implementado para ANN
+    \item Resolver al menos tres tareas en datasets de tareas particulares
+    \item Aplicar estrategias de codificación y decodificación para controlar la forma en que la información entra y sale de las neuronas \cite{Luu2025HybridLA}. \\
+\end{enumerate}
+
+\section{Metodologías y herramientas utilizadas}
+
+Esta investigación se desarrolló siguiendo el método científico: a partir de la revisión bibliográfica se definió el problema de optimización de SNN esparsas, se implementó una propuesta experimental y se evaluó mediante experimentos reproducibles. La metodología consideró, de forma resumida, la selección de algoritmos evolutivos multiobjetivo, el diseño e implementación de una plataforma integrada para simular y optimizar SNN, el ajuste sistemático de hiperparámetros y la evaluación de los resultados en tareas de clasificación. El análisis se centró en el compromiso entre el desempeño predictivo y la complejidad estructural de las redes obtenidas.
+
+La implementación se realizó principalmente en \textbf{C++}, integrando los algoritmos evolutivos y el simulador de SNN en un mismo entorno. Para el desarrollo y depuración se utilizaron IDEs compatibles con C++, tales como Visual Studio Code, Cursor o Antigravity, junto con herramientas de análisis estático y extensiones de apoyo. El control de versiones y la gestión del código se realizaron mediante \textbf{Git} y \textbf{GitHub}, mientras que la redacción y gestión bibliográfica se efectuaron mediante \textbf{Overleaf} y \LaTeX{}.
+
+Las etapas de desarrollo, pruebas preliminares y análisis de resultados se ejecutaron en equipos personales con sistema operativo Ubuntu 24.04. Los experimentos de mayor demanda computacional se realizaron en el clúster del proyecto Fondecyt 1251455 del Departamento de Ingeniería Informática de la USACH, equipado con procesadores multinúcleo, 768 GB de memoria RAM y Ubuntu Server 24.04.x LTS. La utilización de control de versiones, la documentación de las configuraciones y la ejecución sistemática de experimentos buscan favorecer la trazabilidad y reproducibilidad de los resultados.
+
+\section{Organización del documento}
+
+

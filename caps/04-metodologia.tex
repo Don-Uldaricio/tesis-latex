@@ -1,0 +1,623 @@
+\chapter{Metodología y diseño experimental}
+
+% \section{Diseño general de la investigación}
+
+\section{Estrategia de selección de algoritmos evolutivos}
+
+La selección de algoritmos evolutivos se definió a partir de la literatura \cite{Shao2025_SMOEA} tomando como referencia diferentes SMOEA acotados a la resolución de problemas de optimización esparsos multiobjetivo (SMOP) y \textit{problemas del mundo real}. La estrategia consistió en dos etapas: una preselección considerando entre uno o dos algoritmos de cada familia debido a la gran cantidad de SMOEAs que hay dentro del estudio. La segunda etapa consistió en la selección final de algoritmos para su posterior implementación en SNN.
+
+Para la primera etapa se consideró la preselección de uno o dos SMOEAs de cada una de las principales familias \cite{Shao2025_SMOEA}, intentando abarcar toda la taxonomía propuesta por el autor. Esta preselección se hizo tomando en cuenta la fecha de publicación del algoritmo, priorizando los algoritmos más actuales. En la Tabla \ref{tab:preseleccion_algoritmos} se encuentran los algoritmos preseleccionados para la comparación.
+
+\begin{table}
+    \centering
+    \small
+    \caption{Preselección de SMOEAs para resolución de SMOPs y entrenamiento de SNN.}
+    \label{tab:preseleccion_algoritmos}
+    \begin{tabular}{p{5.5cm}lp{5cm}}\hline
+         \textbf{Familia principal}&  \textbf{Subcategoría}& \textbf{Algoritmos}\\\hline
+         New variation operators based&  Variable flipping& MOEA-ESD \cite{Ren2023MultipleSD_MOEA_ESD}, LRMOEA \cite{10612838_LRMOEA}\\
+         &  Novel operator& S-NSGA-II \cite{10066873_S-NSGA-II}, SCEA \cite{ZHANG2024108194_SCEA}\\
+         Dimensionality reduction based&  Bi-level interaction& MOEA-CKF \cite{10664523_MOEA-CKF}\\
+         Decision variable grouping based&  Uniform grouping& SparseEA2 \cite{SparseEA2}\\ \hline
+    \end{tabular}
+\end{table}
+
+Para la segunda etapa se tomaron en consideración los siguientes criterios de selección: 
+
+\begin{itemize}
+    \item Disponibilidad del código del algoritmo para facilitar su posterior implementación en SNN
+    \item Disponibilidad de los datasets para la realización de experimentos
+    \item Resolución de tareas de entrenamiento de redes neuronales y problemas de optimización
+\end{itemize}
+
+Para esto se utilizó la plataforma PlatEMO \cite{8065138_platEMO} como entorno de referencia para la selección de algoritmos debido a que constituye un framework abierto desarrollado en MATLAB que integra algoritmos evolutivos, problemas, operadores e indicadores de desempeño en un entorno unificado, lo que facilita la ejecución de experimentos comparativos bajo condiciones homogéneas y reproducibles. Asimismo, la plataforma permite configurar parámetros relevantes del proceso de optimización y obtener resultados estandarizados, lo que resulta útil para establecer una base experimental consistente.
+
+Además, se utilizó esta plataforma como base para una posterior implementación de los algoritmos debido a que la implementación final de este trabajo se desarrolló en C++ junto con un simulador de SNN, por lo que resultó conveniente partir de algoritmos que ya dispusieran de una implementación funcional, abierta y revisable. La arquitectura modular de PlatEMO, basada en la separación entre algoritmos, problemas, operadores y métricas, favoreció este proceso de análisis y posterior migración a otro lenguaje.
+
+Adicionalmente, se privilegió el uso de algoritmos cuyos datasets, tareas de entrenamiento y parámetros experimentales estuvieran claramente definidos en cada uno de sus estudios \cite{MOEA/CKF, Yue2025CNEA, 10066873_S-NSGA-II}, de manera que la comparación entre la implementación en ANN y SNN pudiera realizarse sobre una base metodológicamente consistente. Bajo este enfoque, la comparación buscó identificar diferencias de comportamiento y posibles mejoras asociadas al cambio de paradigma neuronal, y no evaluar complejidad computacional ni velocidad de ejecución como objetivo principal.
+
+Como resultado de la selección final, se identificó que S-NSGA-II \cite{10066873_S-NSGA-II} y MOEA-CKF \cite{MOEA/CKF} cumplían de mejor manera con los criterios definidos. En particular, S-NSGA-II aparece asociado a entrenamiento de redes neuronales en problemas del mundo real (\textit{Real World NN training}) y SMOPs en PlatEMO 3.4, mientras que MOEA-CKF presenta la misma cobertura en PlatEMO 3.5. En contraste, otros algoritmos fueron descartados por no contar con código en PlatEMO (como CNEA \cite{Yue2025CNEA} y MOEA-ESD), por no reportar tareas de entrenamiento de redes neuronales o no presentar los datasets usados para la resolución de estas tareas.
+
+La decisión de estudiar estos dos algoritmos se fundamentó en que, aunque la tesis no busca comparar complejidad computacional ni tiempos de ejecución entre algoritmos, los tiempos relativamente acotados de S-NSGA-II en la ejecución de experimentos hacen viable su incorporación junto con MOEA-CKF en la fase experimental. El resumen de los criterios de selección final de los algoritmos se puede observar en la Tabla \ref{tab:algo_seleccion_final}.
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \caption{Criterios de selección final de SMOEAs.}
+    \begin{tabular}{cp{4cm}p{2cm}p{2cm}p{2cm}}
+    \hline
+         \textbf{Nombre}&  \textbf{Datasets NN}&  \textbf{Código}&  \textbf{Problemas}&  \textbf{Benchmarks}\\ \hline
+         MOEA-ESD&  Statlog (German), Connectionist&  No&  No resuelve NN training& No presenta \\\hline
+         LRMOEA&  No realiza entrenamiento NN&  PlatEMO&  PO&  LRMOP 1-8\\\hline
+         S-SNGA-II&  Statlog Australian, Climate, Statlog (German)&  PlatEMO 3.4&  Real World NN training&  SMOP 1-8\\\hline
+         SCEA&  No realiza entrenamiento NN&  PlatEMO&  No resuelve NN training&  SMOP 1-8\\\hline
+         MOEA-CKF&  Connectionist, Bench Sonar, SetapProduct, LSVT Voice Rehabilitation&  PlatEMO 3.5&  Real world NN training&  SMOP 1-8\\\hline
+         SparseEA2&  Connectionist, Bench Sonar, Hill Valley, LSVT Voice Rehabilitation&  PlatEMO&  Real world NN training&  SMOP 1-8\\\hline
+         CNEA&  No disponibles&  No&  Tareas sin especificar&  Task 1-9\\\hline
+    \end{tabular}
+    \label{tab:algo_seleccion_final}
+\end{table}
+
+% Bajo este diseño, la comparación final se realizó manteniendo condiciones experimentales equivalentes para ambos algoritmos en el simulador de SNN, de modo que las diferencias observadas puedan atribuirse al comportamiento de cada algoritmo y a su interacción con la arquitectura neuronal implementada. La información obtenida en PlatEMO cumplió un rol de referencia para la definición de datasets, tareas y parámetros iniciales, pero la validación principal de la tesis se concentró en los experimentos de entrenamiento ejecutados sobre el simulador de SNN.
+
+
+%% -------------------------------------------
+
+\section{Datos y preparación experimental}
+La presente investigación utilizó un conjunto de datos de clasificación previamente disponibles en el entorno experimental adoptado con el propósito de asegurar consistencia metodológica. En particular, la selección de los datasets se realizó considerando su pertinencia para el problema de entrenamiento de SNN, así como su disponibilidad en un formato ya integrado al ecosistema PlatEMO.
+
+Los experimentos se desarrollaron sobre cuatro conjuntos de datos de clasificación, correspondientes a problemas binarios con distintos niveles de dimensionalidad. Estos datasets se usaron como base para evaluar el desempeño de las arquitecturas SNN y de los algoritmos multiobjetivo considerados. En conjunto, estos datasets permitieron cubrir escenarios de distinta complejidad estructural, bajo configuraciones con distinta dimensión del espacio de decisión y distinta demanda de complejidad en la red.
+
+El estudio de S-NSGA-II indica que el problema de entrenamiento de redes neuronales se encuentra implementado en PlatEMO e incluye la selección de datasets provenientes del repositorio UCI, mientras que MOEA-CKF también reporta experimentos de entrenamiento de redes neuronales ejecutados en PlatEMO como parte de sus entrenamientos de redes neuronales. Los conjuntos de datos utilizados son los que se presentan en la Tabla \ref{tab:datasets_resumen}.
+
+\begin{table}
+    \centering
+    \small
+    \caption{Información de los datasets utilizados para entrenamiento de SNN y optimización de hiperparámetros.}
+    \label{tab:datasets_resumen}
+    \begin{tabular}{lp{5cm}cccc}
+    \hline 
+      N°&Dataset&  Tipo&  Muestras&  Características&  Clases\\ \hline
+      1&Statlog Australian&  Real&  690&  14&  2\\
+      2&Climate&  Real&  540&  18&  2\\
+      3&Statlog German&  Real&  1000&  24&  2\\ 
+      4&Connectionist Bench Sonar& Real& 208& 60& 2\\ 
+    \hline
+\end{tabular}
+\end{table}
+
+La selección de los datasets respondió a criterios principalmente metodológicos y experimentales. En primer lugar, se priorizaron aquellos conjuntos de datos que ya habían sido considerados en los estudios de S-NSGA-II y MOEA-CKF, y, en segundo lugar, se escogieron datasets que ya se encontraban disponibles y correctamente formateados dentro de la plataforma experimental utilizada. Esto permitió asegurar compatibilidad inmediata con la implementación del problema, evitar errores de adaptación manual y mantener la reproducibilidad del protocolo experimental.
+
+La selección tuvo como objetivo definir un conjunto acotado y reproducible para el análisis comparativo de la propuesta. En consecuencia, los datasets fueron elegidos por su adecuación al problema de entrenamiento de SNN, por su consistencia con antecedentes experimentales reportados en la literatura y por su disponibilidad inmediata en el entorno de trabajo adoptado.
+
+%-------------------------------
+
+\section{Metodología de selección del framework de simulación SNN}
+\label{sec:benchmark-framework-metodologia}
+
+El pipeline de entrenamiento optimiza los pesos de una SNN mediante un MOEA. En cada corrida, la red se construye una sola vez y posteriormente se evalúa de manera repetida para calcular las funciones objetivo. En el escenario más exigente se realizan hasta 100\,000 evaluaciones de función por corrida, según la literatura \cite{MOEA/CKF, 10066873_S-NSGA-II}, organizadas en poblaciones de individuos por generación. El framework de simulación está, por tanto, inserto en el ciclo evolutivo y su costo por evaluación se multiplica miles de veces, influenciando el tiempo total de cada experimento.
+
+El objetivo de la metodología fue determinar cuál de los tres frameworks disponibles entre \textit{ANNarchy}, \textit{NEST} y la implementación propia en C++, era la más adecuada para este uso, justificando la selección mediante evidencia cuantitativa y análisis estadístico.
+
+\subsection{Diseño experimental}
+
+\paragraph{Topología y parámetros de simulación}
+
+Los tres frameworks evaluados simulan la misma arquitectura y modelo neuronal, definidos en la implementación del proyecto. La topología considerada es
+\[
+(n_{\text{features}} + 1) \rightarrow n_{\text{hidden}} \rightarrow n_{\text{outputs}}
+\]
+totalmente conectada y sin recurrencia. Se emplea el modelo de Izhikevich en régimen \textit{regular spiking}.
+
+El protocolo de estímulo utilizó una duración de codificación de \(50\,\mathrm{ms}\) y una duración de evaluación de \(100\,\mathrm{ms}\), con tasa máxima de \(100\,\mathrm{Hz}\) y período refractario de \(5\,\mathrm{ms}\). En este experimento se reprodució el patrón de uso real del simulador en el MOEA: la red se construye una sola vez y se reutiliza, modificando únicamente los pesos entre evaluaciones.
+
+\paragraph{Configuraciones evaluadas}
+
+Se definieron seis configuraciones, formadas por tres conjuntos de datos reales del proyecto y dos tamaños de capa oculta con tal de evaluar configuraciones parecidas al entrenamiento final de las SNN. En la Tabla \ref{tab:framework-configuraciones-met} se pueden observar las configuraciones utilizadas para este fin. Los datasets usados son los especificados en la Tabla \ref{tab:datasets_resumen}.
+
+\begin{table}[htbp]
+\centering
+\caption{Configuraciones consideradas en el benchmark de selección de framework.}
+\label{tab:framework-configuraciones-met}
+\small
+\begin{tabular}{llrrrrrrr}
+\toprule
+Configuración & Dataset & $n_f$ & $n_c$ & $n_h$ & $D$ & $n$ & $n_{\mathrm{train}}$ & $K$ \\
+\midrule
+ds1\_h10 & Dataset\_NN\_1 & 14 & 2 & 10 & 160  &  690 & 552 & 30 \\
+ds1\_h20 & Dataset\_NN\_1 & 14 & 2 & 20 & 320  &  690 & 552 & 30 \\
+ds4\_h10 & Dataset\_NN\_4 & 60 & 2 & 10 & 620  &  208 & 167 & 30 \\
+ds4\_h20 & Dataset\_NN\_4 & 60 & 2 & 20 & 1240 &  208 & 167 & 30 \\
+ds3\_h10 & Dataset\_NN\_3 & 24 & 2 & 10 & 260  & 1000 & 800 & 30 \\
+ds3\_h20 & Dataset\_NN\_3 & 24 & 2 & 20 & 520  & 1000 & 800 & 30 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+El número de repeticiones se fijó en 30 para las seis configuraciones, igualando el tamaño de muestra y la potencia estadística entre todos los tests de comparación entre frameworks. Las métricas empleadas se definen en la Tabla~\ref{tab:framework-metricas-met}. Cada métrica se seleccionó en función de su relevancia dentro del ciclo evolutivo.
+
+\begin{table}[htbp]
+\centering
+\caption{Métricas utilizadas en el benchmark para la selección del framework.}
+\label{tab:framework-metricas-met}
+\small
+\begin{tabular}{p{0.15\linewidth}p{0.4\linewidth}p{0.35\linewidth}}
+\toprule
+Métrica & Definición & Relevancia \\
+\midrule
+\texttt{eval\_s} &
+Tiempo de una evaluación de \textit{fitness}: asignación de pesos, simulación y cálculo de \textit{accuracy} sobre $n_{\mathrm{train}}$ muestras. &
+Métrica dominante, ya que podría ejecutarse hasta 10\,000 veces por corrida del MOEA.\\
+\texttt{batch\_s} & Tiempo de evaluar una población completa en paralelo; sólo en simulador en C++.&
+El paralelismo nativo representa una ventaja estructural.\\ \hline
+\end{tabular}
+\end{table}
+
+
+\subsection{Plan de análisis estadístico}
+
+La comparación formal entre frameworks se realizó mediante la prueba no paramétrica de Mann-Whitney $U$, dado que no se garantizó normalidad en los tiempos de ejecución y se detectó una violación del supuesto de independencia entre iteraciones en NEST. Para cada configuración se reportan tamaño muestral, media, desviación estándar, mediana, mínimos y máximos. La inferencia comparativa se basa en Mann-Whitney. Dada la comparación entre dos frameworks A y B, las hipótesis nula y alternativa fueron las siguientes:
+
+\begin{itemize}
+    \item $H_0$: $\operatorname{mediana}(A)=\operatorname{mediana(B)}$, las dos poblaciones de las que provienen las muestras tienen la misma distribución.
+    \item $H_a$: $\operatorname{mediana}(A)\neq\operatorname{mediana(B)}$, las distribuciones difieren.
+\end{itemize}
+
+La decisión de qué framework es más rápido se tomó en dos pasos: el test rechaza $H_0$ ($p<0.05$) en favor de $H_a$ y luego se observó la dirección de esa diferencia para determinar qué framework es más veloz en términos de evaluación.
+
+Como diagnóstico de independencia entre corridas se calcula la correlación de Spearman entre el número de iteración y el tiempo de evaluación, marcando como \textit{tendencia} aquellas configuraciones con \(p < 0.05\). Este criterio se utiliza como aviso de validez, es decir, no se descartan mediciones a partir de él. Las hipótesis nula y alternativa fueron las siguientes: 
+
+\begin{itemize}
+    \item $H_0$: $\rho = 0$, no existe correlación monótona entre la iteración y el tiempo de evaluación.
+    \item $H_a$: $\rho \neq 0$, existe una correlación entre la iteración y el tiempo de evaluación.
+\end{itemize}
+
+% \subsection{Modelo de proyección del costo total}
+
+% Para dimensionar el impacto real de la elección de framework se utilizó una proyección lineal del costo total de una corrida completa con un máximo de evaluaciones \texttt{MAXFE}, combinando el tiempo medio de evaluación, el \textit{speedup} por evaluación en batch y el \texttt{moea\_overhead} del optimizador:
+% \[
+% T_{\mathrm{total}} \approx \frac{\overline{t}_{\mathrm{eval}} \,\texttt{MAXFE}}{S_{\mathrm{batch}}} + T_{\mathrm{MOEA}}
+% \]
+% donde \(\overline{t}_{\mathrm{eval}}\) es el tiempo medio de evaluación de \textit{fitness}, \(S_{\mathrm{batch}}\) es el \textit{speedup} medido al evaluar una población completa en paralelo (o \(S_{\mathrm{batch}} = 1\) en ejecución serial), y \(T_{\mathrm{MOEA}}\) corresponde al overhead propio del algoritmo evolutivo.
+
+% Esta estimación ignora la estructura generacional y asume un costo por evaluación constante, por lo que se interpreta como una aproximación basada en el \textit{speedup} empírico: dado que \texttt{POPSIZE} = 100 coincide con el tamaño de lote medido, el número de generaciones equivale al número de lotes paralelizables.
+
+% \subsection{Criterios de selección y limitaciones}
+
+El framework de simulación se seleccionó considerando: (i) tiempo de evaluación de \textit{fitness} significativamente menor en las configuraciones representativas, (ii) tiempo de construcción y ausencia de costos adicionales de inicialización o compilación y (iii) disponibilidad de evaluación batch paralela y \textit{speedup} alcanzable.
+
+% , y (iv) impacto combinado del costo de simulación y del overhead propio del MOEA.
+
+% Las principales amenazas a la validez del benchmark incluyen: la tendencia intra-configuración en los tiempos de NEST y la acumulación de memoria entre evaluaciones sucesivas en un mismo proceso y la ausencia de verificación de equivalencia funcional entre frameworks, la realización de mediciones en una única plataforma y sesión.
+
+
+%-----------
+
+
+\section{Diseño del problema experimental Sparse SNN}
+El problema experimental de entrenamiento de SNN se definió con el propósito de aplicar algoritmos de optimización multiobjetivo con énfasis en esparsidad al entrenamiento de SNN para tareas de clasificación. En términos generales, el objetivo es encontrar configuraciones de red que logren, de manera simultánea, un buen desempeño en exactitud y una baja complejidad estructural.
+
+\subsection{Formulación multiobjetivo y representación del problema}
+El problema se modela como una tarea de optimización multiobjetivo en la que ambos objetivos se plantean en forma de minimización (ver \ref{sec:optimizacion-multi}). El primer objetivo $f_1(x)$ cuantifica la complejidad estructural de la red asociada a la solución $x$, entendida como la fracción de conexiones efectivamente activas sobre el total de sinapsis parametrizadas. En consecuencia, valores bajos de $f_1$ corresponden a redes más esparsas, mientras que valores cercanos a uno indican redes densamente conectadas.
+
+El segundo objetivo $f_2(x)$ corresponde al error de clasificación obtenido sobre el conjunto de entrenamiento. Para problemas multiclase, se utiliza un esquema de decodificación tipo Winner-Takes-All (WTA), en el que la clase predicha se asigna a la neurona de salida que presenta mayor actividad durante la ventana de evaluación. La función objetivo se reconstruye como el complemento de una métrica de desempeño (por ejemplo, \textit{accuracy}), de forma que minimizar $f_2$ equivale a maximizar el desempeño del clasificador.
+
+En general, ambos objetivos son conflictivos entre sí, por esta razón, el propósito de los algoritmos multiobjetivo no es obtener una única solución óptima, sino aproximar el frente de Pareto que recoge los mejores compromisos entre precisión y simplicidad.
+
+Cada individuo de la población se representa mediante un vector real $x = (w_0,w_1,\ldots,w_{D-1})$ de dimensión $D$, donde cada componente $w_i$ corresponde al peso asociado a una sinapsis específica de la red. Los valores se encuentran acotados en el intervalo $[0,1]$, de manera que $w_i = 0$ indica que la conexión está inactiva y $w_i > 0$ representa una sinapsis excitatoria activa, cuya intensidad es proporcional al valor del peso. Esta codificación incorpora implícitamente la esparsidad en el genotipo: un mayor número de valores exactamente nulos se traduce en una red con una menor cantidad de conexiones activas.
+
+Adicionalmente, se considera un factor de escala global $w_{\text{scale}}$, aplicado antes de la simulación. Por tanto, el peso efectivo utilizado por el simulador se define como $w_i^{\ast} = w_i \cdot w_{\text{scale}}$. La dimensión $D$ del espacio de decisión está determinada por la topología de la SNN y por el número de conexiones entrenables. Dicha dimensión se definió como
+
+\begin{equation}
+D = (n_{\text{Features}} + 1)\cdot n_{\text{Hidden}}
++ n_{\text{Hidden}}\cdot n_{\text{Outputs}}
+\label{eq:decision_dimension}
+\end{equation}
+
+donde $n_{\text{Features}}$ corresponde al número de características de entrada del conjunto de datos, $n_{\text{Hidden}}$ al número de neuronas de la capa oculta y $n_{\text{Outputs}}$ al número de neuronas de la capa de salida. El término adicional incorpora una neurona de sesgo (bias) conectada exclusivamente con la capa oculta.
+
+% El orden de los elementos dentro del vector de decisión sigue la secuencia de inserción de las sinapsis en la red. Primero se codifican las conexiones entre la capa de entrada y la capa oculta, incluyendo las conexiones provenientes del nodo de sesgo; posteriormente, se codifican las conexiones entre la capa oculta y la capa de salida. Todas las variables emplean codificación real y comparten los límites inferior y superior definidos por
+
+% $$0.0 \leq w_i \leq 1.0, \qquad i = 0,1,\ldots,D-1$$
+
+\subsection{Funciones objetivo y consideraciones estructurales}\label{subsec:funciones_objetivo}
+
+El primer objetivo, $f_1$, mide la complejidad estructural de la red como la fracción de pesos estrictamente no nulos respecto del total de componentes del vector de decisión:
+
+\begin{equation}
+f_1(\mathbf{x}) =
+\dfrac{\|x\|_0}{\|x\|}
+\label{eq:structural_sparsity}
+\end{equation}
+
+donde $\|x\|_0$ corresponde a la cantidad de pesos no nulos de la red, y $\|x\|$ corresponde a la cantidad total de pesos de la red. El valor de $f_1(x)$ se encuentra acotado en el intervalo $[0,1]$. Un valor cercano a cero describe una solución altamente esparsa, mientras que un valor cercano a uno representa una red densa.
+
+El segundo objetivo, $f_2$, mide el error de clasificación y depende del proceso de simulación y decodificación de la respuesta de la SNN. Para cada muestra del conjunto de entrenamiento, el vector de entrada, previamente normalizado al intervalo $[0,1]$, se transforma en trenes de \textit{espigas} mediante el esquema de codificación seleccionado, ya sea \textit{Poisson} o \textit{Time-To-First-Spike} (TTFS). La red se simula durante una ventana temporal de duración fija y la predicción final se obtiene a partir de la actividad de las neuronas de salida, mediante un decodificador el decodificador WTA. El objetivo se define como el complemento de la métrica de desempeño, donde $\operatorname{Acc}(x)$ representa la precisión en la tarea de clasificación tal y como se muestra en la Ecuación \ref{eq:classification_error}.
+
+\begin{equation}
+f_2(x) =
+1 - \operatorname{Acc}(x)
+\label{eq:classification_error}
+\end{equation}
+
+% \subsection{Consideraciones estructurales de la red}
+La red neuronal considerada posee una topología fija de tipo, compuesta por tres niveles: capa de entrada, capa oculta y capa de salida. No se permiten conexiones recurrentes ni conexiones laterales dentro de una misma capa. Por consiguiente, toda la variabilidad estructural del problema está dada exclusivamente por la activación o desactivación efectiva de las sinapsis parametrizadas en el vector de decisión $D$.
+
+La capa de entrada contiene $n_{\text{Features}}$ neuronas, una por cada característica del conjunto de datos, además de una neurona adicional de sesgo con activación constante igual a $1.0$. Esta neurona de sesgo se conecta únicamente con la capa oculta y no directamente con la capa de salida. Esta decisión evita soluciones triviales asociadas a la clase mayoritaria, particularmente en escenarios con alta esparsidad. La capa oculta contiene $n_{\text{Hidden}}$ neuronas, mientras que la capa de salida contiene $n_{\text{Outputs}}$ neuronas. La cantidad de neuronas de salida depende del problema de clasificación abordado y del mecanismo de decodificación utilizado.
+
+Todas las neuronas ocultas y de salida se implementan conceptualmente mediante el modelo de Izhikevich en configuración \textit{regular spiking}. Este modelo permite representar dinámicas temporales ricas utilizando un número reducido de parámetros. Además, se consideran exclusivamente sinapsis excitatorias, con pesos iniciales iguales a cero, sin plasticidad sináptica durante la simulación y con normalización previa de las variables de entrada.
+
+
+%--------------------------------
+
+% \section{Problema experimental Sparse SNN}
+% El problema experimental SparseSNN fue definido con el propósito de aplicar algoritmos de optimización multiobjetivo esparsos a las SNN. Su objetivo es encontrar configuraciones de red que logren, de manera simultánea, un buen desempeño de clasificación y una baja complejidad estructural.
+
+% Desde el punto de vista de implementación, SparseSNN se integra como una subclase concreta de Problem, correspondiente a la interfaz abstracta provista por el framework PlatEMO-CPP. En esta clase se implementan los métodos \texttt{Setting()}, \texttt{Initialization()}, \texttt{CalDec()} y \texttt{CalObj()}, los cuales permiten definir el espacio de búsqueda, generar soluciones iniciales, proyectar las variables dentro de sus cotas válidas y evaluar los objetivos del problema, respectivamente.
+
+
+% \subsection{Formulación multiobjetivo del problema}
+% El problema se formula como una tarea de optimización multiobjetivo, en la que ambos objetivos deben ser minimizados de manera simultánea. El primer objetivo, $f_1$, cuantifica la complejidad estructural de la red según la Ecuación \ref{eq:structural_sparsity}. Aunque este objetivo se asocia operativamente con la esparsidad, en rigor mide la densidad de conexiones activas; por ello, su minimización equivale a favorecer arquitecturas más esparsas.
+
+% El segundo objetivo, $f_2$, corresponde al error de clasificación obtenido sobre el conjunto de entrenamiento. Para problemas multiclase, cuando hay más de una neurona en la capa de salida, este objetivo se definió como se muestra en la Ecuación \ref{eq:classification_error} empleando decodificación tipo winner-takes-all (WTA).
+
+% Ambos objetivos son conflictivos entre sí. En general, una red con mayor número de conexiones activas puede reducir el error de clasificación; sin embargo, ello incrementa su complejidad estructural. Por esta razón, el propósito del algoritmo multiobjetivo no es obtener una única solución óptima, sino aproximar el frente de Pareto que reúne los mejores compromisos entre precisión y simplicidad.
+
+% El espacio de búsqueda corresponde al hipercubo $[0,1]^D$ que depende de la arquitectura particular de la red, según se detalla en la Sección \ref{subsec:variables_decision}. La evaluación de soluciones se realiza en paralelo para acelerar el proceso, evitando condiciones de carrera y permitiendo evaluar múltiples soluciones de manera concurrente.
+
+% Adicionalmente, el problema consideró una modalidad adicional de evaluación inspirada en un esquema de remuestreo con reemplazo. En lugar de calcular $f_2$ una sola vez sobre todo el conjunto de entrenamiento, el desempeño de cada solución se estima a partir de varias muestras generadas aleatoriamente desde dicho conjunto, permitiendo que una misma instancia pueda aparecer más de una vez. Luego, la red se evalúa sobre cada una de estas muestras y el valor final de $f_2$ se obtiene como el promedio de los resultados observados \cite{LoyolaJara2026evolvingsnn}. Esta estrategia busca disminuir la dependencia de la evaluación respecto de una composición puntual de los datos y proporcionar una estimación más estable y robusta del rendimiento.
+
+% \subsection{Representación de individuos}
+% Cada individuo de la población se representa mediante un vector de dimensión $D$:
+
+% $$x=(w_0, w_1, ..., w_{D-1}) \in [0,1]^D$$
+
+% donde cada componente $w_i$ corresponde al peso asociado a una sinapsis específica de la red. Un valor de cero indica que la conexión está inactiva, mientras que un valor mayor a cero representa una sinapsis activa cuya intensidad es proporcional a dicho valor.
+
+% Antes de ser asignados a la red, los pesos pueden ser escalados por un factor global $wScale$, de modo que el peso efectivo utilizado durante la simulación es $w_i\cdot wScale$. No obstante, la medición de la esparsidad $f_1$ se realiza sobre los valores originales del vector de decisión, es decir, antes de aplicar esta escala.
+
+% La inicialización de la población se lleva a cabo mediante una estrategia deliberadamente esparsa. En particular, cada peso se genera según:
+
+% \begin{equation}
+%     w_i \sim Uniform(0,1) \times Bernoulli(0.5)
+% \end{equation}
+
+% lo que produce, en promedio, individuos con aproximadamente un $50\%$ de sus pesos iguales a cero. Esta decisión favorece una exploración inicial del frente de Pareto en regiones de baja complejidad estructural y se implementa explícitamente en el método Initialization(), diferenciándose del muestreo uniforme estándar definido en la clase base Problem.
+
+% Finalmente, la proyección de soluciones fuera de rango se realiza en el método \texttt{CalDec()}, mediante un operador de recorte que fuerza cada variable al intervalo $[0,1]$. Dado que el problema se resuelve mediante metaheurísticas evolutivas y no se dispone de gradientes analíticos, no se considera un procedimiento de ajuste local adicional.
+
+% \subsection{Variables de decisión}\label{subsec:variables_decision}
+% La dimensión $D$ del espacio de decisión está determinada por la topología de la SNN y por el número de variables necesarias para parametrizar todas las sinapsis entrenables. En este trabajo, dicha dimensión se define como:
+
+% $$D=(nFeatures+1)\times nHidden + nHidden\times nOutputs$$
+
+% donde \texttt{nFeatures} corresponde al número de características de entrada del conjunto de datos, \texttt{nHidden} al número de neuronas en la capa oculta y \texttt{nOutputs} al número de neuronas de salida en problemas multiclase o en clasificación binaria. El término adicional incorpora la neurona de sesgo (bias), que se conecta exclusivamente con la capa oculta.
+
+% El orden de los elementos dentro del vector de decisión sigue la secuencia de inserción de sinapsis en la red. En primer lugar se codifican las conexiones entre la capa de entrada y la capa oculta, incluyendo las conexiones provenientes del nodo de sesgo; posteriormente se codifican las conexiones entre la capa oculta y la capa de salida. Todas las variables comparten las mismas cotas, $lower = 0.0$ y $upper = 1.0$, y se representan mediante codificación real.
+
+% \subsection{Funciones objetivo}
+% El primer objetivo del problema corresponde a la complejidad estructural de la red y se calcula como la fracción de pesos estrictamente positivos tal y como se describe en la ecuación 4.1. Este valor se encuentra acotado en el intervalo $[0,1]$. Un valor cercano a 0 representa una red altamente esparsa, mientras que un valor cercano a 1 indica una red densa. En el extremo, $f_1=0$ describe una solución completamente inactiva, la cual minimiza la complejidad pero carece de utilidad práctica como clasificador.
+
+% El segundo objetivo, $f_2$, mide el error de clasificación y depende del proceso de simulación y decodificación de la respuesta de la SNN. Para cada muestra del conjunto de entrenamiento, el vector de entrada previamente normalizado en $[0,1]$ se transforma en trenes de pulsos mediante el esquema de codificación seleccionado. En el caso de codificador Poisson, los pulsos se generan a partir de un proceso de Poisson con tasa proporcional al valor de entrada, hasta una frecuencia máxima max\_rate. En el caso del codificador TTFS, cada neurona emite un único pulso y el instante de disparo codifica la magnitud de la característica de entrada.
+
+% Posteriormente, la red se simula durante el tiempo de evaluación en milisegundos, considerando una ventana de codificación también en milisegundos y un paso temporal dt. La predicción final se obtiene a partir de la actividad de las neuronas de salida. Cuando $nOutputs>1$, se utiliza un decodificador WTA, asignando la clase correspondiente a la neurona con mayor número de pulsos. Cuando solo hay una neurona de salida, la predicción se basa en el cálculo del AUC mediante barrido de umbrales discretos. En todos los casos, el objetivo se define como el complemento de la métrica de desempeño:
+
+% $$f_2(x)=1-métrica(x)$$
+
+% donde $metrica(x) \in [0,1]$. Así, valores más bajos de $f_2$ representan un mejor comportamiento del clasificador.
+
+% \subsection{Restricciones estructurales de la red}
+% La red neuronal considerada en SparseSNN posee una topología fija, de tipo feedforward y completamente conectada entre capas consecutivas. No se permiten conexiones recurrentes ni conexiones laterales, por lo que toda la variabilidad estructural del problema está dada exclusivamente por la activación o desactivación efectiva de las sinapsis parametrizadas en el vector de decisión.
+
+% La arquitectura se compone de tres niveles. La capa de entrada contiene nFeatures neuronas, una por característica del conjunto de datos, más una neurona adicional de sesgo con activación constante igual a 1.0. Esta neurona de sesgo se conecta únicamente con la capa oculta, y no directamente con la capa de salida. Esta restricción de diseño busca evitar soluciones triviales asociadas a la clase mayoritaria, especialmente en escenarios de alta esparsidad.
+
+% La capa oculta contiene nHidden neuronas, mientras que la capa de salida contiene nOutputs neuronas. Tanto las neuronas ocultas como las de salida se implementan mediante el modelo de Izhikevich en su configuración regular spiking. Este modelo se describe mediante las ecuaciones diferenciales de la Sección \ref{subsec:ecuaciones_diferenciales}.
+
+% En cuanto a la dinámica sináptica, se consideran únicamente conexiones excitatorias con pesos iniciales iguales a 0.0. No se incorpora plasticidad sináptica durante la simulación; por tanto, los pesos permanecen estáticos y son asignados externamente por el algoritmo evolutivo mediante setWeights(). Asimismo, no se consideran sinapsis inhibitorias ni mecanismos de aprendizaje en línea.
+
+% Como restricción adicional del proceso experimental, todas las variables de entrada se normalizan previamente al intervalo $[0,1]$ mediante escalamiento min-max, requisito especialmente relevante para el correcto funcionamiento del codificador Poisson. Las etiquetas de clase, por su parte, se recodifican a índices enteros con base cero. La partición de los datos se realiza en entrenamiento y prueba, utilizando el conjunto de entrenamiento durante la optimización y reservando el conjunto de prueba exclusivamente para la evaluación final del desempeño.
+
+% %------------------------------------------
+
+
+%------------------------------------------
+
+% \section{Configuración de la red SNN}
+
+% \subsection{Modelo neuronal utilizado}
+
+% En esta investigación se utilizó el modelo neuronal de Izhikevich para todas las neuronas de la red. Esta elección se justifica porque el modelo de Izhikevich ofrece un equilibrio adecuado entre eficiencia computacional y realismo biológico, al describir la dinámica neuronal mediante dos variables de estado y permitir la reproducción de diversos patrones de disparo con un número reducido de parámetros. Aunque en el presente trabajo se empleó un único patrón de disparo, la adopción de este modelo permite conservar una representación temporal más rica que la proporcionada por LIF, lo que resulta metodológicamente conveniente en el contexto de SNN.
+
+% En particular, todas las neuronas se configuraron bajo la variante \textit{Regular Spiking}, cuya dinámica y parámetros se detallan en la Sección 2.3. Esta formulación corresponde al modelo original propuesto por Izhikevich \cite{Izhikevich2003}, el cual representa de manera compacta la interacción entre el potencial de membrana y un mecanismo de recuperación que resume la activación e inactivación de corrientes iónicas relevantes.
+
+% La corriente sináptica se implementó mediante un esquema basado en conductancias con decaimiento exponencial, no obstante, en la configuración evaluada todas las sinapsis fueron excitatorias, por lo que la componente inhibitoria no participó como mecanismo efectivo de conectividad. La integración numérica de las ecuaciones diferenciales se realizó mediante el método de Euler explícito, empleando dos subpasos de tamaño $dt/2$ por cada paso de simulación, con el fin de mejorar la estabilidad numérica de la dinámica temporal.
+
+% Es importante señalar que no se definió un período refractario a nivel de neurona dentro del modelo dinámico utilizado. Por consiguiente, el único mecanismo refractario del sistema corresponde al proceso de codificación de entrada, el cual se describe en la Subsección~\ref{subsec:parametros_fijos_simulacion}.
+
+% \subsection{Topología de la red}
+
+% La arquitectura considerada corresponde a una red SNN \textit{feedforward} estricta de tres capas: entrada, capa oculta y salida. Esta estructura responde a la idea de replicar las topología de red de los algoritmos seleccionados \cite{MOEA/CKF, 10066873_S-NSGA-II}, por lo que no hay ni conexiones recurrentes ni sinapsis que generen ciclos en el grafo de conectividad. En consecuencia, la propagación de información sigue únicamente la dirección entrada $\rightarrow$ capa oculta $\rightarrow$ salida.
+
+% Entre capas adyacentes se adoptó un esquema de conectividad densa de tipo todos-con-todos. Sin embargo, la esparsidad no se impuso mediante una reducción topológica previa del conjunto de enlaces, sino a través de los valores de los pesos sinápticos. En otras palabras, la red parte de una conectividad potencial completa, pero la conectividad efectiva queda determinada por la solución evolucionada. Este enfoque es coherente con formulaciones de optimización esparsa en redes neuronales, en las cuales cada peso puede tratarse como una variable de decisión y la complejidad estructural se expresa en función del número de conexiones activas \cite{Shao2025_SMOEA}.
+
+% El tamaño de la capa de entrada se definió como $nFeatures + 1$, donde $nFeatures$ corresponde al número de atributos del conjunto de datos y el término adicional representa un nodo de sesgo constante. Por su parte, el tamaño de la capa de salida dependió tanto del problema abordado como de la estrategia de decodificación considerada. Se usaron dos neuronas en la capa de salida para ambos métodos de codificación. Esto se explica con detalle en la Subsección~\ref{subsec:parametros_fijos_simulacion}. Bajo esta arquitectura, la dimensión del vector de decisión quedó determinada tal y como se especifica en la Subsección \ref{subsec:variables_decision}.
+
+
+% \subsection{Configuración de la capa oculta}
+% La red considerada incorpora una única capa oculta, sin agregar capas ocultas adicionales, al igual que en los algoritmos a estudiar. Su tamaño, denotado por $nHidden$, no formó parte del genotipo evolucionado ni del vector de decisión optimizado por los algoritmos. En consecuencia, el proceso evolutivo actuó exclusivamente sobre los pesos sinápticos, mientras que el número de neuronas ocultas se trató como una condición externa de cada corrida experimental.
+
+% Desde la perspectiva del diseño experimental, $nHidden$ se consideró una variable independiente. En particular, se evaluaron diferentes tamaños de capa oculta con el propósito de analizar la robustez de la red equilibrando esparsidad y desempeño predictivo. Esta estrategia permite distinguir con mayor claridad el efecto del tamaño de la capa oculta del efecto producido por la distribución de pesos sinápticos.
+
+% \textbf{REVISAR}
+% La separación entre capacidad arquitectónica y optimización de conectividad resulta metodológicamente conveniente, ya que evita mezclar decisiones estructurales globales con el ajuste fino de la red. De este modo, la comparación entre configuraciones refleja tanto la influencia del número de neuronas ocultas como la capacidad de los algoritmos evolutivos para encontrar soluciones eficientes dentro de cada escala arquitectónica. \textbf{REVISAR}
+
+% \subsection{Parámetros fijos de simulación}
+% \label{subsec:parametros_fijos_simulacion}
+
+% Los parámetros de simulación permanecen constantes durante cada corrida e incluyen, entre otros, el paso de integración $dt$, la duración de la ventana de codificación, la duración total de la evaluación temporal y, cuando corresponde al esquema de codificación seleccionado, la tasa máxima de disparo y el período refractario de entrada. Esta distinción resulta fundamental, ya que separa la optimización de la solución neuronal de la calibración del entorno temporal en el que dicha solución es evaluada.
+
+% Dentro de este marco, el esquema de codificación y decodificación también se consideró parte del diseño experimental. En particular, se evaluaron cuatro combinaciones arquitectónicas:
+
+% \begin{enumerate}
+%     \item Codificación de Poisson con dos neuronas de salida y decodificación \textit{winner-take-all};
+%     \item Codificación \textit{time-to-first-espiga} (TTFS) con dos neuronas de salida y decodificación \textit{winner-take-all};
+% \end{enumerate}
+
+% Estas dos configuraciones permitieron comparar, bajo un marco metodológico común, distintas formas de representar la información de entrada y de traducir la dinámica de salida en una decisión de clasificación. Los parámetros de simulación asociados a estas configuraciones no se fijaron de manera arbitraria. Por el contrario, fueron calibrados previamente mediante optimización bayesiana con Optuna. La explicación detallada de esto se encuentra en la Sección \ref{sec:metodologia_busqueda_hiper}.
+
+% Por último, conviene distinguir esta calibración de parámetros de simulación de la calibración de los hiperparámetros propios del algoritmo evolutivo. Parámetros como los índices de distribución de SBX y mutación, o los límites de dispersión inicial de la población, también pueden ajustarse mediante el mismo procedimiento bayesiano, pero pertenecen conceptualmente a la configuración del optimizador y no a la definición de la red SNN. En la literatura reciente sobre optimización multiobjetivo esparsa, estos componentes se tratan precisamente como parte de los operadores evolutivos y de la estrategia de inicialización, y no como parte del modelo neuronal propiamente tal [file:2][file:3].
+
+% \section{Encoders y decoders evaluados}
+
+\section{Metodología de búsqueda de hiperparámetros}\label{sec:metodologia_busqueda_hiper}
+\subsection{Estrategia general, espacio de búsqueda e hiperparámetros}\label{subsec:estrategia_opti_externa}
+El rendimiento de un algoritmo evolutivo multiobjetivo aplicado al entrenamiento de SNN para clasificación, depende de la configuración del simulador, el comportamiento neuronal y de parámetros internos del algoritmo. Dado que estos elementos interactúan entre sí resulta adecuado buscarlos en vez de fijarlos a priori mediante criterios arbitrarios.
+
+Se definió una optimización externa sobre la optimización evolutiva interna. En el bucle externo, un optimizador bayesiano implementado con Optuna y el muestreador \textit{Tree-structured Parzen Estimator} (TPE) propone una configuración de hiperparámetros. Luego, dicha configuración se utiliza para ejecutar completamente el SMOEA correspondiente hasta agotar su presupuesto de evaluaciones. El resultado de esa corrida, expresado como un frente de Pareto final, se resume en un único escalar mediante el hipervolumen (HV), que actúa como función objetivo del proceso externo.
+
+En este esquema, el optimizador externo maximiza el HV medio obtenido por el algoritmo interno, mientras que el SMOEA continúa resolviendo el problema multiobjetivo. En consecuencia, la búsqueda de hiperparámetros no altera la naturaleza del problema de optimización resuelto por el algoritmo evolutivo, sino que determina la configuración con la cual dicho algoritmo puede explorar de forma más eficaz el espacio de soluciones.
+
+El espacio de búsqueda considerado integra variables continuas, discretas y categóricas. Esta decisión responde a la naturaleza de los hiperparámetros involucrados y evita imponer una representación artificial sobre variables que no comparten la misma semántica. 
+
+Por una parte, existen hiperparámetros genuinamente continuos, cuyo efecto sobre el desempeño del sistema es suave o multiplicativo. En este grupo se incluyen los índices de distribución de cruzamiento y mutación, la escala de pesos sinápticos y, en las arquitecturas con codificación Poisson, la tasa máxima de disparo.
+
+Por otra parte, algunos parámetros están cuantizados por restricciones del simulador o por decisiones de implementación. El paso de integración $dt$, por ejemplo, se restringe a un conjunto discreto de valores previamente definidos, mientras que parámetros como el período refractario se modelan naturalmente como variables discretas en un rango pequeño.
+
+Finalmente, existen hiperparámetros categóricos que representan decisiones arquitectónicas. En particular, la arquitectura combina el tipo de codificador, la métrica de fitness utilizada y el número de neuronas de salida. Este hiperparámetro además condiciona la existencia de otros como \texttt{max\_rate} y \texttt{refractory\_period} que se usan solo cuando se emplea codificación Poisson.
+
+La Tabla \ref{tab:espacio-busqueda-hiper} resume los hiperparámetros incluidos en la búsqueda, junto con su categoría, tipo y condición de parametrización. Esta parametrización permite que cada variable sea tratada conforme a su naturaleza experimental. El detalle de los hiperparámetros y cuál es su función se encuentra en la \textbf{Tabla X} del Anexo.
+
+\begin{table}
+\centering
+\small
+\caption{Hiperparámetros considerados en el espacio de búsqueda.}
+\label{tab:espacio-busqueda-hiper}
+\begin{tabular}{llll}
+\hline
+\textbf{Hiperparámetro} & \textbf{Bloque} & \textbf{Tipo} & \textbf{Condición} \\
+\hline
+\texttt{architecture} & Encoder/arquitectura & Categórico & Siempre \\
+\texttt{disC} & Operadores SMOEA & Continuo & Siempre \\
+\texttt{disM} & Operadores SMOEA & Continuo & Siempre \\
+\texttt{proM} & Operadores SMOEA & Continuo & Siempre \\
+\texttt{disSM} & Esparsidad & Continuo & Siempre \\
+\texttt{proSM} & Esparsidad & Continuo & Siempre \\
+\texttt{sLower} & Esparsidad & Continuo & Siempre \\
+\texttt{sGap} & Esparsidad & Continuo & Siempre \\
+\texttt{wScale} & Simulación/red & Continuo & Siempre \\
+\texttt{dt} & Simulación neuronal & Continuo & Siempre \\
+\texttt{encoding\_duration} & Simulación neuronal & Entero/continuo & Siempre \\
+\texttt{extra\_eval} & Simulación neuronal & Entero/continuo & Siempre \\
+\texttt{max\_rate} & Encoder Poisson & Continuo & Solo Poisson \\
+\texttt{refractory\_period} & Encoder Poisson & Continuo & Solo Poisson \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Configuración experimental, evaluación y presupuesto computacional}\label{subsec:configuracion_evaluacion_presupuesto}
+
+En S-NSGA-II se mantuvieron fijos los componentes definidos en su formulación original, incluyendo la selección por torneo binario, la selección ambiental de NSGA-II y la probabilidad de cruzamiento unitaria. La optimización externa ajustó los parámetros asociados a los operadores S-SBX y S-PM, la esparsidad, la escala de pesos, la simulación y la arquitectura de codificación/decodificación.
+
+En MOEA-CKF se conservaron sus mecanismos internos de análisis, agrupamiento y reproducción, pues forman parte de la definición del algoritmo. Ambos métodos se evaluaron sobre el mismo espacio externo de hiperparámetros, de modo que las diferencias de desempeño se atribuyan principalmente a sus mecanismos evolutivos.
+
+% \paragraph{Evaluación de cada trial}
+Cada trial de Optuna se ejecutó para tres tamaños de capa oculta: 20, 40 y 80 neuronas. Las ejecuciones compartieron la misma configuración, semilla y presupuesto \texttt{maxFE}; solo varió el tamaño de la red y, por tanto, la dimensionalidad del problema.
+
+El valor retornado al optimizador externo correspondió al promedio del hipervolumen (HV) de las tres ejecuciones. Así, se favorecieron configuraciones con desempeño robusto frente a cambios en la topología de la red.
+
+% \paragraph{Presupuesto computacional y equidad}
+La comparación se definió en términos de evaluaciones de función (Function Evaluations, FE), donde cada FE corresponde a la evaluación completa de una solución candidata mediante la simulación de su red \cite{MOEA/CKF, 10066873_S-NSGA-II}. Este criterio se utilizó en lugar del número de generaciones, ya que ambos algoritmos consumen las evaluaciones de forma distinta.
+
+Para cada combinación algoritmo--dataset se asignó el mismo valor de \texttt{maxFE}. El presupuesto se seleccionó para superar la fase de análisis previo de MOEA-CKF y permitir posteriormente su evolución durante aproximadamente 30 generaciones. De este modo, ambos algoritmos dispusieron del mismo presupuesto efectivo de evaluación.
+
+%-----------------------------
+
+% \section{Metodología de comparación entre algoritmos}\label{sec:metodologia-comparacion}
+
+% En esta sección se describe la metodología utilizada para comparar los algoritmos evolutivos MOEA-CKF y S-NSGA-II sobre el problema multiobjetivo de entrenamiento de SNN, así como las comparaciones adicionales de cada algoritmo bajo diferentes condiciones experimentales (plataforma SNN/ANN, evaluación remuestreo/completa, tiempo de cómputo). Todas las pruebas estadísticas se realizaron \emph{por dataset}, sin combinar en un mismo test muestras procedentes de tareas distintas.
+
+% \subsection{Diseño experimental}
+
+% Ambos algoritmos se ejecutaron sobre el mismo problema de entrenamiento de SNN. El diseño experimental considera los siguientes puntos clave que sustentan la validez de la comparación:
+
+% \begin{enumerate}
+%     \item \textbf{Presupuesto de evaluaciones igualado por dataset.} Para cada dataset, ambos algoritmos comparten el mismo presupuesto máximo de evaluaciones. Este presupuesto se ajusta según lo recomendado en la literatura ambos algoritmos estudiados \cite{MOEA/CKF, 10066873_S-NSGA-II}, siempre con el mismo valor para ambos por cada dataset.
+%     \item \textbf{Hiperparámetros fijos por combinación algoritmo--dataset.} Los hiperparámetros de los operadores y comportamiento sináptico provienen de la búsqueda Bayesiana especificada en \ref{sec:metodologia_busqueda_hiper}.
+% \end{enumerate}
+
+% Los resultados se organizaron en cuatro conjuntos experimentales. Los conjuntos de \textit{referencia} y \textit{con remuestreo} incluyeron 31 corridas por combinación, pareadas por semilla. Ambos registraron HV, frentes de Pareto y convergencia; se diferenciaron únicamente en que el segundo calculó el fitness mediante remuestreo. Por tanto, sus resultados permiten comparaciones pareadas.
+
+% El conjunto experimental de \textit{ANN} incluyó igualmente 31 corridas por combinación y registró HV, complejidad y exactitud de la mejor red en la implementación ANN de PlatEMO/MATLAB. Como sus semillas y generador aleatorio no son equivalentes a los de la implementación C++, esta comparación no es pareada y debió usarse para identificar una tendencia general.
+
+% Finalmente, el conjunto de \textit{rendimiento temporal} consideró 15 corridas por combinación, pareadas por semilla, y midió exclusivamente el tiempo de cómputo bajo hardware e hiperparámetros compartidos. En este caso, el HV no se interpreta como indicador de calidad, pues los hiperparámetros no fueron ajustados para maximizar el desempeño de optimización.
+
+% El análisis consideró seis enfoques de comparación, resumidos en la Tabla~\ref{tab:angulos-comparacion}. Los enfoques 1--3 comparan MOEA-CKF y S-NSGA-II en el estudio SNN base; los enfoques 4--6 comparan cada algoritmo bajo distintas condiciones de plataforma, evaluación y medición temporal. La corrección por comparaciones múltiples se aplica posteriormente sobre los p-valores agrupados en familias temáticas.
+
+% \begin{table}[hbtp]
+%     \centering
+%     \small
+%     \caption{Enfoques de comparación, pregunta asociada y fuente de datos utilizada.}
+%     \label{tab:angulos-comparacion}
+%     \begin{tabular}{clp{5.5cm}p{5cm}}
+%         \toprule
+%         \# & Enfoque & Pregunta & Fuente \\
+%         \midrule
+%         1 & HV principal &
+%         ¿Qué algoritmo tiene mejor frente de Pareto (SNN)? &
+%         Conjunto experimental de referencia\\ \hline
+%         2 & Frentes de Pareto &
+%         ¿Cómo se reparten complejidad y error en las soluciones de cada algoritmo? &
+%         Conjunto experimental de referencia\\\hline
+%         3 & Convergencia &
+%         ¿Qué tan rápido converge cada algoritmo con el mismo presupuesto de FE? &
+%         Conjunto experimental de referencia\\\hline
+%         4 & Plataforma &
+%         ¿HV/complejidad mejor en SNN (C++) o en ANN (MATLAB original)? &
+%         Conjunto experimental de referencia vs. Conjunto experimental ANN\\\hline
+%         5 & Remuestreo &
+%         ¿El remuestreo mejora o empeora el HV? &
+%         Conjunto experimental de referencia vs. Conjunto experimental con remuestreo\\\hline
+%         6 & Tiempo &
+%         ¿Qué algoritmo es más rápido en tiempo de reloj? &
+%         Conjunto experimental temporal\\
+%         \bottomrule
+%     \end{tabular}
+% \end{table}
+
+% \subsection{Indicadores por enfoque}
+
+% \paragraph{Hipervolumen (HV)}
+
+% El indicador principal de calidad de los frentes es el hipervolumen (HV) el cual se computa normalizando contra el punto de referencia \((1,1)\), independiente del algoritmo, de la corrida y del dataset, de modo que las comparaciones entre algoritmos, entre datasets y entre plataformas SNN/ANN fueron directas.
+
+% Para cada combinación algoritmo--dataset se reportó la mediana y el rango intercuartílico (IQR) del HV, junto con el rango observado y el p-valor de la prueba de Wilcoxon aplicando diseño pareado por semilla.
+
+% \paragraph{Frentes de Pareto}
+
+% El HV resume el frente de Pareto en un escalar, pero no describe de qué está hecha la diferencia entre algoritmos. Por ello se complementó el análisis con tres técnicas basadas en los archivos resultados obtenidos de los frentes de Pareto para cada corrida:
+
+% \begin{enumerate}
+%     \item \textbf{Solución de mejor exactitud por corrida.} En cada frente se selecciona la solución con mejor exactitud, desempatada por menor complejidad estructural $f_1$, generando una muestra pareada por error, complejidad y tamaño del frente.
+%     \item \textbf{Frente combinado y C-metric.} Se construyó un \textit{frente combinado} por algoritmo uniendo las soluciones de las 31 corridas, eliminando duplicados y filtrando a soluciones no dominadas (dominancia estricta). Sobre estos frentes combinados se calcula la métrica de cobertura \(C(A,B)\) de Zitzler y Thiele \cite{Zitzler2007HV_revisited}, que mide la fracción de puntos del frente \(B\) dominados o igualados por al menos un punto de \(A\).
+%     \item \textbf{Bandas de complejidad.} Se construyeron deciles de complejidad sobre el pool de puntos de ambos algoritmos, y se compara el error mediano por banda y algoritmo. Esto permitió distinguir si uno de los algoritmos domina en la zona de baja complejidad (redes ralas) y el otro en la zona de alta precisión (redes densas), en vez de asumir que el HV resume de forma concisa la distribución de las redes.
+% \end{enumerate}
+
+% \paragraph{Convergencia}
+
+% Dado que ambos algoritmos consumen FE en distintas cantidades por generación, por lo que se aproximó el número de evaluaciones asumiendo consumo aproximadamente constante de FE por generación dentro de cada corrida. Con esta aproximación se construyeron curvas de convergencia de HV mediano con bandas P10--P90 versus \texttt{fe\_approx}, indicadores de velocidad de convergencia a partir del \texttt{fe\_approx} necesario para alcanzar por primera vez el \(95\%\) del HV final de cada corrida.
+
+% \paragraph{Plataforma SNN vs. ANN}
+
+% Dado que los resultados de ANN traen por corrida la exactitud de
+% la mejor red, su complejidad y el HV del frente completo, la comparación se realizó \emph{por algoritmo} para aislar el efecto de la plataforma como único factor distinto entre las muestras. En este caso no existe pareo estadísticamente significativo entre corridas MATLAB y C++, por lo que se empleó la prueba de Mann--Whitney U sobre muestras independientes.
+
+% \paragraph{Evaluación remuestreo vs. referencia}
+
+% El conjunto de \textit{remuestreo} usó los mismos hiperparámetros afinados que el conjunto de \textit{referencia}, pero usando remuestreo, calculando el fitness de cada individuo promediado sobre 10 remuestreos del 50\% del conjunto de entrenamiento por generación, en vez de una sola pasada completa. Esto para buscar una señal de fitness más robusta a generalización \cite{LoyolaJara2026evolvingsnn}. Dado el mismo conjunto de semillas, la comparación de HV se realizó mediante pruebas pareadas de Wilcoxon por algoritmo y dataset (ocho comparaciones en total).
+
+% \paragraph{Tiempo de cómputo}
+
+% Para comparar tiempo de cómputo se diseñó específicamente el conjunto de \textit{rendimiento temporal}, con hiperparámetros compartidos entre algoritmos y condiciones de hardware controladas. Allí se comparan los tiempos de ejecución mediante Wilcoxon pareado por semilla.
+
+% \subsection{Pruebas estadísticas y corrección por comparaciones múltiples}\label{subsec:pruebas-estadisticas-correccion}
+
+% Se optó por utilizar pruebas no paramétricas como criterio principal, manteniendo la coherencia con las pruebas estadísticas empleadas en los estudios originales de ambos algoritmos evolutivos. De esta forma, cada enfoque de comparación utiliza el mismo tipo de test que en su publicación de referencia, adaptado al diseño pareado o no pareado descrito en la Tabla~\ref{tab:angulos-comparacion}.
+
+% \begin{itemize}
+%     \item \textbf{Tamaño del efecto.} Junto al p-valor se reportó sistemáticamente el tamaño de efecto \(\hat{A}_{12}\) de Vargha--Delaney, interpretado sobre \(|\hat{A}_{12} - 0.5|\) según los umbrales habituales: diferencias insignificantes (<0.06), pequeñas (0.06--0.14), medianas (0.14--0.21) o grandes (\(\geq\)0.21).
+%     \item \textbf{C-metric.} La métrica de cobertura \(C(A,B)\) se utilizó únicamente como indicador descriptivo al comparar frentes combinados, sin asociarle p-valores ni contrastes de hipótesis formales.
+% \end{itemize}
+
+% La corrección por comparaciones múltiples se realizó mediante el procedimiento Holm--Bonferroni, aplicado dentro de cada familia de tests relacionados, para controlar la tasa de error familiar manteniendo mayor potencia que el ajuste Bonferroni clásico.
+
+
+
+
+%--------------------------
+
+\section{Metodología de comparación entre algoritmos}\label{sec:metodologia-comparacion}
+
+En esta sección se describe la metodología utilizada para comparar los algoritmos evolutivos MOEA-CKF y S-NSGA-II sobre el problema multiobjetivo de entrenamiento de SNN, así como las comparaciones adicionales de cada algoritmo bajo diferentes condiciones experimentales (plataforma SNN/ANN, evaluación remuestreo/referencia, tiempo de cómputo). Todas las pruebas estadísticas se realizaron \emph{por dataset}, sin combinar en un mismo test muestras procedentes de tareas distintas.
+
+\subsection{Diseño experimental}
+
+Ambos algoritmos se ejecutaron sobre el mismo problema de entrenamiento de SNN. El diseño experimental considera los siguientes puntos clave que sustentan la validez de la comparación:
+
+\begin{enumerate}
+    \item \textbf{Presupuesto de evaluaciones igualado por dataset.} Para cada dataset, ambos algoritmos comparten el mismo presupuesto máximo de evaluaciones. Este presupuesto se ajusta según lo recomendado en la literatura ambos algoritmos estudiados \cite{MOEA/CKF, 10066873_S-NSGA-II}, siempre con el mismo valor para ambos por cada dataset.
+    \item \textbf{Hiperparámetros fijos por combinación algoritmo--dataset.} Los hiperparámetros de los operadores genéticos y comportamiento sináptico provienen de la búsqueda Bayesiana especificada en \ref{sec:metodologia_busqueda_hiper}.
+\end{enumerate}
+
+Los resultados se organizaron en cuatro conjuntos experimentales. Los conjuntos de \textit{referencia} y \textit{con remuestreo} incluyeron 31 corridas por combinación, pareadas por semilla. Ambos registraron HV, frentes de Pareto y convergencia; se diferenciaron únicamente en que el segundo calculó el fitness mediante remuestreo. Por tanto, sus resultados permiten comparaciones pareadas.
+
+El conjunto experimental de \textit{ANN} incluyó igualmente 31 corridas por combinación y registró HV, complejidad y exactitud de la mejor red en la implementación ANN de PlatEMO/MATLAB. Como sus semillas y generador aleatorio no son equivalentes a los de la implementación C++, esta comparación no fue pareada.
+
+Finalmente, el conjunto experimental de \textit{rendimiento temporal} consideró 15 corridas por combinación, pareadas por semilla, y midió exclusivamente el tiempo de cómputo bajo hardware e hiperparámetros compartidos. En este caso, el HV no se interpretó como indicador de calidad, pues los hiperparámetros no fueron ajustados para maximizar el desempeño de optimización.
+
+El análisis se organizó en tres estudios y seis enfoques de comparación, resumidos en la Tabla~\ref{tab:angulos-comparacion}. El primer estudio, el principal, compara MOEA-CKF y S-NSGA-II, ambos ejecutados en SNN, teniendo en cuentra tres enfoques: HV, frentes de Pareto y convergencia, todos sobre el conjunto experimental de referencia. El segundo estudio comparó cada algoritmo entre la plataforma SNN y la implementación ANN original (PlatEMO). Por último, los \textit{otros experimentos} evaluaron el efecto del remuestreo y el tiempo de cómputo, este último bajo hiperparámetros compartidos y condiciones de hardware equitativas entre algoritmos.
+
+\begin{table}[htbp]
+\centering
+    \small
+    \caption{Estudios y enfoques de comparación, pregunta asociada y fuente de datos utilizada.}
+    \label{tab:angulos-comparacion}
+\begin{tabular}{lp{2.1cm}p{5cm}p{4.2cm}}
+\hline
+\textbf{Estudio}   & \textbf{Enfoque}&\textbf{Pregunta}& \textbf{Fuente}  \\ \hline
+\multirow{3}{*}{SNN vs. SNN}        & HV principal      & ¿Qué algoritmo tiene mejor frente de Pareto (SNN)?                         & \multirow{3}{*}{Conjunto de referencia}\\
+& Frentes de Pareto & ¿Cómo se reparten complejidad y error en las soluciones de cada algoritmo? &\\
+& Convergencia      & ¿Qué tan rápido converge cada algoritmo con el mismo presupuesto de FE?    &\\ \hline
+SNN vs. ANN                         & Plataforma        & ¿HV/complejidad mejor en SNN (C++) o en ANN (MATLAB original)?             & Conjunto experimental de referencia vs. Conjunto experimental ANN            \\ \hline
+\multirow{2}{*}{Otros experimentos} & Remuestreo        & ¿El remuestreo mejora o empeora el HV?                                     & Conjunto experimental de referencia vs. Conjunto experimental con remuestreo \\
+& Tiempo            & ¿Qué algoritmo es más rápido en tiempo de reloj?                           & Conjunto experimental temporal \\\hline                                     
+\end{tabular}
+\end{table}
+
+\subsection{Estudio 1: Comparación de algoritmos en SNN (C++)}\label{sec:metodologia-estudio1}
+
+El estudio principal compara MOEA-CKF y S-NSGA-II, ambos ejecutados en SNN (C++) sobre el conjunto experimental de referencia, mediante tres experimentos complementarios: HV, frentes de Pareto y convergencia.
+
+\paragraph{Hipervolumen}
+
+Es el indicador principal de calidad de los frentes el cual se computó normalizando contra el punto de referencia \((1,1)\), independiente del algoritmo, de la corrida y del dataset, de modo que las comparaciones entre algoritmos, entre datasets y entre plataformas fueron directas. Para cada combinación algoritmo--dataset se reportó la mediana y el rango intercuartílico (IQR) del HV, junto con el rango observado y el p-valor de la prueba de Wilcoxon aplicando diseño pareado por semilla.
+
+\paragraph{Frentes de Pareto}
+
+El HV resume el frente de Pareto en un escalar, pero no describe de qué está hecha la diferencia entre algoritmos. Por ello se complementó el análisis con tres técnicas basadas en los archivos resultados obtenidos de los frentes de Pareto para cada corrida:
+
+\begin{enumerate}
+    \item \textbf{Solución de mejor exactitud por corrida.} En cada frente se seleccionó la solución con mejor exactitud, generando una muestra pareada por error de entrenamiento, complejidad y tamaño del frente.
+    \item \textbf{Frente combinado y C-metric.} Se construyó un \textit{frente combinado} por algoritmo uniendo las soluciones de las 31 corridas, eliminando duplicados y filtrando a soluciones no dominadas. Sobre estos frentes combinados se calculó la métrica de cobertura \(C(A,B)\) de Zitzler y Thiele \cite{Zitzler2007HV_revisited}, que mide la fracción de puntos del frente \(B\) dominados o igualados por al menos un punto de \(A\).
+    \item \textbf{Bandas de complejidad.} Se construyeron deciles de complejidad sobre el pool de puntos de ambos algoritmos, y se comparó el error mediano por banda y algoritmo. Esto permitió distinguir si uno de los algoritmos domina en la zona de baja complejidad (redes esparsas) y el otro en la zona de alta precisión (redes densas), en vez de asumir que el HV resume de forma concisa la distribución de las redes.
+\end{enumerate}
+
+\paragraph{Convergencia}
+
+Dado que ambos algoritmos consumen FE en distintas cantidades por generación, por lo que se aproximó el número de evaluaciones asumiendo consumo aproximadamente constante de FE por generación dentro de cada corrida. Con esta aproximación se construyeron curvas de convergencia de HV mediano con bandas P10--P90 versus \texttt{fe\_approx}, indicadores de velocidad de convergencia a partir del \texttt{fe\_approx} necesario para alcanzar por primera vez el \(95\%\) del HV final de cada corrida.
+
+\subsection{Estudio 2: Plataforma SNN (C++) vs.\ ANN (MATLAB)}\label{sec:metodologia-estudio2}
+
+El segundo estudio comparó el rendimiento de cada algoritmo entre su implementación SNN (C++) y la implementación ANN original de PlatEMO/MATLAB. Dado que los resultados de ANN traen por corrida la exactitud de la mejor red, su complejidad y el HV del frente completo, la comparación se realizó \emph{por algoritmo} para aislar el efecto de la plataforma como único factor distinto entre las muestras. En este caso no existe pareo estadísticamente significativo entre corridas MATLAB y C++, por lo que se empleó la prueba de Mann--Whitney U sobre muestras independientes.
+
+\subsection{Otros experimentos}\label{sec:metodologia-otros}
+
+Además de los dos estudios anteriores, se realizaron experimentos adicionales que evalúan a cada algoritmo bajo condiciones específicas: el efecto del remuestreo sobre el HV, y el tiempo de cómputo bajo hiperparámetros compartidos y hardware equitativo.
+
+\paragraph{Evaluación con remuestreo}
+
+El conjunto de \textit{remuestreo} usó los mismos hiperparámetros afinados que el conjunto de \textit{referencia}, pero usando remuestreo, calculando el fitness de cada individuo promediado sobre 10 remuestreos del 50\% del conjunto de entrenamiento por generación, en vez de una sola pasada completa. Esto para buscar una señal de fitness más robusta a generalización \cite{LoyolaJara2026evolvingsnn}. Dado el mismo conjunto de semillas, la comparación de HV se realizó mediante pruebas pareadas de Wilcoxon por algoritmo y dataset (ocho comparaciones en total).
+
+\paragraph{Tiempo de cómputo}
+
+Para comparar tiempo de cómputo se diseñó específicamente el conjunto de \textit{rendimiento temporal}, con hiperparámetros compartidos entre algoritmos y condiciones de hardware controladas. Allí se comparan los tiempos de ejecución mediante Wilcoxon pareado por semilla.
+
+\subsection{Pruebas estadísticas y corrección por comparaciones múltiples}\label{subsec:pruebas-estadisticas-correccion}
+
+Se optó por utilizar pruebas no paramétricas como criterio principal, manteniendo la coherencia con las pruebas estadísticas empleadas en los estudios originales de ambos algoritmos evolutivos. De esta forma, cada enfoque de comparación utiliza el mismo tipo de test que en su publicación de referencia, adaptado al diseño pareado o no pareado descrito en la Tabla~\ref{tab:angulos-comparacion}.
+
+\begin{itemize}
+    \item \textbf{Tamaño del efecto.} Junto al p-valor se reportó sistemáticamente el tamaño de efecto \(\hat{A}_{12}\) de Vargha--Delaney, interpretado sobre \(|\hat{A}_{12} - 0.5|\) según los umbrales habituales: diferencias insignificantes (<0.06), pequeñas (0.06--0.14), medianas (0.14--0.21) o grandes (\(\geq\)0.21).
+    \item \textbf{C-metric.} La métrica de cobertura \(C(A,B)\) se utilizó únicamente como indicador descriptivo al comparar frentes combinados, sin asociarle p-valores ni contrastes de hipótesis formales.
+\end{itemize}
+
+La corrección por comparaciones múltiples se realizó mediante el procedimiento Holm--Bonferroni, aplicado dentro de cada familia de tests relacionados, para controlar la tasa de error familiar manteniendo mayor potencia que el ajuste Bonferroni clásico.

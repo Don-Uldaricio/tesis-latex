@@ -1,0 +1,138 @@
+\chapter{Implementación}\label{cap:implementacion}
+
+\section{Arquitectura general del sistema}\label{sec:arqui_sistema}
+El sistema propuesto se organizó en dos módulos principales: un framework evolutivo y un simulador de SNN. Esta separación refleja explícitamente la distinción entre el algoritmo de búsqueda y la SNN con su dinámica. El framework evolutivo constituye la capa de algoritmos evolutivos, definición de problemas, manejo de población y registro de resultados, mientras que el simulador implementa la dinámica de la red, la codificación de datos en trenes de espigas y la decodificación para clasificación. 
+
+% El archivo platemo-cpp/CMakeLists.txt compila las fuentes de snn-simulator en una librería estática (snn\_libs) y las enlaza en el ejecutable principal platemo\_cpp, de modo que ambos módulos terminan formando un único binario con responsabilidades bien diferenciadas.
+
+La arquitectura completa se puede describir como una secuencia de transformación desde la codificación del individuo hasta la evaluación de sus objetivos y el retorno al algoritmo evolutivo la cual se puede observar en la Figura \ref{fig:pipeline_snn_evo}.
+
+\begin{itemize}
+    \item Codificación: cada solución candidata se representa como un vector real de dimensión $D$, donde cada componente corresponde al peso de una sinapsis en el intervalo $[0,1]$.
+
+    \item Construcción/decodificación de la SNN: el vector de pesos se proyecta sobre una topología fija (ver \ref{subsec:funciones_objetivo}).
+
+    \item Simulación: el simulador codifica cada muestra de entrada en trenes de espigas, ejecuta la red paso a paso durante una ventana temporal fija y decodifica la salida mediante WTA.
+
+    \item Evaluación: se calculan los dos objetivos: error y complejidad estructural.
+
+    \item Retorno al algoritmo evolutivo: los objetivos se almacenan y el algoritmo multiobjetivo opera sobre ellos mediante ordenamiento no dominado y \textit{crowding distance}, sin necesidad de conocer los detalles internos de la simulación.
+\end{itemize}
+
+\begin{figure}[hbtp]
+    \centering
+    \includegraphics[width=0.75\linewidth]{images/pipeline_snn_evolutivo.png}
+    \caption{Pipeline de evaluación del sistema evolutivo.}
+    \label{fig:pipeline_snn_evo}
+\end{figure}
+
+\subsection{Flujo general de ejecución}
+El ciclo evolutivo completo se instancia en el archivo principal del módulo evolutivo y sigue el patrón clásico población → inicialización → simulación/evaluación → selección → reproducción, repetido hasta agotar el presupuesto de evaluaciones. Este bucle define el flujo de información entre el módulo evolutivo y el simulador de SNN, garantizando tanto la coherencia de la evaluación multiobjetivo como la reproducibilidad de las corridas experimentales.
+
+Durante la inicialización, se generan los pesos, produciendo aproximadamente un 50\% de ceros y sesgando la población inicial hacia redes esparsas. Sobre esta base común, cada algoritmo aplica su propia estrategia de arranque según lo explicado en la Sección \ref{subsec:operadores_geneticos}. 
+% S-NSGA-II utiliza VSSPS (Variable Stripe Sparse Population Sampling) para generar un gradiente de esparsidad entre individuos, mientras que MOEA-CKF emplea un Prior Analysis que evalúa soluciones con una sola variable activa a la vez para estimar la importancia de cada sinapsis y sesgar el muestreo inicial hacia las variables más relevantes.
+
+En cada generación, todos los individuos se evalúan simulando la SNN sobre el conjunto de entrenamiento, en paralelo, aprovechando un pool de simuladores y redes preconstruidas por hilo. Una vez calculados los objetivos, ambos algoritmos utilizan selección por torneo binario para construir el mating pool\footnote{Conjunto de individuos seleccionados de la población actual para reproducirse.}, basada en el número de frente de Pareto y la distancia de aglomeración (\textit{crowding distance}), y posteriormente aplican selección ambiental tipo NSGA-II (ordenamiento no dominado + crowding) para decidir los individuos sobrevivientes tras fusionar padres e hijos.
+
+% En el caso particular de MOEA-CKF, además se registra qué operador de reproducción generó cada sobreviviente para ajustar dinámicamente la proporción $\rho$ entre subestrategias cooperativas. La reproducción en S-NSGA-II se realiza mediante un cruzamiento esparcido SSBX (Sparse Simulated Binary Crossover) seguido de una mutación polinómica esparcida SPM (Sparse Polynomial Mutation), capaces de modificar tanto el valor de los pesos como el patrón global de esparsidad, mientras que MOEA-CKF divide la población en dos grupos y aplica operadores específicos de reducción de dimensionalidad y agrupamiento dual.
+
+El bucle generacional se ejecuta hasta que se alcanza el número máximo de evaluaciones \texttt{maxFE}; una vez terminada la evolución, se calcula el Hipervolumen (HV) del frente final y, opcionalmente, exporta el frente de Pareto, el historial de convergencia y los conteos de picos en el conjunto de test. El flujo general de ejecución se puede observar en la Figura \ref{fig:flujo_evo_511}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{images/flujo_evo_snn_horizontal.png}
+    \caption{Flujo evolutivo generacional compartido por ambos algoritmos. El ciclo repite evaluación mediante simulación de la SNN hasta que se cumple la condición de término $FE \geq maxFE$.}
+    \label{fig:flujo_evo_511}
+\end{figure}
+
+
+\subsection{Módulos del sistema}
+La implementación se organiza en torno a cinco módulos conceptuales que cubren la totalidad del pipeline: módulo evolutivo, simulador de SNN, manejo de datasets, métricas y configuración experimental. Esta separación en módulos permite mantener una arquitectura clara, donde el algoritmo evolutivo se mantiene independiente de los detalles del simulador y de la gestión de datos, facilitando la extensión y el análisis comparativo de algoritmos. Esta arquitectura modular se puede observar en la Figura \ref{fig:arquitectura_modular_sistema}.
+
+El \textit{módulo evolutivo} define una jerarquía genérica Problema/Solución, implementa los dos algoritmos multiobjetivo y sus operadores genéticos. El \textit{simulador SNN} encapsula el modelo de neurona de Izhikevich, la estructura de la red (neuronas y sinapsis), el bucle de simulación temporal y los mecanismos de codificación y decodificación de spikes. A su vez, el \textit{módulo de datasets} se encarga de los archivos, la normalización, y la codificación de etiquetas. El \textit{módulo de métricas} las funciones objetivo y los indicadores agregados como el hipervolumen; finalmente, la \textit{configuración experimental} se gestiona íntegramente mediante scripts de orquestación.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\linewidth]{images/modulos_sistema_snn.png}
+    \caption{Arquitectura modular del sistema.}
+    \label{fig:arquitectura_modular_sistema}
+\end{figure}
+
+
+%----------------------------
+
+\section{Implementación de simulador SNN}
+
+El simulador SNN se implementó como un proyecto autónomo añadiendo además un framework de pruebas unitarias. La organización del código se estructura en módulos bien separados: núcleo de simulación (neurona, red, simulador), codificación de entrada, decodificación para clasificación y utilidades. Conceptualmente, la arquitectura sigue un pipeline Codificador → Red → Decodificador, donde un codificador transforma datos tabulares en trenes de espigas, la red de Izhikevich integra la dinámica neuronal y sináptica, y un decodificador de clasificación convierte los spikes de salida en decisiones y métricas de desempeño.
+
+\subsection{Modelo neuronal y representación de la red}
+
+Para esto, el simulador implementa exclusivamente neuronas de tipo Izhikevich, parametrizadas según el modelo original (ver \ref{sec:izhikevich}). La integración numérica se realiza mediante un esquema de Euler explícito con dos sub-pasos de tamaño $dt/2$ por paso de simulación, siguiendo la recomendación de Izhikevich para mejorar la estabilidad sin sacrificar eficiencia. La corriente total que recibe cada neurona combina conductancias excitatorias e inhibitorias con decaimiento exponencial, un término de corriente constante y un término de ruido uniforme generado con un RNG\footnote{Random Number Generator.}, lo que permite capturar variabilidad estocástica sin introducir condiciones de carrera.
+
+Las conexiones sinápticas se representan mediante una estructura que almacena el índice de la neurona pre-sináptica, el índice de la neurona post-sináptica, una bandera que indica si la sinapsis es excitatoria o inhibitoria, y un peso escalar. A nivel de red, la topología se modela como una lista dispersa de sinapsis junto a listas de adyacencia pre-sinápticas y post-sinápticas (vectores de vectores de índices), lo que permite recorrer eficientemente las conexiones entrantes y salientes sin necesidad de matrices densas. El modelo no incorpora delays sinápticos explíctios ni conductancias por sinapsis: la transmisión de un spike es instantánea en el mismo paso de simulación y la dinámica de conductancias se implementa en las neuronas post-sinápticas.
+
+\subsection{Motor de simulación y codificación}
+El corazón del motor de simulación es la red, que mantiene vectores de neuronas Izhikevich y de sinapsis y ofrece métodos para avanzar la dinámica en el tiempo por pasos. En cada paso, el motor propaga las espigas generadas en el paso anterior actualizando las conductancias excitatorias e inhibitorias de las neuronas post-sinápticas, integra el estado de cada neurona y avanza el reloj global en un esquema de paso fijo, sin motor basado en eventos. El simulador envuelve a la red y a un codificador de entrada, gestionando la inyección de corrientes codificadas, la recolección de spikes y voltajes de salida, así como el cálculo de métricas como precisión, de modo que la simulación pueda utilizarse directamente como función objetivo en módulos externos de optimización. El módulo de codificación define dos implementaciones concretas: Poisson Encoder y TTFS (ver \ref{sec:codificacion-y-deco}).
+
+\subsection{Validación y pruebas}
+Se validó el simulador mediante 33 pruebas unitarias en los módulos de núcleo, codificación y decodificación. Estas pruebas verifican el comportamiento esperado de las neuronas frente a estímulos excitatorios e inhibitorios, la construcción y conectividad de las redes, la respuesta de la simulación ante distintos perfiles de corriente y la consistencia de los procesos de codificación y decodificación.
+
+%  \subsection{Decisiones de diseño y evolución}
+% Un aspecto central del diseño es que el simulador no implementa reglas de plasticidad internas como STDP, \textit{backpropagation through time} o gradientes sustitutos: la dinámica neuronal y sináptica es puramente forward, y el ajuste de pesos se delega expresamente al módulo externo de optimización evolutiva multiobjetivo, que utiliza el simulador como librería estática. Esta separación de responsabilidades permite mantener el simulador SNN pequeño, testeable y enfocado en la fidelidad de la dinámica de disparo, mientras que la exploración del espacio de pesos y topologías se aborda en un código independiente descrito en el capítulo dedicado a la optimización evolutiva.
+
+%----------------------------------------------
+
+\section{Implementación de algoritmos evolutivos}
+Para la implementación de los algoritmos evolutivos aplicado al entrenamiento de SNN, se realizó la migración de los algoritmos desde la plataforma PlatEMO \cite{8065138_platEMO} a C++, cuya versión original se encuentra desarrollada en MATLAB. La migración se llevó a cabo procurando conservar la lógica original de las estructuras principales del código, incluyendo la representación de individuos, la inicialización de la población, los operadores genéticos, los mecanismos de selección y el procedimiento de actualización generacional. En aquellos casos en que ciertas funciones o utilidades de MATLAB no contaban con un equivalente directo en C++, se desarrollaron implementaciones alternativas que mantuvieran un comportamiento funcionalmente equivalente dentro del algoritmo. En la Tabla \ref{tab:fidelidad_algoritmos} se muestra un resumen de la fidelidad de la migración de los SMOEA a C++. 
+
+% En este caso, S-NSGA-II corresponde al algoritmo con mayor fidelidad respecto de la implementación original, debido a que sus operadores presentan una lógica más directa de traducir que los componentes de MOEA-CKF.
+
+Con el fin de facilitar la mantenibilidad y la validación del sistema, la implementación se organizó de forma modular al igual que en el código original. Se separaron los componentes asociados a la codificación de soluciones, los operadores genéticos, la evaluación del desempeño de la población y la interfaz de comunicación con el simulador de SNN. Esta organización permitió desacoplar la lógica propia de cada algoritmo evolutivo de la lógica de simulación neuronal, favoreciendo tanto la depuración del código como la reutilización de componentes en distintas configuraciones experimentales. \textbf{MOSTRAR DIAGRAMA DE ORGANIZACIÓN DEL CODIGO de PLATEMO}
+
+La representación de cada individuo fue diseñada para permitir la optimización simultánea de la topología de la red y de los pesos sinápticos. De este modo, cada solución codificó tanto la presencia o ausencia de conexiones como los parámetros asociados a las conexiones activas, permitiendo abordar el problema desde un enfoque neuroevolutivo. Esta formulación fue coherente con el objetivo de mejorar el equilibrio entre desempeño de clasificación y complejidad estructural, ya que posibilitó explorar configuraciones de red compactas sin restringir la capacidad adaptativa de los pesos sinápticos.
+
+Una vez implementados los algoritmos en C++, estos fueron integrados con el simulador de SNN a través del problema de entrenamiento de SNN. Así, la evaluación de cada individuo consistió en ejecutar una configuración experimental completa definida por un dataset, una cantidad de variables de entrada y un número determinado de neuronas en la capa oculta. Bajo este esquema, cada solución propuesta por el algoritmo evolutivo fue decodificada en una arquitectura de red concreta, simulada sobre los datos correspondientes y evaluada según las funciones objetivo definidas para el problema. El proceso de optimización siguió un ciclo iterativo que ya fue explicado en la Sección \ref{sec:arqui_sistema}. 
+
+% Finalmente, se verificó que la implementación en C++ preservara la lógica general de los algoritmos de referencia y resultara compatible con la ejecución repetible de experimentos. Para ello, se incorporaron mecanismos de parametrización de los algoritmos, configuración del tamaño de la capa oculta y gestión del dataset a utilizar en cada ejecución. 
+
+Con esto se obtuvo una plataforma experimental unificada, capaz de conectar el proceso evolutivo con la simulación de SNN y de soportar las etapas posteriores de evaluación y comparación de resultados.
+
+%----------------------------
+
+% \section{Integración del problema con el simulador SNN}\label{sec:integracion_sparsesnn_simulador}
+
+% La integración entre el proceso de optimización evolutiva y el simulador SNN se definió mediante una formulación que relaciona cada solución candidata con una configuración evaluable de una SNN. De esta manera, un vector de decisión representa una posible parametrización de la red, cuya calidad se determinó a partir de objetivos asociados simultáneamente a la esparsidad estructural y al desempeño predictivo.
+
+% \subsection{Representación del problema de optimización}
+
+% El problema considera una configuración experimental que establece los hiperparámetros de los algoritmos de optimización, las características de la arquitectura neuronal y los criterios de evaluación (ver \ref{snn}. Esta configuración determina, entre otros aspectos, la dimensión del espacio de decisión, el número de objetivos y la correspondencia entre los parámetros sinápticos de la red y los componentes del vector de decisión.
+
+% La longitud $D$ de dicho vector se obtiene a partir de la cantidad de conexiones potenciales entre las capas de la red. En particular, se consideran las conexiones desde la capa de entrada ---incluyendo una unidad de sesgo--- hacia la capa oculta, y desde esta última hacia la capa de salida. Cada variable de decisión representa la intensidad relativa de una conexión sináptica y se restringe al intervalo $[0,1]$.
+
+% La población inicial se genera mediante una estrategia que favorece configuraciones dispersas. Para cada componente del vector de decisión se genera inicialmente un valor real uniforme en $[0,1]$ y, posteriormente, se aplica un mecanismo probabilístico que puede desactivar dicha conexión. Cuando una conexión es desactivada, su valor se establece en cero. Como consecuencia, las soluciones iniciales presentan distintos niveles de conectividad efectiva y una proporción relevante de sinapsis inactivas.
+
+% Durante el proceso evolutivo, se asegura que las soluciones producidas por los operadores de variación permanezcan dentro del dominio factible. Para ello, cada componente se proyecta al intervalo permitido mediante la siguiente operación:
+
+% \[
+% w_i \leftarrow \min\left\{1,\max\left\{0,w_i\right\}\right\}.
+% \]
+
+% La búsqueda de soluciones se realiza exclusivamente mediante mecanismos evolutivos de selección, recombinación y mutación. Por tanto, no se incorpora una etapa adicional de ajuste local basada en gradientes, ya que la adaptación de las configuraciones depende de la exploración y explotación realizadas por el algoritmo multiobjetivo.
+
+% \subsection{Evaluación de las soluciones mediante simulación}
+
+% La evaluación de las soluciones candidatas se ejecuta de forma paralela, asignando distintas evaluaciones a recursos computacionales independientes. Cada recurso dispone de una instancia propia de la red y del entorno de simulación, lo que permite evaluar múltiples configuraciones de manera concurrente sin interferencias entre ellas.
+
+% Para evaluar una solución, los valores contenidos en su vector de decisión se asignan a las conexiones de una topología neuronal previamente definida. La estructura potencial de la red permanece fija durante el proceso de optimización; sin embargo, cada solución determina qué conexiones se encuentran activas y cuál es la intensidad efectiva de sus pesos. Esta estrategia evita reconstruir la arquitectura de la red para cada evaluación y permite que la búsqueda evolutiva se concentre en la selección de conexiones y pesos relevantes.
+
+% Para cada patrón de entrada, las características se transforman en trenes de espigas mediante el esquema de codificación definido experimentalmente. Se consideran dos alternativas de codificación: la codificación de Poisson y la codificación \textit{time-to-first-spike} (TTFS). Ambas transforman atributos normalizados en el intervalo $[0,1]$ en representaciones temporales de actividad neuronal.
+
+% Posteriormente, la red se simula durante una ventana temporal establecida por los parámetros experimentales. La dinámica neuronal se modela mediante neuronas de Izhikevich configuradas en el régimen \textit{regular spiking}. Durante la simulación se registra la actividad de las neuronas de salida, considerando tanto la cantidad como los instantes de emisión de espigas.
+
+% La actividad de salida se transforma posteriormente en una predicción de clase a través de un mecanismo de decodificación. En problemas de clasificación multiclase, se utiliza una regla \textit{winner-takes-all} (WTA), en la cual la clase predicha corresponde a la neurona de salida que presenta la mayor cantidad de espigas durante la ventana de simulación.
+
+% Una vez evaluadas todas las muestras asociadas a una solución, se calculan los objetivos $f_1$ y $f_2$. El primer objetivo cuantifica la proporción de pesos positivos en el vector de decisión, de acuerdo con la Ecuación~\ref{eq:structural_sparsity}. El segundo objetivo corresponde al complemento de la métrica de desempeño predictivo, según la Ecuación~\ref{eq:classification_error}. Ambos objetivos se minimizan de forma simultánea durante la búsqueda evolutiva.
+
+% De manera opcional, la evaluación puede incorporar un procedimiento de remuestreo con reemplazo. En este caso, el error de clasificación se estima sobre múltiples subconjuntos generados a partir de los datos de entrenamiento y se obtiene como el promedio de las evaluaciones realizadas. Este procedimiento reduce la dependencia de los resultados respecto de una única partición de los datos y proporciona una estimación más robusta del desempeño de cada solución.
+
+% Finalmente, los valores objetivos obtenidos para cada configuración son utilizados por el algoritmo evolutivo para comparar, seleccionar y modificar las soluciones de la población. De este modo, el proceso de optimización opera sobre medidas agregadas de esparsidad y desempeño, sin depender de los detalles internos del mecanismo de simulación neuronal.

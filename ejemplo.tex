@@ -1,0 +1,140 @@
+\documentclass[dosguias,openany]{tesisusach}
+% La opción dosguias permite incluir profesor co-guía con \profesorco{}
+% La clase está basada en la clase book, por lo que las opciones de esta son
+% pasadas directamente. La opción openany es para evitar páginas en blanco
+% entre capítulos y es una opción de la clase book, que es un requerimiento
+% del repositorio central
+
+% Acá van todos los paquetes necesarios, aunque la clase ed por sí requiere
+% ya varios, como biblatex, caption, inputenc (con utf8), etc.
+\usepackage{lipsum}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{rotating}
+\usepackage{multirow}
+\usepackage[table]{xcolor}
+
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\providecommand{\Atwelve}{\ensuremath{\hat{A}_{12}}}
+
+\title{Implementación de un algoritmo evolutivo basado en optimización esparsa multiobjetivo a gran escala para Redes Neuronales de Espigas}
+\author{Fulano de Tal \and Perengano los Palotes}
+% La fecha de la portada solo requiere el año
+\date{\the\year}
+
+\keywordsEs{Prueba, Tesis, Ejemplo}
+\keywordsEn{Test, Thesis, Example}
+
+% Acá el texto está en minúscula solo para probar la versalita en la portada
+%\universidad{universidad de santiago de chile}
+\subtitle{O la memoria, si es que es el caso\ldots}
+
+\facultad{facultad de ingeniería}
+\unidad{Departamento de Ingeniería Informática}
+\profesor{Mengano}
+\profesorco{Sutano}
+\propuesta{Tesis para optar al grado/título de\ldots}
+\ciudad{Santiago}
+\pais{Chile}
+
+% Por si hiciera falta reemplazar el logo de la portada,
+% el comando \logo lo puede colocar
+%\logo{\includegraphics[scale=.25]{./images/LogoUsach2.png}}
+
+% Archivo de referencias
+\addbibresource{caps/referencias.bib}
+
+\begin{document}
+	\maketitle
+	% ----------------------------------------------------------
+	% ----------- PRIMERA PARTE --------------------------------
+	% Temas preliminares: abstract, agradecimientos, 
+	% dedicatorias...
+	\frontmatter
+	
+	% Los resúmenes son "capítulos" en cuanto a formato, pero como deben aparecer
+	% en páginas seguidas, hay dos opciones principales: se utilizan opciones como
+	% oneside (todas las páginas son "páginas derechas") u openany (doble página),
+	% pero los capítulos inician en cualquier página, o se omite el inicio en
+	% cualquier página para el resumen. Estos comandos antes y después del resumen
+	% logran eso
+	%\makeatletter % convierte @ en letra, en vez de caracter especial
+	%\@openrightfalse % anula empezar capítulo en página derecha
+	\begin{resumenEs}
+		Este es un modelo de documento que permite mostrar cómo utilizar el \textit{template} de tesis con el procesador de texto \LaTeX, específicamente su motor \texttt{pdflatex} para producir un \textsc{pdf} de calidad idealmente con la menor cantidad de dolores de cabeza por formato.
+
+		La \textit{document class} ha sido construida pensando en que el formato sea el apropiado para la biblioteca de la Universidad de Santiago de Chile y que cualquier problema que ocasione el formato sea minimizado por el manejo de \LaTeX, en lugar de pelear con interfaces gráficas confusas.
+	\end{resumenEs}
+	
+	\begin{resumenEn}
+		This is a document model intended to show how to use the template for thesis writing with the text processor \LaTeX, specifically its \texttt{pdflatex} engine in order to produce quality \textsc{pdf} output, ideally with as less of a headache as possible when dealing with formatting.
+
+		The document class has been built having in mind the required format for the library of the University of Santiago of Chile, and with the ideal that any problem that arises from formatting is minimized by the \LaTeX system handling, instead of struggling with confusing graphical user interfaces.
+	\end{resumenEn}
+	%\@openrighttrue % restaura empezar capítulo en página derecha
+	%\makeatother % restaura @ como carácter especial
+
+	% Para una dedicatoria de una línea o dos
+	\dedicatoriaSimple{A Lilith, señora de los desposeídos}
+	
+	\begin{agradecimiento}
+		Este es un ejemplo de hoja de agradecimientos, para poder explayarse en cuanto a quién se lleva la gratitud por haber hecho posible este trabajo.
+		
+		Es el lugar donde se agradece a la familia, seres queridos, profesores, profesoras, funcionarios, universidad, entidades que financiaron el proyecto, la banda que acompañó las noches insomnes de trabajo, los juegos que evitaron caer en la locura, la marca de café que mantuvo las noches insomnes, el equipo de los amores, etc.
+
+		Adicionalmente, el ambiente \texttt{pagDedicatoria} es para esto mismo, pero una página personalizada de dedicatoria, en lugar de solo una línea.
+	\end{agradecimiento}
+
+	% De acuerdo al formato, lo preliminar termina con las tablas
+	% de contenido.
+	\tableofcontents
+	\newpage
+	%% Indice de tablas
+	\listoftables
+	\newpage
+	%% Indice de figuras
+	\listoffigures
+	\newpage
+	% Acá puede ir cualquier índice adicional del trabajo hecho, como códigos, algoritmo, etc.
+
+	% ----------------------------------------------------------
+	% ----------- SEGUNDA PARTE --------------------------------
+	% Los capítulos solo están de relleno como ejemplo con el paquete lipsum
+	% Los contenidos de estos capítulos son típico código estándar de LaTeX
+	\mainmatter
+	\include{caps/01-intro}
+	\include{caps/02-marco-teorico}
+	\include{caps/03-estado-arte}
+    \include{caps/04-metodologia}
+	\include{caps/05-implementacion}
+    \include{caps/06-resultados}
+    \include{caps/07-discusion}
+    % \include{caps/resultados-comparacion}
+	
+	% ----------------------------------------------------------
+	% ----------- TERCERA PARTE --------------------------------
+	% ### Bibliografía de este documento ###
+	% La opción heading la coloca en la tabla de contenidos
+	\printbibliography[heading=bibintoc]
+	
+	% Alternativa de apéndices
+	\appendix
+	% \include{appendix/01-addendum}
+
+	% Alternativa de anexos
+	\annex
+	% Por un bug del kernel de LaTeX (cf. el paquete appendix), si el primer
+	% anexo está en un archivo aparte, debe ser incluido con \input, en lugar
+	% de \include
+	% Puede que lo logre arreglar en una futura versión de este template...
+	% Idealmente :'v
+	\input{anexos/01-prueba}
+	\include{anexos/02-otro}
+	
+\end{document}
