@@ -1,5 +1,5 @@
 % Archivo de ejemplo para colocar introducción
-\chapter{Introducción}
+\chapter{Introducción}\label{cap:intro}
 
 \section{Antecedentes y motivación}
 En la última década, el aprendizaje profundo (Deep Learning) ha revolucionado la inteligencia artificial \cite{dean2022golden}, sin embargo, este avance ha conllevado un costo computacional y energético insostenible. Sin ir más lejos, un computador estándar que usa redes profundas para reconocer 1000 tipos de objetos diferentes, requiere alrededor de 250W \cite{roy2019spike}, necesitando un consumo energético superior a los 20W que necesita el cerebro humano para realizar simultáneamente tareas de razonamiento, reconocimiento y control \cite{roy2019spike}.\\
@@ -60,7 +60,7 @@ Considerando los enfoques anteriores, se propone usar un enfoque evolutivo, impl
 \subsection{Objetivo general}
 Evaular un algoritmo evolutivo de optimización esparsa multiobjetivo a gran escala para Redes Neuronales de Espigas (SNN), con el fin de optimizar simultáneamente la precisión de clasificación y la eficiencia estructural (sparsity) del modelo.
 
-\subsection{Objetivos específicos}
+\subsection{Objetivos específicos}\label{sec:objetivos-especificos}
 A continuación se enumeran los objetivos específicos necesarios para cumplir con el objetivo general:
 \begin{enumerate}
     \item Seleccionar al menos un algoritmo evolutivo que cumpla con enfoque en esparsidad, multiobjetivo y a gran escala, para asegurar su aplicación al entrenamiento de SNN en tareas de clasificación, mediante el análisis comparativo de enfoques evolutivos existentes en la literatura.
