@@ -2,7 +2,7 @@
 \chapter{Introducción}\label{cap:intro}
 
 \section{Antecedentes y motivación}
-En la última década, el aprendizaje profundo (Deep Learning) ha revolucionado la inteligencia artificial \cite{dean2022golden}, sin embargo, este avance ha conllevado un costo computacional y energético insostenible. Sin ir más lejos, un computador estándar que usa redes profundas para reconocer 1000 tipos de objetos diferentes, requiere alrededor de 250W \cite{roy2019spike}, necesitando un consumo energético superior a los 20W que necesita el cerebro humano para realizar simultáneamente tareas de razonamiento, reconocimiento y control \cite{roy2019spike}.\\
+En la última década, el aprendizaje profundo (Deep Learning) ha revolucionado la inteligencia artificial \cite{dean2022golden}, sin embargo, este avance ha conllevado un costo computacional y energético insostenible. Sin ir más lejos, un computador estándar que usa redes profundas para reconocer 1000 tipos de objetos diferentes, requiere alrededor de 250W \cite{roy2019spike}, necesitando un consumo energético superior a los 20W que necesita el cerebro humano para realizar simultáneamente tareas de razonamiento, reconocimiento y control \cite{roy2019spike}.
 
 Frente a esto, la Computación Neuromórfica y las Redes Neuronales de Espigas (SNN) emergen como una alternativa eficiente, inspirada en el cerebro humano \cite{Schuman2022Opportunities}, donde la información no se procesa de forma continua, sino que se transmite mediante impulsos discretos, o espigas. A diferencia de las Redes Neuronales Artificiales (ANN), las SNN emulan la forma en que las neuronas del cerebro generan y responden a estos impulsos, operando de manera asíncrona y dispersa (event-driven), lo que teóricamente permite un consumo energético drásticamente menor \cite{Schuman2022Opportunities}. Al igual que el cerebro humano, que ajusta su actividad neuronal en función de estímulos, las SNN ajustan sus conexiones solamente cuando son requeridas \cite{kabilan_neuromorphic}, lo que las convierte en una opción más viable para sistemas con limitaciones de energía y recursos computacionales. Sin embargo, el despliegue masivo de SNNs enfrenta una barrera crítica: la dificultad de su entrenamiento.
 
@@ -24,12 +24,12 @@ Se propone la siguiente pregunta de investigación: ¿cómo entrenar SNN sin dep
 En el contexto de la computación neuromórfica, el entrenamiento de Redes Neuronales de Espigas (SNN) presenta desafíos únicos debido a la naturaleza discreta y no diferenciable de los spikes. Para determinar la estrategia de entrenamiento más adecuada para este proyecto, se han evaluado cinco enfoques considerando tres criterios críticos para el desarrollo de sistemas neuromórficos eficientes:
 
 \begin{enumerate}
-    \item \textbf{Precisión (Accuracy):} capacidad del modelo para clasificar correctamente en benchmarks estándar.
+    \item \textbf{Exactitud (Accuracy):} capacidad del modelo para clasificar correctamente en benchmarks estándar.
     \item \textbf{Costo Computacional de Entrenamiento:} recursos de memoria y procesamiento requeridos para encontrar la solución óptima.
     \item \textbf{Eficiencia Estructural (Sparsity):} capacidad intrínseca del método para generar topologías dispersas (menos conexiones) que reduzcan el consumo energético en la inferencia.
 \end{enumerate}
 
-Estos criterios permiten realizar una comparación adecuada para posteriormente seleccionar el enfoque más adecuado para la solución del problema. \\
+Estos criterios permiten realizar una comparación adecuada para posteriormente seleccionar el enfoque más adecuado para la solución del problema.
 
 \textbf{Aprendizaje con gradientes sustitutos:} los métodos de \textit{surrogate gradient} adaptan el \textit{Backpropagation} a SNN reemplazando la función de activación no diferenciable por una aproximación suave, permitiendo entrenar SNN profundas \cite{Schuman2022Opportunities}. Sin embargo, requieren almacenar la dinámica temporal de las neuronas, lo que incrementa el costo de memoria y cómputo \cite{Neftci2019SurrogateGradient}.\\
 

@@ -61,9 +61,9 @@ El \textit{módulo evolutivo} define una jerarquía genérica Problema/Solución
 
 %----------------------------
 
-\section{Implementación de simulador SNN}
+\section{Implementación de simulador SNN}\label{sec:simulador-snn}
 
-El simulador SNN se implementó como un proyecto autónomo añadiendo además un framework de pruebas unitarias. La organización del código se estructura en módulos bien separados: núcleo de simulación (neurona, red, simulador), codificación de entrada, decodificación para clasificación y utilidades. Conceptualmente, la arquitectura sigue un pipeline Codificador → Red → Decodificador, donde un codificador transforma datos tabulares en trenes de espigas, la red de Izhikevich integra la dinámica neuronal y sináptica, y un decodificador de clasificación convierte los spikes de salida en decisiones y métricas de desempeño.
+El simulador SNN se implementó como un proyecto autónomo añadiendo además un framework de pruebas unitarias. La organización del código se estructura en módulos bien separados: núcleo de simulación (neurona, red, simulador), codificación de entrada, decodificación para clasificación y utilidades. Conceptualmente, la arquitectura sigue un pipeline Codificador → Red → Decodificador, donde un codificador transforma datos tabulares en trenes de espigas, la red de Izhikevich integra la dinámica neuronal y sináptica, y un decodificador de clasificación convierte los spikes de salida en decisiones y métricas de desempeño. El código fuente de este módulo está disponible como repositorio independiente (ver Anexo \ref{chap:anexo-repos}).
 
 \subsection{Modelo neuronal y representación de la red}
 
@@ -82,8 +82,8 @@ Se validó el simulador mediante 33 pruebas unitarias en los módulos de núcleo
 
 %----------------------------------------------
 
-\section{Implementación de algoritmos evolutivos}
-Para la implementación de los algoritmos evolutivos aplicado al entrenamiento de SNN, se realizó la migración de los algoritmos desde la plataforma PlatEMO \cite{8065138_platEMO} a C++, cuya versión original se encuentra desarrollada en MATLAB. La migración se llevó a cabo procurando conservar la lógica original de las estructuras principales del código, incluyendo la representación de individuos, la inicialización de la población, los operadores genéticos, los mecanismos de selección y el procedimiento de actualización generacional. En aquellos casos en que ciertas funciones o utilidades de MATLAB no contaban con un equivalente directo en C++, se desarrollaron implementaciones alternativas que mantuvieran un comportamiento funcionalmente equivalente dentro del algoritmo. En la Tabla \ref{tab:fidelidad_algoritmos} se muestra un resumen de la fidelidad de la migración de los SMOEA a C++. 
+\section{Implementación de algoritmos evolutivos}\label{sec:algoritmos-evolutivos}
+Para la implementación de los algoritmos evolutivos aplicado al entrenamiento de SNN, se realizó la migración de los algoritmos desde la plataforma PlatEMO \cite{8065138_platEMO} a C++, cuya versión original se encuentra desarrollada en MATLAB. La migración se llevó a cabo procurando conservar la lógica original de las estructuras principales del código, incluyendo la representación de individuos, la inicialización de la población, los operadores genéticos, los mecanismos de selección y el procedimiento de actualización generacional. En aquellos casos en que ciertas funciones o utilidades de MATLAB no contaban con un equivalente directo en C++, se desarrollaron implementaciones alternativas que mantuvieran un comportamiento funcionalmente equivalente dentro del algoritmo. En la Tabla \ref{tab:fidelidad_algoritmos} se muestra un resumen de la fidelidad de la migración de los SMOEA a C++. El código fuente de este módulo está disponible como repositorio independiente (ver Anexo \ref{chap:anexo-repos}).
 
 % En este caso, S-NSGA-II corresponde al algoritmo con mayor fidelidad respecto de la implementación original, debido a que sus operadores presentan una lógica más directa de traducir que los componentes de MOEA-CKF.
 

@@ -19,6 +19,7 @@
 \usepackage{rotating}
 \usepackage{multirow}
 \usepackage[table]{xcolor}
+\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
 
 \newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
 \providecommand{\Atwelve}{\ensuremath{\hat{A}_{12}}}
@@ -66,6 +67,11 @@
 	% logran eso
 	%\makeatletter % convierte @ en letra, en vez de caracter especial
 	%\@openrightfalse % anula empezar capítulo en página derecha
+
+	\newpage
+    Este trabajo se enmarca dentro del proyecto \textbf{Fondecyt Regular 1251455 NeuroMetaEvo: Integrating Metaheuristic Techniques with Neuroscience for Advanced Neuromorphic Algorithm Design}.
+
+	
 	\begin{resumenEs}
 		Las Redes Neuronales de Espigas (SNN) son un paradigma de computación neuromórfica inspirado en el cerebro, donde la información se procesa mediante eventos discretos (espigas), lo que promete mayor eficiencia energética que las redes neuronales artificiales (ANN) convencionales. Sin embargo, su entrenamiento se ve limitado por la naturaleza no diferenciable de la función de disparo, que impide aplicar directamente \textit{Backpropagation}. Esta tesis aborda el problema mediante neuroevolución, empleando algoritmos evolutivos multiobjetivo esparsos a gran escala (SMOEA) que optimizan simultáneamente topología y pesos sinápticos de una SNN sin depender de gradientes, buscando equilibrar precisión de clasificación y esparsidad estructural.
 
@@ -139,5 +145,6 @@
 	% Idealmente :'v
 	\input{anexos/01-prueba}
 	\include{anexos/02-otro}
+	\include{anexos/03-repositorios}
 	
 \end{document}

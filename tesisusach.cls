@@ -98,7 +98,10 @@
 \RequirePackage{graphicx}
 
 %-------Referencias
-\RequirePackage{hyperref}
+% plainpages=false evita destinos de hyperref duplicados (name{page.1}) al
+% mezclar numeración romana (frontmatter) y arábiga (mainmatter), ambas
+% comenzando en 1
+\RequirePackage[plainpages=false,pdfpagelabels=true]{hyperref}
 % Paquete para colocar el link al inicio del flotante, en lugar de al final
 \RequirePackage[all]{hypcap}
 
@@ -327,6 +330,11 @@
 \fi
 
 \renewcommand{\maketitle}{
+	% La portada no tiene numeración de página propia (se numera junto al
+	% resto del frontmatter/mainmatter más adelante), así que se le quita
+	% el destino de página de hyperref; si no, choca con la página 1 del
+	% mainmatter y hyperref genera un destino duplicado (name{page.1})
+	\hypersetup{pageanchor=false}
 	\begin{titlepage}
 		% Ideas básicas sacadas de acá: 
 		% https://tex.stackexchange.com/questions/5284/heading-title-with-a-logo
@@ -370,10 +378,10 @@
 		\begin{minipage}{0.5\linewidth}
 			\begin{flushright}
 				\begin{tabular}{ll}
-				\ifdosguias{Profesores:}\else{Profesor:}\fi
+				\ifdosguias{Profesor guía:}\else{Profesor:}\fi
 				&\ifdosguias
 					\@profesor \\
-					&\@profesorco
+					Profesor co-guía: &\@profesorco
 				\else
 					\@profesor
 				\fi
@@ -390,6 +398,7 @@
 		\end{center}
 		
 	\end{titlepage}
+	\hypersetup{pageanchor=true}
 }
 
 %================================================================
