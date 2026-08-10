@@ -66,7 +66,7 @@ Las principales ventajas de la neuroevolución para SNN incluyen su naturaleza l
 En la literatura reciente se han propuesto marcos unificados que combinan neuroevolución con aprendizaje por gradiente estocástico, así como algoritmos evolutivos capaces de trabajar con múltiples objetivos como precisión, complejidad del modelo y eficiencia energética, lo que resulta especialmente relevante para el diseño de SNN ejecutables en hardware neuromórfico bajo restricciones de recursos \cite{Zhang2023DNN_Neuroevolution_SGD, Shen2024EvolutionarySNN}. En este contexto, los métodos de optimización evolutiva multiobjetivo aplicados a SNN se alinean de forma natural con la necesidad de equilibrar desempeño, esparsidad y costo computacional en redes de disparo de gran escala, motivando la exploración de algoritmos avanzados de optimización poblacional y estrategias de codificación adecuadas para este tipo de modelos \cite{Shen2024EvolutionarySNN, Hiraga2024mutationbasedevolution}.
 
 
-%-----------------------------------------
+%---------------------
 
 \section{Neuroevolución en SNN}
 La neuroevolución se refiere al uso de algoritmos evolutivos para diseñar y entrenar redes neuronales, tratando pesos, arquitectura y otros hiperparámetros como individuos de una población que se adapta mediante selección, mutación y recombinación \cite{Schuman2020evooptineuro, Shen2024EvolutionarySNN}. En el contexto de SNN, esta familia de métodos se ha consolidado como una alternativa a los enfoques basados en gradientes, especialmente cuando se busca optimizar simultáneamente la estructura de la red, los parámetros neuronales y criterios adicionales como eficiencia energética o tamaño del modelo \cite{Shen2024EvolutionarySNN, Schuman2022Opportunities}.
@@ -94,18 +94,18 @@ Otro aspecto ventajoso es la compatibilidad de los métodos evolutivos con tarea
 
 Finalmente, los enfoques evolutivos ofrecen una integración relativamente directa con plataformas neuromórficas reales, ya que pueden incluir en la representación genética los límites de hardware (por ejemplo, resolución de pesos, número máximo de retardos, topologías permitidas) y evolucionar únicamente redes que sean realizables bajo dichas restricciones.
 
-%---------------
+%--------
 
 \subsection{Limitaciones actuales y desafíos}
 A pesar de sus ventajas, los métodos evolutivos aplicados a SNN presentan limitaciones importantes en términos de coste computacional, ya que requieren evaluar poblaciones completas de redes en cada generación, y cada evaluación implica simulaciones temporales potencialmente largas sobre conjuntos de datos de entrenamiento \cite{Schuman2022Opportunities, Schuman2020evooptineuro}. Esta naturaleza poblacional hace que la neuroevolución sea, en muchos casos, más lenta para converger que los enfoques basados en gradientes, especialmente cuando se trabaja con redes profundas y datasets de gran escala, lo que ha motivado el desarrollo de estrategias de reducción de coste y búsqueda más eficiente \cite{Shen2024EvolutionarySNN, Branquinho2023-neuro-conv-snn}.
 
-Históricamente, muchas aplicaciones evolutivas en SNN se han limitado a arquitecturas relativamente poco profundas o a problemas con pocas entradas, debido tanto a restricciones de hardware como a la complejidad de simular grandes SNN; aunque trabajos recientes han extendido estos métodos a SNN profundas y convolucionales, todavía existe una brecha respecto del rendimiento y la escala alcanzados por redes artificiales entrenadas con gradientes sustitutos o conversión ANN--SNN \cite{Branquinho2023-neuro-conv-snn, Schliebs2013snn-survey}. Algunos estudios \cite{Shen2024EvolutionarySNN} señalan que aunque enfoques como SpikeDHS, STTS, AutoSNN y NeuEvo logran precisiones competitivas en CIFAR e ImageNet, muchos de ellos dependen de espacios de búsqueda complejos, entrenamiento de superredes o combinaciones con técnicas basadas en gradientes, lo que evidencia que la neuroevolución pura aún enfrenta desafíos en tareas de muy gran escala.
+Históricamente, muchas aplicaciones evolutivas en SNN se han limitado a arquitecturas relativamente poco profundas o a problemas con pocas entradas, debido tanto a restricciones de hardware como a la complejidad de simular grandes SNN; aunque trabajos recientes han extendido estos métodos a SNN profundas y convolucionales, todavía existe una brecha respecto del rendimiento y la escala alcanzados por redes artificiales entrenadas con gradientes sustitutos o conversión ANN-SNN \cite{Branquinho2023-neuro-conv-snn, Schliebs2013snn-survey}. Algunos estudios \cite{Shen2024EvolutionarySNN} señalan que aunque enfoques como SpikeDHS, STTS, AutoSNN y NeuEvo logran precisiones competitivas en CIFAR e ImageNet, muchos de ellos dependen de espacios de búsqueda complejos, entrenamiento de superredes o combinaciones con técnicas basadas en gradientes, lo que evidencia que la neuroevolución pura aún enfrenta desafíos en tareas de muy gran escala.
 
 Otro desafío importante reside en el diseño del espacio de búsqueda y la codificación genética de las redes, ya que la elección de cómo representar arquitectura, pesos, retardos y operadores de disparo influye de manera crítica en la capacidad del algoritmo evolutivo para explorar soluciones útiles sin perder eficiencia \cite{Elbrecht2020-neuro-snn}. Además, existe aún poca homogeneidad en la literatura respecto de los criterios de evaluación y los benchmarks utilizados para comparar métodos evolutivos en SNN, lo que dificulta construir una imagen clara de cuál enfoque ofrece el mejor compromiso entre precisión, esparsidad y coste computacional \cite{Shen2024EvolutionarySNN}. Algunos trabajos reportan únicamente métricas de exactitud, mientras que otros añaden medidas de tasa de espigas, número de sinapsis activas o estimaciones de consumo energético. La falta de conjuntos de pruebas estandarizados para SNN evolutivas hace que los resultados sean, en muchos casos, difíciles de trasladar entre dominios y plataformas de hardware \cite{dimovska2020multiobjectiveoptimizationsizeresilience, Shen2024EvolutionarySNN}.
 
 Finalmente, aunque las aproximaciones evolutivas han mostrado resultados prometedores en aplicaciones de control y clasificación, su combinación con requisitos estrictos de esparsidad y gran escala sigue siendo un problema abierto, donde la búsqueda de arquitecturas extremadamente ligeras y redes altamente eficientes debe equilibrarse con la necesidad de mantener un rendimiento comparable al de enfoques basados en gradientes \cite{dimovska2020multiobjectiveoptimizationsizeresilience, Schuman2020evooptineuro}. Esta tensión entre exploración evolutiva, exigencias de hardware neuromórfico y objetivos multiobjetivo complejos motiva el desarrollo de algoritmos evolutivos especializados para problemas esparsos de gran escala, como los SMOEA considerados en esta tesis, que buscan mejorar la capacidad de las SNN evolutivas para operar en escenarios donde la eficiencia estructural es tan relevante como la precisión \cite{Shen2024EvolutionarySNN, Schuman2022Opportunities}.
 
-%------------------------
+%------------
 
 \section{Esparsidad y eficiencia estructural de redes neuronales}
 
@@ -134,7 +134,7 @@ Estudios recientes sobre SNN evolutivas \cite{Shen2024EvolutionarySNN} reportan 
 
 Cuando la optimización se plantea como un problema multiobjetivo, la calidad del conjunto de soluciones se evalúa frecuentemente mediante indicadores globales como el Hipervolumen, que mide el volumen de la región del espacio de objetivos dominada por el frente aproximado respecto de un punto de referencia \cite{Jin2007evo-multi-snn, dimovska2020multiobjectiveoptimizationsizeresilience}, permitiendo integrar en una sola cifra información de convergencia hacia el frente de Pareto verdadero y de diversidad a lo largo del frente, resultando adecuado para comparar diferentes algoritmos evolutivos en términos de su capacidad para generar soluciones que equilibren exactitud y esparsidad \cite{Zitzler2007HV_revisited}. Otros indicadores, como la Distancia Generacional Invertida (IGD), se han utilizado para cuantificar la proximidad del frente aproximado a un conjunto de referencia, lo que es útil cuando se dispone de soluciones conocidas o se desea evaluar la consistencia del comportamiento del algoritmo en distintos problemas \cite{dimovska2020multiobjectiveoptimizationsizeresilience}. En trabajos sobre compresión esparsa de redes densas, estos indicadores se combinan con métricas de tamaño de modelo y coste de cómputo para caracterizar de forma más completa la calidad del conjunto de configuraciones obtenidas.
 
-%-------------------------
+%-------------
 
 \section{Optimización esparsa multiobjetivo a gran escala}
 Los problemas de optimización multiobjetivo con soluciones esparsas en el frente de Pareto y gran número de variables de decisión se conocen en la literatura como \textit{sparse multi-objective optimization problems} (SMOPs) \cite{Shao2025_SMOEA, Tian2020AnEALSMOP}. En estos problemas, la mayoría de las variables toman valor cero en las soluciones óptimas, pero el número total de variables puede ser del orden de cientos o miles, lo que genera un espacio de búsqueda extremadamente grande y difícil de explorar con presupuestos de evaluación limitados \cite{Tian2020AnEALSMOP, ZOU2025-sparse-LSMOEA, Shao2025_SMOEA}.
@@ -181,7 +181,7 @@ Los SMOEA adaptan este esquema para optimizar no solo los valores de las variabl
 MOEA-CKF emplea una codificación bi-nivel, formada por una capa binaria que representa el patrón de activación y una capa real que almacena los valores de las variables. Sus operadores utilizan información obtenida durante la evolución para identificar variables relevantes, reducir la dimensión efectiva del problema y agrupar variables con comportamiento relacionado. Luego, aplican variación guiada dentro de estos subconjuntos, utilizando el patrón binario para orientar la optimización de los valores reales. De esta forma, MOEA-CKF integra la búsqueda de una estructura esparsa con el ajuste de los parámetros continuos, concentrando el esfuerzo computacional en las variables más relevantes.
 
 
-%-----------------------------------------------
+%------------------------
 
 
 % \subsection{Algoritmos evolutivos multiobjetivo (MOEA)}
@@ -211,7 +211,7 @@ MOEA-CKF emplea una codificación bi-nivel, formada por una capa binaria que rep
 % Otro aporte importante del estudio es que sitúa a los SMOEA dentro de un marco experimental ya relativamente maduro, con taxonomías, bancos de prueba y aplicaciones de referencia. En particular, se destaca el uso extendido de la familia de benchmarks SMOP, así como extensiones con multimodalidad y robustez, para evaluar la capacidad de los algoritmos en escenarios con frentes de Pareto esparsos, interacciones complejas entre variables y distintos tipos de paisaje de búsqueda. Asimismo, el estudio identifica como métricas de evaluación ampliamente utilizadas a IGD y HV, y menciona también indicadores específicos para contextos esparsos, como CSD, lo que evidencia que el análisis de SMOEA no solo depende de la convergencia al frente de Pareto, sino también de la calidad estructural de la esparsidad obtenida.
 
 
-%------------------
+%---------
 
 
 \section{Simulación en SNN}
@@ -231,7 +231,7 @@ Además, los simuladores modernos incorporan herramientas para inspeccionar vari
 Los simuladores de propósito general para SNN, fueron desarrollados principalmente para investigación en neurociencia computacional. Por ello, priorizan la descripción flexible de modelos neuronales y sinápticos, el registro detallado de estados internos, la reproducibilidad y el análisis de dinámicas biológicamente plausibles \cite{Plesser2022NESTSimulator, Vitay2015ANNarchySimulator}. Aunque estas capacidades son valiosas para validar modelos y caracterizar redes, no están orientadas específicamente a neuroevolución ni a la computación neuromórfica. En particular, incorporan funcionalidades generales, como múltiples modelos neuronales, reglas de plasticidad, mecanismos de registro y análisis detallado, que pueden añadir complejidad y sobrecarga innecesarias cuando se requiere evaluar repetidamente una SNN dentro de un algoritmo evolutivo. A continuación se presentan algunos de estos simulador de SNN.
 
 \paragraph{NEST Simulator}
-Es un simulador ampliamente utilizado para SNN, capaz de abarcar desde microcircuitos hasta redes a gran escala. Ofrece un amplio catálogo de modelos neuronales, incluyendo variantes integrate-and-fire, modelos adaptativos, modelos de Izhikevich y modelos de tipo Hodgkin--Huxley, además de múltiples modelos sinápticos con y sin plasticidad \cite{Plesser2022NESTSimulator, Diesmann2003NESTAE}. Su diseño está orientado a la ejecución eficiente en arquitecturas multinúcleo y clústeres HPC, con énfasis en escalabilidad, reproducibilidad y estudio de redes neuronales biológicamente detalladas.
+Es un simulador ampliamente utilizado para SNN, capaz de abarcar desde microcircuitos hasta redes a gran escala. Ofrece un amplio catálogo de modelos neuronales, incluyendo variantes integrate-and-fire, modelos adaptativos, modelos de Izhikevich y modelos de tipo Hodgkin-Huxley, además de múltiples modelos sinápticos con y sin plasticidad \cite{Plesser2022NESTSimulator, Diesmann2003NESTAE}. Su diseño está orientado a la ejecución eficiente en arquitecturas multinúcleo y clústeres HPC, con énfasis en escalabilidad, reproducibilidad y estudio de redes neuronales biológicamente detalladas.
 
 El entorno de usuario de NEST se basa principalmente en interfaces Python, como PyNEST y PyNN \cite{Eppler2008PyNEST}, lo que facilita la definición de redes complejas y conectividades mediante reglas de alto nivel. Sin embargo, la incorporación de modelos personalizados o el acceso directo al núcleo del simulador requiere utilizar su infraestructura interna en C++ y cabeceras específicas \cite{NESTGitHub}, dificultando una integración ligera y directa con un ciclo de evaluación evolutiva implementado en C++.
 
@@ -253,7 +253,7 @@ Al trabajar con una implementación propia es posible diseñar estructuras de da
 Una ventaja clave de esta aproximación es que el algoritmo de optimización y el simulador comparten el mismo entorno de ejecución, reduciendo el costo de comunicación presente al enlazar componentes Python y C++, además de facilitar mecanismos de paralelismo compatibles con el entorno de cómputo disponible, pudiendo servir como base para un posterior mapeo o acoplamiento con plataformas embebidas y hardware neuromórfico.
 
 
-%----------------------------------------
+%--------------------
 
 
 \section{Brecha de investigación}

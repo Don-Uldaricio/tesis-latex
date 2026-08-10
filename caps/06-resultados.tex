@@ -5,7 +5,7 @@
 
 En esta sección se presentan los resultados cuantitativos utilizados para comparar los frameworks \textit{ANNarchy}, \textit{NEST} y \textit{snn-simulator}, siguiendo el diseño experimental y el plan de análisis descritos en \ref{sec:benchmark-framework-metodologia}.
 
-\subsection{Tiempo de evaluación y comparación estadística}
+\paragraph{Tiempo de evaluación y comparación estadística}
 
 La Figura~\ref{fig:eval-time-frameworks} muestra los resultados del tiempo de evaluación de la función objetivo para cada combinación de configuración y framework con 30 repeticiones en todas las configuraciones. Los resultados en detalle se encuentran en la Tabla \ref{tab:framework-evals-res}.
 
@@ -23,14 +23,14 @@ La Figura~\ref{fig:eval-time-frameworks} muestra los resultados del tiempo de ev
 En las seis configuraciones probadas se mantuvo el mismo orden en tiempo de ejecución: \textit{snn-simulator} \(<\) ANNarchy \(<\) NEST. El patrón se sostuvo tanto al aumentar el número de neuronas en la capa oculta (de 10 a 20 neuronas dentro del mismo dataset) como al aumentar el número de características, sin que este benchmark mostrara cuál de las dos dimensiones pesa más. Se reporta la mediana debido al uso de la prueba no paramétrica de Mann-Whitney U. Para el rango de $D$ efectivamente usado en esta prueba, \textit{snn-simulator} nunca deja de ser la opción más rápida por un margen amplio. Sin embargo, extrapolar la ventaja observada aquí a dimensiones muy superiores no está garantizado por estos datos.
 
 
-% \subsection{Comparación estadística entre frameworks (Mann--Whitney U)}
+% \subsection{Comparación estadística entre frameworks (Mann-Whitney U)}
 
-La Tabla~\ref{tab:framework-mannwhitney-res} resume las diferencias entre \textit{snn-simulator} y cada competidor, en base a la mediana, junto con el valor \(p\) de la prueba Mann--Whitney U, con 30 ejecuciones. Las 18 comparaciones por pares (tres frameworks por seis configuraciones) arrojan \(U = 0\) y separación total de las distribuciones, con \(p \approx 3{.}0 \times 10^{-11}\) en todos los casos. La comparación ANNarchy frente a NEST, no mostrada en la tabla, también resulta significativa a favor de ANNarchy en todas las configuraciones.
+La Tabla~\ref{tab:framework-mannwhitney-res} resume las diferencias entre \textit{snn-simulator} y cada competidor, en base a la mediana, junto con el valor \(p\) de la prueba Mann-Whitney U, con 30 ejecuciones. Las 18 comparaciones por pares (tres frameworks por seis configuraciones) arrojan \(U = 0\) y separación total de las distribuciones, con \(p \approx 3{.}0 \times 10^{-11}\) en todos los casos. La comparación ANNarchy frente a NEST, no mostrada en la tabla, también resulta significativa a favor de ANNarchy en todas las configuraciones.
 
 \begin{table}[htbp]
 \centering
 \small
-\caption{Comparaciones por pares mediante Mann--Whitney \(U\). Las diferencias corresponden a la mediana de \textit{snn-simulator} menos la del competidor.}
+\caption{Comparaciones por pares mediante Mann-Whitney \(U\). Las diferencias corresponden a la mediana de \textit{snn-simulator} menos la del competidor.}
 \label{tab:framework-mannwhitney-res}
 \begin{tabular}{lrrrr}
 \toprule
@@ -48,7 +48,7 @@ ds3\_h20 & -142.74 & $<0.0001$ & -3986.35 & $<0.0001$ \\
 
 El \textit{p-valor} indica que la diferencia no es producto del azar, pero no cuantifica qué tan grande es. Con $U=0$ y $n=30$ en cada muestra, de las 900 comparaciones posibles entre una medición de \textit{snn-simulator} y una del competidor ($30\times30$), \textit{snn-simulator} fue menor en las 900, sin un solo caso de solapamiento. No es un caso límite cercano a $p=0.05$, sino una diferencia que se sostiene en el 100\% de las 18 comparaciones. %(3 pares × 6 configs).
 
-\subsection{Tiempo de construcción y escalabilidad de la red}
+\paragraph{Tiempo de construcción y escalabilidad de la red}
 
 La Figura \ref{fig:build_s_by_config} muestra el tiempo de construcción de la red por cada framework en las seis configuraciones con 30 repeticiones en cada una. El \textit{snn-simulator} construye la red en microsegundos, entre tres y cuatro órdenes de magnitud más rápido que NEST y ANNarchy. ANNarchy incurre además en un costo adicional de compilación Cython de aproximadamente 9{.}6–9{.}8 segundos por corrida. Los resultados completos se pueden visualizar en la Tabla \ref{tab:framework-build-memory-res} del Anexo.
 
@@ -124,7 +124,7 @@ La Figura \ref{fig:batch_scalability} muestra la aceleración en los tiempos de 
 
 % Con evaluación batch paralela (\(S_{\mathrm{batch}} \approx 4{.}5\) para ocho hilos), \textit{snn-simulator} reduce el tiempo de simulación de la configuración más grande a del orden de minutos, frente a horas en el caso de NEST.
 
-\subsection{Selección del framework}
+\paragraph{Selección del framework}
 
 Con base en los resultados anteriores, se selecciona \textit{snn-simulator} como framework de simulación SNN para el pipeline de entrenamiento. La decisión se apoya en: (i) tiempos de evaluación significativamente menores en las seis configuraciones, con separación completa de las distribuciones frente a ANNarchy y NEST, (ii) tiempos de construcción varios órdenes de magnitud inferiores sin compilación adicional, y (iii) disponibilidad de evaluación batch paralela con \textit{speedup} sustancial.
 
@@ -133,7 +133,7 @@ La principal desventaja de \textit{snn-simulator} es un consumo de memoria aprox
 Las amenazas a la validez incluyen la anomalía confirmada de tendencia en NEST (crecimiento monótono del tiempo de evaluación al duplicar el número de repeticiones dentro del mismo proceso), y la realización de mediciones en una sola máquina y sesión diferente a donde se realizaron los experimentos finales lo que pudo haber afectado la aceleración de la evualiación mediante paralelismo.
 
 
-%-----------------------------
+%---------------
 
 \section{Resultados de la búsqueda de hiperparámetros}
 
@@ -162,11 +162,11 @@ La Tabla \ref{tab:hv_por_dataset_resultados} resume el HV medio de la mejor conf
 \end{tabular}
 \end{table}
 
-\subsection{Resultados y discusión por dataset}
+\subsection{Resultados por dataset}
 
 \subsubsection{Dataset 1: Statlog Australian}
 
-Ambos algoritmos alcanzan un HV medio muy similar en sus mejores configuraciones: 0.8704 para MOEA-CKF y 0.8725 para S-NSGA-II, con diferencias que no son relevantes en términos prácticos. La diferencia principal es el codificador, Poisson en MOEA-CKF y TTFS en S-NSGA-II. Estas configuraciones se detallan en la Tabla~\ref{tab:hiper_mejor_config}, donde se observa además que los índices de distribución de cruce y mutación, así como los parámetros de esparsidad, adoptan valores distintos entre algoritmos pese a converger a un HV comparable.
+Ambos algoritmos alcanzan un HV medio muy similar en sus mejores configuraciones: 0.8704 para MOEA-CKF y 0.8725 para S-NSGA-II. La diferencia principal es el codificador, Poisson en MOEA-CKF y TTFS en S-NSGA-II. Estas configuraciones se detallan en la Tabla~\ref{tab:hiper_mejor_config}, donde se observa además que los índices de distribución de cruce y mutación, así como los parámetros de esparsidad, adoptan valores distintos entre algoritmos.
 
 \begin{table}[htbp]
     \centering
@@ -223,11 +223,10 @@ Las trayectorias de convergencia del HV medio por \emph{trial} muestran que ambo
     \label{fig:comparacion_hv_ds1}
 \end{figure}
 
-El análisis de importancia de hiperparámetros indica que la escala de pesos (\texttt{wScale}) es el parámetro más influyente en tres de los cuatro estudios considerados, concentrando entre un 73\% y un 96\% de la varianza explicada; la excepción es el caso de S-NSGA-II, donde \texttt{wScale} (52\%) y \texttt{sLower} (39\%) se reparten la mayor parte de la contribución al HV. Estas relaciones se muestran en las Figuras~\ref{fig:ds1_fanova_ckf} y~\ref{fig:ds1_fanova_nsga}.
+El análisis de importancia de hiperparámetros en \texttt{ds1} muestra que \texttt{wScale} concentra la mayor parte de la varianza explicada del HV en MOEA-CKF, mientras que en S-NSGA-II \texttt{wScale} (52\%) y \texttt{sLower} (39\%) se reparten la mayor parte de la contribución. Estas relaciones se muestran en las Figuras~\ref{fig:ds1_fanova_ckf} y~\ref{fig:ds1_fanova_nsga}.
 
 \begin{figure}[htbp]
     \centering
-
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
         \includegraphics[width=\textwidth]{images/importancia_MOEACKF_ds1.png}
@@ -340,7 +339,7 @@ Las Figuras~\ref{fig:ds3_convergencia_ckf} y~\ref{fig:ds3_convergencia_nsga} ilu
     \label{fig:comparacion_hv_ds3}
 \end{figure}
 
-En cuanto a la importancia de hiperparámetros, el análisis fANOVA indica que \texttt{wScale} vuelve a ser el hiperparámetro más influyente en tres de los cuatro estudios, concentrando entre un 73\% y un 96\% de la varianza explicada, mientras que en el caso restante la varianza se reparte entre \texttt{wScale} y los límites de esparsidad. Las Figuras~\ref{fig:ds3_fanova_ckf} y~\ref{fig:ds3_fanova_nsga} reflejan este patrón.
+En cuanto a la importancia de hiperparámetros, el análisis fANOVA en \texttt{ds3} muestra que \texttt{wScale} vuelve a ser el hiperparámetro más influyente para ambos algoritmos. Las Figuras~\ref{fig:ds3_fanova_ckf} y~\ref{fig:ds3_fanova_nsga} reflejan este patrón.
 
 \begin{figure}[htbp]
     \centering
@@ -412,7 +411,7 @@ El análisis fANOVA en \texttt{ds4} muestra una repartición de importancia más
     \label{fig:importancia_hiper_ds4}
 \end{figure}
 
-%----------------------------------
+%-----------------
 
 
 \providecommand{\Atwelve}{\ensuremath{\hat{A}_{12}}}
@@ -420,12 +419,12 @@ El análisis fANOVA en \texttt{ds4} muestra una repartición de importancia más
 \section{Resultados de comparación de algoritmos}
 \label{sec:resultados-discusion}
 
-Los resultados y el análisis se organizan en tres estudios sobre cuatro conjuntos de datos, siguiendo el orden de la Sección~\ref{sec:metodologia-comparacion}. En todos los casos el análisis se realizó por cada dataset, dado que nunca se combinan en una misma prueba estadística. Los p-valores reportados en cada tabla son crudos y se marcaron con \texttt{*} cuando resultaron significativos a $\alpha=0.05$ antes de corrección. El veredicto final, obtenido tras aplicar la corrección de Holm-Bonferroni por familias (Sección \ref{subsec:pruebas-estadisticas-correccion}) se menciona en el texto como \textit{tras corrección}. Por último, las tablas reportaron mediana e IQR como estadístico principal, debido a que varios grupos no distribuyen normal (test de Shapiro-Wilk) y porque la mediana es el estadístico consistente con los tests no paramétricos empleados en todo el documento y la literatura de los algoritmos. Para detalles sobre la media, la desviación estándar y el propio test de normalidad, revisar el repositorio del proyecto.
+Los resultados y el análisis se organizan en tres enfoques sobre cuatro conjuntos de datos, siguiendo el orden de la Sección~\ref{sec:metodologia-comparacion}. En todos los casos el análisis se realizó por cada dataset, dado que nunca se combinan en una misma prueba estadística. Se reportan los p-valores reportados en cada tabla de los test y su corrección, y se marcaron con \texttt{*} cuando resultaron significativos a $\alpha=0.05$. El veredicto final, obtenido tras aplicar la corrección de Holm-Bonferroni por familias (Sección \ref{subsec:pruebas-estadisticas-correccion}) se menciona en el texto como \textit{tras corrección}. Por último, las tablas reportaron mediana e IQR como estadístico principal, debido a que varios grupos no distribuyen normal, siendo consistente con los tests no paramétricos empleados en todo el documento y la literatura de los algoritmos. Para más detalles sobre los resultados, revisar el repositorio del proyecto en .
 
-\subsection{Estudio 1: Comparación de algoritmos en SNN (C++)}
-\label{sec:estudio1}
+\subsection{Comparación de algoritmos en SNN (C++)}
+\label{sec:enfoque1}
 
-Esta sección compara MOEA-CKF y S-NSGA-II, ambos ejecutados en SNN (C++) sobre el conjunto experimental de referencia ($N=31$ corridas pareadas por semilla), mediante tres enfoques: hipervolumen (HV), frentes de Pareto y convergencia, presentados a continuación para los cuatro datasets.
+Esta sección compara MOEA-CKF y S-NSGA-II, ambos ejecutados en SNN (C++) sobre el conjunto experimental de referencia ($N=31$ corridas pareadas por semilla), mediante tres indicadores: hipervolumen (HV), frentes de Pareto y convergencia para los cuatro datasets.
 
 \subsubsection{Hipervolumen (HV)}\label{sec:hv}
 Los resultados descriptivos se resumen en la Tabla~\ref{tab:hv-summary} para los cuatro datasets. Se muestran la mediana y el IQR.
@@ -604,7 +603,7 @@ La complejidad y el tamaño de los frentes siguen siendo significativos tras cor
     \label{fig:frente-bandas-ds2}
 \end{figure}
 
-Los deciles sobre el pool de puntos crudos de ambos algoritmos son mostrados en la Figura \ref{fig:complexity-bands-ds2}. S-NSGA-II prácticamente no tiene puntos más allá de la banda de complejidad $0.0036$--$0.0048$: sus 31 corridas concentran casi toda su masa en las bandas de menor complejidad, donde su error es menor que el de MOEA-CKF en las mismas bandas.
+Los deciles sobre el pool de puntos crudos de ambos algoritmos son mostrados en la Figura \ref{fig:complexity-bands-ds2}. S-NSGA-II prácticamente no tiene puntos más allá de la banda de complejidad $0.0036$-$0.0048$: sus 31 corridas concentran casi toda su masa en las bandas de menor complejidad, donde su error es menor que el de MOEA-CKF en las mismas bandas.
 
 \paragraph{Dataset 3: Statlog German.}\label{sec:ds3-fronts}
 Los tres indicadores resultan significativos tras corrección: S-NSGA-II incurre en más complejidad en sus mejores redes a cambio de un menor error y retiene frentes sustancialmente más grandes.
@@ -708,7 +707,7 @@ MOEA-CKF presenta un error menor que S-NSGA-II en casi todo el rango de compleji
 
 \paragraph{Dataset 1: Statlog Australian}\label{sec:ds1-convergencia}
 
-Según la Figura~\ref{fig:convergence-ds1}, MOEA-CKF converge mucho más rápido al comienzo: sube abruptamente y se estabiliza ya cerca de $\text{FE}\approx3000$--$4000$ en $\text{HV}\approx0.87$. S-NSGA-II, en cambio, arranca más bajo y asciende de forma más gradual, y solo supera el \textit{plateau} de MOEA-CKF alrededor de $\text{FE}\approx11000$--$13000$, para terminar levemente más alto.
+Según la Figura~\ref{fig:convergence-ds1}, MOEA-CKF converge mucho más rápido al comienzo: sube abruptamente y se estabiliza ya cerca de $\text{FE}\approx3000$-$4000$ en $\text{HV}\approx0.87$. S-NSGA-II, en cambio, arranca más bajo y asciende de forma más gradual, y solo supera el \textit{plateau} de MOEA-CKF alrededor de $\text{FE}\approx11000$-$13000$, para terminar levemente más alto.
 
 En las 31 corridas, MOEA-CKF alcanza el 95\% de su propio HV final antes que S-NSGA-II, siendo la diferencia significativa tras corrección y convergiendo en promedio $\sim4.3\times$ más rápido. MOEA-CKF es sistemáticamente más rápido para acercarse a su techo, pero ese techo resulta más bajo que el de S-NSGA-II.
 
@@ -756,7 +755,7 @@ En las 31 corridas de \textbf{ambos} algoritmos, la población inicial (generaci
 
 \paragraph{Dataset 3: Statlog German}\label{sec:ds3-convergencia}
 
-La curva (Figura~\ref{fig:convergence-ds3}) muestra a S-NSGA-II arrancando mucho más bajo ($\sim0.654$) y ascendiendo con pendiente pronunciada, hasta cruzar a MOEA-CKF alrededor de $\text{FE}\approx4500$--$5000$ y terminar por encima de él, mientras que MOEA-CKF se aplana muy temprano.
+La curva (Figura~\ref{fig:convergence-ds3}) muestra a S-NSGA-II arrancando mucho más bajo ($\sim0.654$) y ascendiendo con pendiente pronunciada, hasta cruzar a MOEA-CKF alrededor de $\text{FE}\approx4500$-$5000$ y terminar por encima de él, mientras que MOEA-CKF se aplana muy temprano.
 
 La diferencia para llegar el 95\% del HV final es significativa tras corrección. Si bien S-NSGA-II logra el HV final más alto (\ref{sec:ds3-hv}), es MOEA-CKF quien llega casi instantáneamente a su techo, más bajo, pero alcanzado de inmediato, mientras que S-NSGA-II necesita más FE (8.5\% del presupuesto total de 40000) para llegar al 95\% de un techo más alto. MOEA-CKF se estabiliza rápido en un techo menor, mientras que S-NSGA-II tarda más en llegar a uno mayor.
 
@@ -770,7 +769,7 @@ La diferencia para llegar el 95\% del HV final es significativa tras corrección
 % \textbf{Grupo} & \textbf{Mediana [IQR]} & \textbf{$p$ (Wilcoxon)} &
 %   \Atwelve \\
 % \midrule
-% MOEA-CKF & $0\ [0,\,0]$ & --- & --- \\
+% MOEA-CKF & $0\ [0,\,0]$ & -- & -- \\
 % S-NSGA-II & $3408.5\ [2456.1,\,3909.8]$ & $9.31\times10^{-10}$* & 0.000 \\
 % \bottomrule
 % \end{tabular}
@@ -778,7 +777,7 @@ La diferencia para llegar el 95\% del HV final es significativa tras corrección
 
 \paragraph{Dataset 4: Sonar}\label{sec:ds4-convergencia}
 
-Según la Figura~\ref{fig:convergence-ds4}, MOEA-CKF se mantiene por encima de S-NSGA-II durante todo el presupuesto y todavía sigue subiendo lentamente cerca de $\text{FE}=40000$, sin llegar a aplanarse del todo, mientras que S-NSGA-II se estabiliza antes ($\text{FE}\approx20000$--$25000$) en un nivel inferior.
+Según la Figura~\ref{fig:convergence-ds4}, MOEA-CKF se mantiene por encima de S-NSGA-II durante todo el presupuesto y todavía sigue subiendo lentamente cerca de $\text{FE}=40000$, sin llegar a aplanarse del todo, mientras que S-NSGA-II se estabiliza antes ($\text{FE}\approx20000$-$25000$) en un nivel inferior.
 
 La diferencia en la convergencia es significativa tras corrección: el algoritmo con menor HV final (S-NSGA-II) converge más rápido a su propio techo, mientras que MOEA-CKF, con mayor HV final, tarda $\sim2.4\times$ más en llegar al 95\% del suyo y, según la curva, sin estabilizarse del todo al final del presupuesto.
 
@@ -794,18 +793,18 @@ La diferencia en la convergencia es significativa tras corrección: el algoritmo
 % \textbf{Grupo} & \textbf{Mediana [IQR]} & \textbf{$p$ (Wilcoxon)} &
 %   \Atwelve \\
 % \midrule
-% MOEA-CKF & $13626.4\ [10622.7,\,18901.1]$ & --- & --- \\
+% MOEA-CKF & $13626.4\ [10622.7,\,18901.1]$ & -- & -- \\
 % S-NSGA-II & $5614.0\ [4110.3,\,6416.0]$ & $9.16\times10^{-6}$* & 0.903 \\
 % \bottomrule
 % \end{tabular}
 % \end{table}
 
-\subsection{Estudio 2: Plataforma SNN (C++) vs.\ ANN (MATLAB)}
-\label{sec:estudio2}
+\subsection{Plataforma SNN (C++) vs.\ ANN (MATLAB)}
+\label{sec:enfoque2}
 
 Esta sección compara cada algoritmo entre su implementación SNN (C++) sobre el conjunto experimental de referencia y la implementación ANN original de PlatEMO/MATLAB, para los cuatro datasets.
 
-\subsubsection{Dataset 1: Statlog Australian}
+\paragraph{Dataset 1: Statlog Australian}
 \label{sec:ds1-plataforma}
 Las seis comparaciones (Tablas~\ref{tab:platform-MOEA-CKF-ds1} y \ref{tab:platform-S-NSGA-II-ds1}) son significativas y se mantienen tras corrección. La implementación original en ANN (MATLAB) supera de forma consistente a la SNN en HV y exactitud para ambos algoritmos, con una brecha de exactitud de $\sim0.02$ en los dos casos. Las redes de mayor exactitud en ANN también tienden a ser más densas en el caso de MOEA-CKF; en el caso de S-NSGA-II es similar, pero la media y el rango se disparan debido a algunas corridas en MATLAB que alcanzan redes casi densas.
 
@@ -847,7 +846,7 @@ Accuracy &  $0.8678\ [0.8605,\,0.8768]$ &  \cellcolor{gray!20}$0.8895\ [0.8877,\
 \end{tabular}
 \end{table}
 
-\subsubsection{Dataset 2: Climate}
+\paragraph{Dataset 2: Climate}
 \label{sec:ds2-plataforma}
 Todas las comparaciones son significativas tras corrección (Tablas~\ref{tab:platform-MOEA-CKF-ds2} y \ref{tab:platform-S-NSGA-II-ds2}). La brecha ANN-SNN en HV es la más grande de los cuatro datasets para MOEA-CKF. La complejidad, en cambio, diverge fuertemente según el algoritmo: para MOEA-CKF las redes ANN son apenas más esparsas que las de SNN, mientras que para S-NSGA-II las redes ANN de mejor exactitud son casi completamente densas frente a las redes SNN. Para llegar a su mejor exactitud, S-NSGA-II-ANN necesita casi todos los pesos activos, mientras que en SNN logra un error estadísticamente similar con una fracción minúscula de la red. 
 
@@ -891,7 +890,7 @@ Accuracy &  $0.9213\ [0.9190,\,0.9213]$ &  \cellcolor{gray!20}$0.9653\ [0.9630,\
 \end{tabular}
 \end{table}
 
-\subsubsection{Dataset 3: Statlog German}
+\paragraph{Dataset 3: Statlog German}
 \label{sec:ds3-plataforma}
 Todas las comparaciones son significativas tras corrección (Tablas~\ref{tab:platform-MOEA-CKF-ds3} y \ref{tab:platform-S-NSGA-II-ds3}): las redes ANN de MOEA-CKF son más densas que las SNN, mientras que las redes ANN de S-NSGA-II vuelven a ser casi totalmente densas frente a redes SNN mucho más esparsas.
 
@@ -933,7 +932,7 @@ Accuracy &  $0.7412\ [0.7306,\,0.7538]$ &  \cellcolor{gray!20}$0.7975\ [0.7963,\
 \end{tabular}
 \end{table}
 
-\subsubsection{Dataset 4: Sonar}
+\paragraph{Dataset 4: Sonar}
 \label{sec:ds4-plataforma}
 
 Todas las comparaciones son significativas tras corrección (Tablas~\ref{tab:platform-MOEA-CKF-ds4} y \ref{tab:platform-S-NSGA-II-ds4}). Para S-NSGA-II, la brecha ANN-SNN de HV y de exactitud es la más grande de los cuatro datasets. Para MOEA-CKF, en cambio, las redes SNN de mejor exactitud resultan más densas que las ANN, a diferencia del resto de las combinaciones con una brecha clara de complejidad, donde es la ANN la más densa.
@@ -981,14 +980,14 @@ Accuracy &  $0.7605\ [0.7365,\,0.7874]$ &  \cellcolor{gray!20}$0.9102\ [0.9042,\
 \subsection{Otros enfoques}
 \label{sec:otros-resultados}
 
-Esta subsección agrupa dos enfoques adicionales (remuestreo vs.\ evaluación completa y tiempo de cómputo) cuyos resultados, al ser más acotados que los de las Secciones \ref{sec:estudio1}--\ref{sec:estudio2}, se presentan de forma consolidada para los cuatro datasets.
+Esta subsección agrupa dos enfoques adicionales (remuestreo vs.\ evaluación completa y tiempo de cómputo) cuyos resultados, al ser más acotados que los de las Secciones \ref{sec:enfoque1}-\ref{sec:enfoque2}, se presentan de forma consolidada para los cuatro datasets.
 
 \paragraph{Remuestreo vs.\ conjunto de referencia}
 \label{sec:otros-bootstrap}
 
 Según la Tabla~\ref{tab:bootstrap-all} muestra la comparación de HV por dataset y algoritmo, entre el entrenamiento de SNN de forma normal y el entrenamiento usando remuestreo. 
 
-El remuestreo mejora el HV de forma significativa y con efecto grande para ambos algoritmos en ds1 y ds2, este último con el menor costo relativo de tiempo de los cuatro datasets ($\times4.8$--$4.9$, frente a $\times5$--$15$ en el resto). En ds3 y ds4, en cambio, el efecto es mixto: en ds3 solo MOEA-CKF mejora significativamente, mientras que S-NSGA-II no lo hace ($p=0.066$), con la dirección de $\Atwelve=0.710$ incluso sugiriendo que la evaluación normal iguala o supera al remuestreo más seguido que a la inversa, aunque sin significancia estadística. En ds4 el patrón se invierte y es S-NSGA-II quien mejora significativamente, sin efecto en MOEA-CKF. 
+El remuestreo mejora el HV de forma significativa y con efecto grande para ambos algoritmos en ds1 y ds2, este último con el menor costo relativo de tiempo de los cuatro datasets ($\times4.8$-$4.9$, frente a $\times5$-$15$ en el resto). En ds3 y ds4, en cambio, el efecto es mixto: en ds3 solo MOEA-CKF mejora significativamente, mientras que S-NSGA-II no lo hace ($p=0.066$), con la dirección de $\Atwelve=0.710$ incluso sugiriendo que la evaluación normal iguala o supera al remuestreo más seguido que a la inversa, aunque sin significancia estadística. En ds4 el patrón se invierte y es S-NSGA-II quien mejora significativamente, sin efecto en MOEA-CKF. 
 
 % No existe, entonces, una regla simple: el beneficio del remuestreo depende de la combinación específica de dataset y algoritmo, algo que se discute en (\ref{sec:limitaciones}), y su costo de tiempo ($\times4.8$ a $\times15.1$) es siempre sustancial, independientemente de si el HV mejora o no.
 
@@ -1014,7 +1013,7 @@ El remuestreo mejora el HV de forma significativa y con efecto grande para ambos
 \paragraph{Tiempo de cómputo}
 \label{sec:otros-tiempo}
 
-Según la Tabla~\ref{tab:time-all}, S-NSGA-II es significativamente más rápido que MOEA-CKF en los cuatro datasets, con un efecto grande y menor variabilidad entre corridas en todos los casos. La brecha, sin embargo, crece marcadamente con la dimensionalidad: de $\sim6$--$10\%$ en ds1--ds3 (14--24 features) a $\sim2.4\times$ en ds4 (60 features, sin una sola excepción en las 15 corridas pareadas). MOEA-CKF resulta ser el más lento y variable en ds4 (DE$=259.5$s, por encima del resto de los datasets).
+Según la Tabla~\ref{tab:time-all}, S-NSGA-II es significativamente más rápido que MOEA-CKF en los cuatro datasets, con un efecto grande y menor variabilidad entre corridas en todos los casos. La brecha, sin embargo, crece marcadamente con la dimensionalidad: de $\sim6$-$10\%$ en ds1-ds3 (14-24 features) a $\sim2.4\times$ en ds4 (60 features, sin una sola excepción en las 15 corridas pareadas). MOEA-CKF resulta ser el más lento y variable en ds4 (DE$=259.5$s, por encima del resto de los datasets).
 
 % lo cual es consistente con que su mecanismo de fusión de conocimiento entre escalas (SVD, análisis de dispersión) escala peor con la dimensionalidad que los operadores más simples de S-NSGA-II.
 
@@ -1073,7 +1072,7 @@ $6.10\times10^{-5}$* &
 
 % \paragraph{Plataforma} Es el hallazgo más uniforme de todo el análisis. La ANN original supera a la SNN en HV y exactitud en las 8 de 8 combinaciones dataset$\times$algoritmo, siempre de forma significativa tras corrección. La brecha de exactitud es más pequeña en ds1 y más grande en ds4 para S-NSGA-II. La brecha de complejidad entre ANN y SNN para S-NSGA-II (más alta en ds2/ds3, menor en ds1/ds4) es sistemáticamente mayor que la de MOEA-CKF (siempre moderada), un patrón dependiente del algoritmo que se repite entre datasets y que podría merecer investigación aparte.
 
-% \paragraph{Tiempo} S-NSGA-II es más rápido en los cuatro datasets, pero la brecha crece marcadamente con la dimensionalidad, de $\sim6$--$10\%$ en ds1--ds3 (14--24 features) a $\sim2.4\times$ en ds4 (60 features, $\Atwelve=1.000$). Esto es consistente con que MOEA-CKF consume más FE por generación que S-NSGA-II, y con que ese costo adicional escala con el tamaño del problema.
+% \paragraph{Tiempo} S-NSGA-II es más rápido en los cuatro datasets, pero la brecha crece marcadamente con la dimensionalidad, de $\sim6$-$10\%$ en ds1-ds3 (14-24 features) a $\sim2.4\times$ en ds4 (60 features, $\Atwelve=1.000$). Esto es consistente con que MOEA-CKF consume más FE por generación que S-NSGA-II, y con que ese costo adicional escala con el tamaño del problema.
 
 % \paragraph{Remuestreo} Mejora el HV de forma clara y consistente en ds1 y ds2, con efecto grande en ambos algoritmos, pero produce resultados mixtos en ds3 (solo ayuda a MOEA-CKF) y en ds4 (solo ayuda a S-NSGA-II). No existe, entonces, una regla simple, y el costo de tiempo ($\times4.8$ a $\times15.1$) es siempre sustancial, independientemente de si el HV mejora o no.
 
@@ -1081,17 +1080,19 @@ $6.10\times10^{-5}$* &
 
 
 
-%-----------------------------
+%---------------
 
 
 \section{Conectividad de las redes}
 \label{sec:conectividad}
 
-El análisis cubrió la totalidad de los 248 frentes de Pareto archivados, pero el análisis estructural que sigue se restringe a la solución de \emph{mejor exactitud} de cada corrida (menor error de entrenamiento), por ser la que en la práctica se utilizaría para desplegar la red. No se reporta la fracción de neuronas ocultas muertas: dado que ambos algoritmos optimizan explícitamente la dispersión, tener una gran mayoría de neuronas sin ninguna conexión activa es la operación esperada del método y no un indicador de falla por sí solo.
+El análisis cubrió la totalidad de los 248 frentes de Pareto archivados, pero el análisis estructural que sigue se restringió a la solución de \emph{mejor exactitud} de cada corrida (menor error de entrenamiento), por ser la que en la práctica se utilizaría para desplegar la red. 
 
-Una neurona oculta se clasifica en cuatro estados según reciba (\emph{entrada activa}) o envíe (\emph{salida activa}) al menos una sinapsis distinta de cero: \emph{viva}, si tiene ambas y por lo tanto participa de un camino completo entre la entrada y la salida de la red; \emph{muerta}, si no tiene ninguna; \emph{sumidero}, si tiene entrada activa pero ninguna salida; y \emph{fuente}, si tiene salida activa pero ninguna entrada. Una \emph{clase de salida está desconectada} cuando la neurona de salida correspondiente no recibe ninguna conexión activa desde la capa oculta, de modo que, bajo la decisión ganador-toma-todo entre las dos salidas, la red nunca puede predecir esa clase sin importar la entrada que reciba.
+% No se reporta la fracción de neuronas ocultas muertas: dado que ambos algoritmos optimizan explícitamente la dispersión, tener una gran mayoría de neuronas sin ninguna conexión activa es la operación esperada del método y no un indicador de falla por sí solo.
 
-A partir de esa clasificación se define una \emph{conexión inútil} como toda sinapsis activa que no puede formar parte de ningún camino completo entre la entrada y la salida: las que llegan a una neurona sumidero (entrada activa que muere en la capa oculta sin seguir hacia la salida) y las que salen de una neurona fuente (salida activa que no depende de ninguna entrada real). El indicador reportado es el porcentaje que estas sinapsis representan sobre el total de sinapsis activas de la solución.
+Una neurona oculta se clasificó en cuatro estados según reciba o envíe al menos una sinapsis distinta de cero: \emph{viva}, si tiene ambas y por lo tanto participa de un camino completo entre la entrada y la salida de la red; \emph{muerta}, si no tiene ninguna; \emph{sumidero}, si tiene entrada activa pero ninguna salida; y \emph{fuente}, si tiene salida activa pero ninguna entrada. Una clase de salida está \emph{desconectada} cuando la neurona de salida correspondiente no recibe ninguna conexión activa desde la capa oculta, de modo que, bajo la decisión WTA entre las dos salidas, la red nunca puede predecir esa clase sin importar la entrada que reciba.
+
+A partir de esa clasificación se definió una \emph{conexión inútil} como toda sinapsis activa que no puede formar parte de ningún camino completo entre la entrada y la salida: las que llegan a una neurona sumidero (entrada activa que muere en la capa oculta sin seguir hacia la salida) y las que salen de una neurona fuente (salida activa que no depende de ninguna entrada real). Se reporta el porcentaje que estas sinapsis representan sobre el total de sinapsis activas.
 
 \subsection{Resultados por dataset y algoritmo}
 \label{sec:conectividad-resultados-combo}
@@ -1103,28 +1104,30 @@ La Tabla~\ref{tab:conectividad-combo} resume, para cada una de las ocho combinac
 \small
 \caption{Indicadores de conectividad de la solución de mejor exactitud de cada corrida, por combinación de dataset y algoritmo (31 corridas cada una).}
 \label{tab:conectividad-combo}
-\begin{tabular}{llccc}
+\begin{tabular}{clccc}
 \toprule
-Dataset & Algoritmo & Exactitud media (\%) & \% salida desconectada & \% conexiones inútiles \\
+\textbf{Dataset} & \textbf{Algoritmo} & \textbf{Exactitud media} (\%) & \% \textbf{salida desconectada} & \% \textbf{conexiones inútiles} \\
 \midrule
-ds1 Australian & MOEACKF & 86.0 & 0.0   & 33.3 \\
-ds1 Australian & SNSGAII & 86.9 & 0.0   & 29.7 \\
-ds2 Climate    & MOEACKF & 92.1 & 61.3  & 42.4 \\
-ds2 Climate    & SNSGAII & 92.1 & 100.0 & 0.0  \\
-ds3 German     & MOEACKF & 72.7 & 80.6  & 60.8 \\
-ds3 German     & SNSGAII & 74.2 & 0.0   & 47.7 \\
-ds4 Sonar      & MOEACKF & 81.2 & 0.0   & 61.4 \\
-ds4 Sonar      & SNSGAII & 76.0 & 6.5   & 53.2 \\
+1 & MOEA-CKF & 86.0 & 0.0   & 33.3 \\
+1 & S-NSGA-II & 86.9 & 0.0   & 29.7 \\
+2    & MOEA-CKF & 92.1 & 61.3  & 42.4 \\
+2    & S-NSGA-II & 92.1 & 100.0 & 0.0  \\
+3     & MOEA-CKF & 72.7 & 80.6  & 60.8 \\
+3     & S-NSGA-II & 74.2 & 0.0   & 47.7 \\
+4      & MOEA-CKF & 81.2 & 0.0   & 61.4 \\
+4      & S-NSGA-II & 76.0 & 6.5   & 53.2 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-El porcentaje de redes con salida desconectada es nulo o casi nulo en \texttt{ds1} y \texttt{ds4}, y sustancial en \texttt{ds2} y \texttt{ds3} (entre 61.3\% y 100\% de las corridas), con la misma clase afectada de forma sistemática dentro de cada dataset. El porcentaje de conexiones inútiles, en cambio, varía por dataset con menos relación con el porcentaje de salida desconectada: es más alto en \texttt{ds3} y \texttt{ds4} (47.7\%--61.4\%) y más bajo en \texttt{ds1} (29.7\%--33.3\%); la excepción es \texttt{ds2}$\times$SNSGAII, con 0\% de conexiones inútiles pese a tener el 100\% de sus redes con una salida desconectada, porque sus soluciones de mejor exactitud son extremadamente esparsas (densidad media de 0.32\% de las sinapsis totales) y prácticamente no dejan margen estructural para que aparezcan neuronas sumidero o fuente.
+El porcentaje de redes con salida desconectada es nulo o casi nulo en \texttt{ds1} y \texttt{ds4}, y sustancial en \texttt{ds2} y \texttt{ds3} (entre 61.3\% y 100\% de las corridas), con la misma clase afectada de forma sistemática dentro de cada dataset. El porcentaje de conexiones inútiles, en cambio, varía por dataset con menos relación con el porcentaje de salida desconectada: es más alto en \texttt{ds3} y \texttt{ds4} (47.7\%-61.4\%) y más bajo en \texttt{ds1} (29.7\%-33.3\%); la excepción es \texttt{ds2} en S-NSGA-II, con 0\% de conexiones inútiles pese a tener el 100\% de sus redes con una salida desconectada.
 
-\subsection{Resultados por algoritmo}
-\label{sec:conectividad-resultados-algo}
+% porque sus soluciones de mejor exactitud son extremadamente esparsas (densidad media de 0.32\% de las sinapsis totales) y prácticamente no dejan margen estructural para que aparezcan neuronas sumidero o fuente.
 
-La Tabla~\ref{tab:conectividad-algo} agrupa los cuatro datasets (124 corridas por algoritmo). MOEACKF exhibe una mayor proporción de redes con salida desconectada (35.5\% frente a 26.6\%) y una mayor proporción media de conexiones inútiles (49.5\% frente a 32.7\%) que SNSGAII, pese a una exactitud media prácticamente equivalente entre ambos (83.0\% y 82.3\%).
+% \subsection{Resultados por algoritmo}
+% \label{sec:conectividad-resultados-algo}
+
+La Tabla~\ref{tab:conectividad-algo} agrupa los cuatro datasets por algoritmo. MOEA-CKF exhibe una mayor proporción de redes con salida desconectada (35.5\% frente a 26.6\%) y una mayor proporción media de conexiones inútiles (49.5\% frente a 32.7\%) que S-NSGA-II, pese a una exactitud media prácticamente equivalente entre ambos (83.0\% y 82.3\%).
 
 \begin{table}[htbp]
 \centering
@@ -1133,22 +1136,85 @@ La Tabla~\ref{tab:conectividad-algo} agrupa los cuatro datasets (124 corridas po
 \label{tab:conectividad-algo}
 \begin{tabular}{lrrrr}
 \toprule
-Algoritmo & Corridas & Exactitud media (\%) & \% salida desconectada & \% conexiones inútiles \\
+\textbf{Algoritmo} & \textbf{Corridas} & \textbf{Exactitud media} (\%) & \% \textbf{salida desconectada} & \% \textbf{conexiones inútiles} \\
 \midrule
-MOEACKF & 124 & 83.0 & 35.5 & 49.5 \\
-SNSGAII & 124 & 82.3 & 26.6 & 32.7 \\
+MOEA-CKF & 124 & 83.0 & 35.5 & 49.5 \\
+S-NSGA-II & 124 & 82.3 & 26.6 & 32.7 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{Ejemplo ilustrativo}
-\label{sec:conectividad-ejemplo}
 
-La Figura~\ref{fig:conectividad-ejemplo} corresponde a ds2 (Climate) $\times$ MOEACKF, corrida 0, la solución de mejor exactitud de su frente (91.9\%), con solo 10 de las 840 sinapsis de la red activas. De las 40 neuronas ocultas, 2 están vivas y alimentan exclusivamente a la clase 1, y 2 son sumidero: reciben una conexión real de entrada cada una pero no la propagan hacia ninguna salida, es decir, sus 3 sinapsis de entrada son conexiones inútiles (30\% de las 10 sinapsis activas de la solución). La clase 0 tiene grado de entrada nulo: esta red —la más precisa de toda la corrida— nunca puede predecir la clase 0, sin importar la entrada que reciba.
+La Figura~\ref{fig:conectividad-ejemplo} muestra, para cada una de las ocho combinaciones de dataset y algoritmo, la solución de mejor exactitud de una corrida representativa. En cada panel, los círculos azules son neuronas de entrada, los círculos de la columna central son las neuronas ocultas: verde si están \emph{vivas}, gris si están \emph{muertas} (sin ninguna conexión activa), naranjo si son \emph{sumidero} y amarillo si son \emph{fuente}. Las estrellas rojas son las neuronas de salida (clase 0 y clase 1). Las líneas naranjas resaltan las conexiones \emph{inútiles}: las que llegan a una neurona sumidero o salen de una neurona fuente.
+
+El panel de ds2-MOEA-CKF (Figura~\ref{fig:conectividad-ds2-ckf}, corrida 0) corresponde al caso ya introducido en la Sección~\ref{sec:conectividad}: la solución de mejor exactitud de su frente deja una clase de salida sin ninguna conexión de entrada, y las pocas neuronas que sí reciben una entrada real terminan en un sumidero en lugar de propagarse hacia la salida, de modo que esa entrada nunca llega a influir en la predicción.
+
+Los siete paneles restantes ilustran fenómenos parecidos. La desconexión de una clase de salida aparece tanto en redes casi vacías (ds3-MOEA-CKF, Figura~\ref{fig:conectividad-ds3-ckf}) como en redes mínimas donde, pese a no tener ninguna conexión inútil, la única neurona activa alimenta exclusivamente a la otra clase (ds2-S-NSGA-II, Figura~\ref{fig:conectividad-ds2-nsga}). Un segundo patrón, sin desconexión de clases pero con una fracción relevante de conexiones inútiles concentradas en neuronas sumidero, se observa en ambos algoritmos sobre ds1 (Figuras~\ref{fig:conectividad-ds1-ckf} y~\ref{fig:conectividad-ds1-nsga}) y en ds3-S-NSGA-II (Figura~\ref{fig:conectividad-ds3-nsga}). Finalmente, en ds4 (Sonar, Figuras~\ref{fig:conectividad-ds4-ckf} y~\ref{fig:conectividad-ds4-nsga}), el dataset de mayor dimensionalidad, ambos algoritmos activan más sinapsis en términos absolutos, pero la mayoría de las neuronas ocultas activas son sumidero, de modo que buena parte de esa mayor actividad tampoco alcanza la salida.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.75\textwidth]{images/example_best_acc_useless.png}
-\caption{Solución de mejor exactitud de ds2$\times$MOEACKF, corrida 0. De las 40 neuronas ocultas, 2 están vivas (verde) y alimentan solo a la clase 1, y 2 son sumidero (naranjo): reciben entrada real pero no llegan a ninguna salida. La clase 0 no recibe ninguna conexión.}
+
+% Fila 1
+\begin{subfigure}[b]{0.23\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/conectividad_ds1_moeackf.png}
+    \caption{ds1-MOEA-CKF (corrida 5).}
+    \label{fig:conectividad-ds1-ckf}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.23\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/conectividad_ds1_snsgaii.png}
+    \caption{ds1-S-NSGA-II (corrida 7).}
+    \label{fig:conectividad-ds1-nsga}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.23\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/conectividad_ds2_moeackf.png}
+    \caption{ds2-MOEA-CKF (corrida 0).}
+    \label{fig:conectividad-ds2-ckf}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.23\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/conectividad_ds2_snsgaii.png}
+    \caption{ds2-S-NSGA-II (corrida 22).}
+    \label{fig:conectividad-ds2-nsga}
+\end{subfigure}
+
+\par\vspace{0.4cm}
+
+% Fila 2
+\begin{subfigure}[b]{0.23\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/conectividad_ds3_moeackf.png}
+    \caption{ds3-MOEA-CKF (corrida 9).}
+    \label{fig:conectividad-ds3-ckf}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.23\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/conectividad_ds3_snsgaii.png}
+    \caption{ds3-S-NSGA-II (corrida 8).}
+    \label{fig:conectividad-ds3-nsga}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.23\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/conectividad_ds4_moeackf.png}
+    \caption{ds4-MOEA-CKF (corrida 26).}
+    \label{fig:conectividad-ds4-ckf}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.23\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/conectividad_ds4_snsgaii.png}
+    \caption{ds4-S-NSGA-II (corrida 8).}
+    \label{fig:conectividad-ds4-nsga}
+\end{subfigure}
+
+\caption{Solución de mejor exactitud de una corrida representativa por cada combinación de dataset y algoritmo. Neuronas ocultas: vivas (verde), muertas (gris), sumidero (naranjo) y fuente (amarillo); estrellas rojas: neuronas de salida. Las líneas naranjas marcan conexiones inútiles (hacia un sumidero o desde una fuente).}
 \label{fig:conectividad-ejemplo}
+
 \end{figure}

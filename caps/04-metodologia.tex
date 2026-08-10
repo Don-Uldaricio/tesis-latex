@@ -61,7 +61,7 @@ La decisión de estudiar estos dos algoritmos se fundamentó en que, aunque la t
 % Bajo este diseño, la comparación final se realizó manteniendo condiciones experimentales equivalentes para ambos algoritmos en el simulador de SNN, de modo que las diferencias observadas puedan atribuirse al comportamiento de cada algoritmo y a su interacción con la arquitectura neuronal implementada. La información obtenida en PlatEMO cumplió un rol de referencia para la definición de datasets, tareas y parámetros iniciales, pero la validación principal de la tesis se concentró en los experimentos de entrenamiento ejecutados sobre el simulador de SNN.
 
 
-%% -------------------------------------------
+%% ----------------------
 
 \section{Datos y preparación experimental}
 La presente investigación utilizó un conjunto de datos de clasificación previamente disponibles en el entorno experimental adoptado con el propósito de asegurar consistencia metodológica. En particular, la selección de los datasets se realizó considerando su pertinencia para el problema de entrenamiento de SNN, así como su disponibilidad en un formato ya integrado al ecosistema PlatEMO.
@@ -90,7 +90,7 @@ La selección de los datasets respondió a criterios principalmente metodológic
 
 La selección tuvo como objetivo definir un conjunto acotado y reproducible para el análisis comparativo de la propuesta. En consecuencia, los datasets fueron elegidos por su adecuación al problema de entrenamiento de SNN, por su consistencia con antecedentes experimentales reportados en la literatura y por su disponibilidad inmediata en el entorno de trabajo adoptado.
 
-%-------------------------------
+%----------------
 
 \section{Metodología de selección del framework de simulación SNN}
 \label{sec:benchmark-framework-metodologia}
@@ -191,7 +191,7 @@ El framework de simulación se seleccionó considerando: (i) tiempo de evaluaci�
 % Las principales amenazas a la validez del benchmark incluyen: la tendencia intra-configuración en los tiempos de NEST y la acumulación de memoria entre evaluaciones sucesivas en un mismo proceso y la ausencia de verificación de equivalencia funcional entre frameworks, la realización de mediciones en una única plataforma y sesión.
 
 
-%-----------
+%------
 
 
 \section{Diseño del problema experimental Sparse SNN}
@@ -248,7 +248,7 @@ La capa de entrada contiene $n_{\text{Features}}$ neuronas, una por cada caracte
 Todas las neuronas ocultas y de salida se implementan conceptualmente mediante el modelo de Izhikevich en configuración \textit{regular spiking}. Este modelo permite representar dinámicas temporales ricas utilizando un número reducido de parámetros. Además, se consideran exclusivamente sinapsis excitatorias, con pesos iniciales iguales a cero, sin plasticidad sináptica durante la simulación y con normalización previa de las variables de entrada.
 
 
-%--------------------------------
+%----------------
 
 % \section{Problema experimental Sparse SNN}
 % El problema experimental SparseSNN fue definido con el propósito de aplicar algoritmos de optimización multiobjetivo esparsos a las SNN. Su objetivo es encontrar configuraciones de red que logren, de manera simultánea, un buen desempeño de clasificación y una baja complejidad estructural.
@@ -317,10 +317,10 @@ Todas las neuronas ocultas y de salida se implementan conceptualmente mediante e
 
 % Como restricción adicional del proceso experimental, todas las variables de entrada se normalizan previamente al intervalo $[0,1]$ mediante escalamiento min-max, requisito especialmente relevante para el correcto funcionamiento del codificador Poisson. Las etiquetas de clase, por su parte, se recodifican a índices enteros con base cero. La partición de los datos se realiza en entrenamiento y prueba, utilizando el conjunto de entrenamiento durante la optimización y reservando el conjunto de prueba exclusivamente para la evaluación final del desempeño.
 
-% %------------------------------------------
+% %---------------------
 
 
-%------------------------------------------
+%---------------------
 
 % \section{Configuración de la red SNN}
 
@@ -428,9 +428,9 @@ El valor retornado al optimizador externo correspondió al promedio del hipervol
 % \paragraph{Presupuesto computacional y equidad}
 La comparación se definió en términos de evaluaciones de función (Function Evaluations, FE), donde cada FE corresponde a la evaluación completa de una solución candidata mediante la simulación de su red \cite{MOEA/CKF, 10066873_S-NSGA-II}. Este criterio se utilizó en lugar del número de generaciones, ya que ambos algoritmos consumen las evaluaciones de forma distinta.
 
-Para cada combinación algoritmo--dataset se asignó el mismo valor de \texttt{maxFE}. El presupuesto se seleccionó para superar la fase de análisis previo de MOEA-CKF y permitir posteriormente su evolución durante aproximadamente 30 generaciones. De este modo, ambos algoritmos dispusieron del mismo presupuesto efectivo de evaluación.
+Para cada combinación algoritmo-dataset se asignó el mismo valor de \texttt{maxFE}. El presupuesto se seleccionó para superar la fase de análisis previo de MOEA-CKF y permitir posteriormente su evolución durante aproximadamente 30 generaciones. De este modo, ambos algoritmos dispusieron del mismo presupuesto efectivo de evaluación.
 
-%-----------------------------
+%---------------
 
 % \section{Metodología de comparación entre algoritmos}\label{sec:metodologia-comparacion}
 
@@ -442,7 +442,7 @@ Para cada combinación algoritmo--dataset se asignó el mismo valor de \texttt{m
 
 % \begin{enumerate}
 %     \item \textbf{Presupuesto de evaluaciones igualado por dataset.} Para cada dataset, ambos algoritmos comparten el mismo presupuesto máximo de evaluaciones. Este presupuesto se ajusta según lo recomendado en la literatura ambos algoritmos estudiados \cite{MOEA/CKF, 10066873_S-NSGA-II}, siempre con el mismo valor para ambos por cada dataset.
-%     \item \textbf{Hiperparámetros fijos por combinación algoritmo--dataset.} Los hiperparámetros de los operadores y comportamiento sináptico provienen de la búsqueda Bayesiana especificada en \ref{sec:metodologia_busqueda_hiper}.
+%     \item \textbf{Hiperparámetros fijos por combinación algoritmo-dataset.} Los hiperparámetros de los operadores y comportamiento sináptico provienen de la búsqueda Bayesiana especificada en \ref{sec:metodologia_busqueda_hiper}.
 % \end{enumerate}
 
 % Los resultados se organizaron en cuatro conjuntos experimentales. Los conjuntos de \textit{referencia} y \textit{con remuestreo} incluyeron 31 corridas por combinación, pareadas por semilla. Ambos registraron HV, frentes de Pareto y convergencia; se diferenciaron únicamente en que el segundo calculó el fitness mediante remuestreo. Por tanto, sus resultados permiten comparaciones pareadas.
@@ -451,7 +451,7 @@ Para cada combinación algoritmo--dataset se asignó el mismo valor de \texttt{m
 
 % Finalmente, el conjunto de \textit{rendimiento temporal} consideró 15 corridas por combinación, pareadas por semilla, y midió exclusivamente el tiempo de cómputo bajo hardware e hiperparámetros compartidos. En este caso, el HV no se interpreta como indicador de calidad, pues los hiperparámetros no fueron ajustados para maximizar el desempeño de optimización.
 
-% El análisis consideró seis enfoques de comparación, resumidos en la Tabla~\ref{tab:angulos-comparacion}. Los enfoques 1--3 comparan MOEA-CKF y S-NSGA-II en el estudio SNN base; los enfoques 4--6 comparan cada algoritmo bajo distintas condiciones de plataforma, evaluación y medición temporal. La corrección por comparaciones múltiples se aplica posteriormente sobre los p-valores agrupados en familias temáticas.
+% El análisis consideró seis enfoques de comparación, resumidos en la Tabla~\ref{tab:angulos-comparacion}. Los enfoques 1-3 comparan MOEA-CKF y S-NSGA-II en el estudio SNN base; los enfoques 4-6 comparan cada algoritmo bajo distintas condiciones de plataforma, evaluación y medición temporal. La corrección por comparaciones múltiples se aplica posteriormente sobre los p-valores agrupados en familias temáticas.
 
 % \begin{table}[hbtp]
 %     \centering
@@ -490,7 +490,7 @@ Para cada combinación algoritmo--dataset se asignó el mismo valor de \texttt{m
 
 % El indicador principal de calidad de los frentes es el hipervolumen (HV) el cual se computa normalizando contra el punto de referencia \((1,1)\), independiente del algoritmo, de la corrida y del dataset, de modo que las comparaciones entre algoritmos, entre datasets y entre plataformas SNN/ANN fueron directas.
 
-% Para cada combinación algoritmo--dataset se reportó la mediana y el rango intercuartílico (IQR) del HV, junto con el rango observado y el p-valor de la prueba de Wilcoxon aplicando diseño pareado por semilla.
+% Para cada combinación algoritmo-dataset se reportó la mediana y el rango intercuartílico (IQR) del HV, junto con el rango observado y el p-valor de la prueba de Wilcoxon aplicando diseño pareado por semilla.
 
 % \paragraph{Frentes de Pareto}
 
@@ -504,12 +504,12 @@ Para cada combinación algoritmo--dataset se asignó el mismo valor de \texttt{m
 
 % \paragraph{Convergencia}
 
-% Dado que ambos algoritmos consumen FE en distintas cantidades por generación, por lo que se aproximó el número de evaluaciones asumiendo consumo aproximadamente constante de FE por generación dentro de cada corrida. Con esta aproximación se construyeron curvas de convergencia de HV mediano con bandas P10--P90 versus \texttt{fe\_approx}, indicadores de velocidad de convergencia a partir del \texttt{fe\_approx} necesario para alcanzar por primera vez el \(95\%\) del HV final de cada corrida.
+% Dado que ambos algoritmos consumen FE en distintas cantidades por generación, por lo que se aproximó el número de evaluaciones asumiendo consumo aproximadamente constante de FE por generación dentro de cada corrida. Con esta aproximación se construyeron curvas de convergencia de HV mediano con bandas P10-P90 versus \texttt{fe\_approx}, indicadores de velocidad de convergencia a partir del \texttt{fe\_approx} necesario para alcanzar por primera vez el \(95\%\) del HV final de cada corrida.
 
 % \paragraph{Plataforma SNN vs. ANN}
 
 % Dado que los resultados de ANN traen por corrida la exactitud de
-% la mejor red, su complejidad y el HV del frente completo, la comparación se realizó \emph{por algoritmo} para aislar el efecto de la plataforma como único factor distinto entre las muestras. En este caso no existe pareo estadísticamente significativo entre corridas MATLAB y C++, por lo que se empleó la prueba de Mann--Whitney U sobre muestras independientes.
+% la mejor red, su complejidad y el HV del frente completo, la comparación se realizó \emph{por algoritmo} para aislar el efecto de la plataforma como único factor distinto entre las muestras. En este caso no existe pareo estadísticamente significativo entre corridas MATLAB y C++, por lo que se empleó la prueba de Mann-Whitney U sobre muestras independientes.
 
 % \paragraph{Evaluación remuestreo vs. referencia}
 
@@ -524,16 +524,16 @@ Para cada combinación algoritmo--dataset se asignó el mismo valor de \texttt{m
 % Se optó por utilizar pruebas no paramétricas como criterio principal, manteniendo la coherencia con las pruebas estadísticas empleadas en los estudios originales de ambos algoritmos evolutivos. De esta forma, cada enfoque de comparación utiliza el mismo tipo de test que en su publicación de referencia, adaptado al diseño pareado o no pareado descrito en la Tabla~\ref{tab:angulos-comparacion}.
 
 % \begin{itemize}
-%     \item \textbf{Tamaño del efecto.} Junto al p-valor se reportó sistemáticamente el tamaño de efecto \(\hat{A}_{12}\) de Vargha--Delaney, interpretado sobre \(|\hat{A}_{12} - 0.5|\) según los umbrales habituales: diferencias insignificantes (<0.06), pequeñas (0.06--0.14), medianas (0.14--0.21) o grandes (\(\geq\)0.21).
+%     \item \textbf{Tamaño del efecto.} Junto al p-valor se reportó sistemáticamente el tamaño de efecto \(\hat{A}_{12}\) de Vargha-Delaney, interpretado sobre \(|\hat{A}_{12} - 0.5|\) según los umbrales habituales: diferencias insignificantes (<0.06), pequeñas (0.06-0.14), medianas (0.14-0.21) o grandes (\(\geq\)0.21).
 %     \item \textbf{C-metric.} La métrica de cobertura \(C(A,B)\) se utilizó únicamente como indicador descriptivo al comparar frentes combinados, sin asociarle p-valores ni contrastes de hipótesis formales.
 % \end{itemize}
 
-% La corrección por comparaciones múltiples se realizó mediante el procedimiento Holm--Bonferroni, aplicado dentro de cada familia de tests relacionados, para controlar la tasa de error familiar manteniendo mayor potencia que el ajuste Bonferroni clásico.
+% La corrección por comparaciones múltiples se realizó mediante el procedimiento Holm-Bonferroni, aplicado dentro de cada familia de tests relacionados, para controlar la tasa de error familiar manteniendo mayor potencia que el ajuste Bonferroni clásico.
 
 
 
 
-%--------------------------
+%-------------
 
 \section{Metodología de comparación entre algoritmos}\label{sec:metodologia-comparacion}
 
@@ -545,26 +545,26 @@ Ambos algoritmos se ejecutaron sobre el mismo problema de entrenamiento de SNN. 
 
 \begin{enumerate}
     \item \textbf{Presupuesto de evaluaciones igualado por dataset.} Para cada dataset, ambos algoritmos comparten el mismo presupuesto máximo de evaluaciones. Este presupuesto se ajusta según lo recomendado en la literatura ambos algoritmos estudiados \cite{MOEA/CKF, 10066873_S-NSGA-II}, siempre con el mismo valor para ambos por cada dataset.
-    \item \textbf{Hiperparámetros fijos por combinación algoritmo--dataset.} Los hiperparámetros de los operadores genéticos y comportamiento sináptico provienen de la búsqueda Bayesiana especificada en \ref{sec:metodologia_busqueda_hiper}.
+    \item \textbf{Hiperparámetros fijos por combinación algoritmo-dataset.} Los hiperparámetros de los operadores genéticos y comportamiento sináptico provienen de la búsqueda Bayesiana especificada en la Sección \ref{sec:metodologia_busqueda_hiper}.
 \end{enumerate}
 
-Los resultados se organizaron en cuatro conjuntos experimentales. Los conjuntos de \textit{referencia} y \textit{con remuestreo} incluyeron 31 corridas por combinación, pareadas por semilla. Ambos registraron HV, frentes de Pareto y convergencia; se diferenciaron únicamente en que el segundo calculó el fitness mediante remuestreo. Por tanto, sus resultados permiten comparaciones pareadas.
+Los resultados se organizaron en cuatro conjuntos experimentales. Los conjuntos de \textit{referencia} y \textit{con remuestreo} incluyeron 31 corridas por combinación, pareadas por semilla. Ambos registraron HV, frentes de Pareto y convergencia; se diferenciaron únicamente en que el segundo calculó el fitness mediante remuestreo, lo que permitió comparaciones pareadas.
 
 El conjunto experimental de \textit{ANN} incluyó igualmente 31 corridas por combinación y registró HV, complejidad y exactitud de la mejor red en la implementación ANN de PlatEMO/MATLAB. Como sus semillas y generador aleatorio no son equivalentes a los de la implementación C++, esta comparación no fue pareada.
 
 Finalmente, el conjunto experimental de \textit{rendimiento temporal} consideró 15 corridas por combinación, pareadas por semilla, y midió exclusivamente el tiempo de cómputo bajo hardware e hiperparámetros compartidos. En este caso, el HV no se interpretó como indicador de calidad, pues los hiperparámetros no fueron ajustados para maximizar el desempeño de optimización.
 
-El análisis se organizó en tres estudios y seis enfoques de comparación, resumidos en la Tabla~\ref{tab:angulos-comparacion}. El primer estudio, el principal, compara MOEA-CKF y S-NSGA-II, ambos ejecutados en SNN, teniendo en cuentra tres enfoques: HV, frentes de Pareto y convergencia, todos sobre el conjunto experimental de referencia. El segundo estudio comparó cada algoritmo entre la plataforma SNN y la implementación ANN original (PlatEMO). Por último, los \textit{otros experimentos} evaluaron el efecto del remuestreo y el tiempo de cómputo, este último bajo hiperparámetros compartidos y condiciones de hardware equitativas entre algoritmos.
+El análisis se organizó en tres indicadores cada uno con sus indicadores, los que se encuentran resumidos en la Tabla~\ref{tab:angulos-comparacion}. El primer enfoque, el principal, compara MOEA-CKF y S-NSGA-II, ambos ejecutados en SNN, teniendo en cuentra tres enfoques: HV, frentes de Pareto y convergencia, todos sobre el conjunto experimental de referencia. El segundo enfoque comparó cada algoritmo entre la plataforma SNN y la implementación ANN original (PlatEMO). Por último, los \textit{otros experimentos} evaluaron el efecto del remuestreo y el tiempo de cómputo, este último bajo hiperparámetros compartidos y condiciones de hardware equitativas entre algoritmos.
 
 \begin{table}[htbp]
 \centering
     \small
-    \caption{Estudios y enfoques de comparación, pregunta asociada y fuente de datos utilizada.}
+    \caption{Enfoques e indicadores de comparación, pregunta asociada y fuente de datos utilizada.}
     \label{tab:angulos-comparacion}
 \begin{tabular}{lp{2.1cm}p{5cm}p{4.2cm}}
 \hline
-\textbf{Estudio}   & \textbf{Enfoque}&\textbf{Pregunta}& \textbf{Fuente}  \\ \hline
-\multirow{3}{*}{SNN vs. SNN}        & HV principal      & ¿Qué algoritmo tiene mejor frente de Pareto (SNN)?                         & \multirow{3}{*}{Conjunto de referencia}\\
+\textbf{Enfoque}   & \textbf{Indicador}&\textbf{Pregunta}& \textbf{Fuente}  \\ \hline
+\multirow{3}{*}{SNN vs. SNN}        & Hipervolumen      & ¿Qué algoritmo tiene mejor frente de Pareto (SNN)?                         & \multirow{3}{*}{Conjunto de referencia}\\
 & Frentes de Pareto & ¿Cómo se reparten complejidad y error en las soluciones de cada algoritmo? &\\
 & Convergencia      & ¿Qué tan rápido converge cada algoritmo con el mismo presupuesto de FE?    &\\ \hline
 SNN vs. ANN                         & Plataforma        & ¿HV/complejidad mejor en SNN (C++) o en ANN (MATLAB original)?             & Conjunto experimental de referencia vs. Conjunto experimental ANN            \\ \hline
@@ -573,17 +573,17 @@ SNN vs. ANN                         & Plataforma        & ¿HV/complejidad mejor
 \end{tabular}
 \end{table}
 
-\subsection{Estudio 1: Comparación de algoritmos en SNN (C++)}\label{sec:metodologia-estudio1}
+\subsection{Comparación de algoritmos en SNN (C++)}\label{sec:metodologia-estudio1}
 
-El estudio principal compara MOEA-CKF y S-NSGA-II, ambos ejecutados en SNN (C++) sobre el conjunto experimental de referencia, mediante tres experimentos complementarios: HV, frentes de Pareto y convergencia.
+Este enfoque principal compara MOEA-CKF y S-NSGA-II, ambos ejecutados en SNN (C++) sobre el conjunto experimental de referencia, mediante tres experimentos complementarios: HV, frentes de Pareto y convergencia.
 
 \paragraph{Hipervolumen}
 
-Es el indicador principal de calidad de los frentes el cual se computó normalizando contra el punto de referencia \((1,1)\), independiente del algoritmo, de la corrida y del dataset, de modo que las comparaciones entre algoritmos, entre datasets y entre plataformas fueron directas. Para cada combinación algoritmo--dataset se reportó la mediana y el rango intercuartílico (IQR) del HV, junto con el rango observado y el p-valor de la prueba de Wilcoxon aplicando diseño pareado por semilla.
+Es el indicador principal de calidad de los frentes el cual se computó normalizando contra el punto de referencia \((1,1)\), independiente del algoritmo, de la corrida y del dataset, de modo que las comparaciones entre algoritmos, entre datasets y entre plataformas fueron directas. Para cada combinación algoritmo-dataset se reportó la mediana y el rango intercuartílico (IQR) del HV, junto con el rango observado y el p-valor de la prueba de Wilcoxon aplicando diseño pareado por semilla.
 
 \paragraph{Frentes de Pareto}
 
-El HV resume el frente de Pareto en un escalar, pero no describe de qué está hecha la diferencia entre algoritmos. Por ello se complementó el análisis con tres técnicas basadas en los archivos resultados obtenidos de los frentes de Pareto para cada corrida:
+Dado que HV resume el frente de Pareto en un escalar, pero no describe de qué está hecha la diferencia entre algoritmos, se complementó el análisis con dos técnicas basadas en los resultados obtenidos de los frentes de Pareto para cada corrida:
 
 \begin{enumerate}
     \item \textbf{Solución de mejor exactitud por corrida.} En cada frente se seleccionó la solución con mejor exactitud, generando una muestra pareada por error de entrenamiento, complejidad y tamaño del frente.
@@ -593,17 +593,17 @@ El HV resume el frente de Pareto en un escalar, pero no describe de qué está h
 
 \paragraph{Convergencia}
 
-Dado que ambos algoritmos consumen FE en distintas cantidades por generación, por lo que se aproximó el número de evaluaciones asumiendo consumo aproximadamente constante de FE por generación dentro de cada corrida. Con esta aproximación se construyeron curvas de convergencia de HV mediano con bandas P10--P90 versus \texttt{fe\_approx}, indicadores de velocidad de convergencia a partir del \texttt{fe\_approx} necesario para alcanzar por primera vez el \(95\%\) del HV final de cada corrida.
+Dado que ambos algoritmos consumen FE en distintas cantidades por generación, por lo que se aproximó el número de evaluaciones asumiendo consumo aproximadamente constante de FE por generación dentro de cada corrida. Con esta aproximación se construyeron curvas de convergencia de HV mediano con bandas P10-P90 versus \texttt{fe\_approx}, indicadores de velocidad de convergencia a partir del \texttt{fe\_approx} necesario para alcanzar por primera vez el \(95\%\) del HV final de cada corrida.
 
-\subsection{Estudio 2: Plataforma SNN (C++) vs.\ ANN (MATLAB)}\label{sec:metodologia-estudio2}
+\subsection{Plataforma SNN (C++) vs.\ ANN (MATLAB)}\label{sec:metodologia-estudio2}
 
-El segundo estudio comparó el rendimiento de cada algoritmo entre su implementación SNN (C++) y la implementación ANN original de PlatEMO/MATLAB. Dado que los resultados de ANN traen por corrida la exactitud de la mejor red, su complejidad y el HV del frente completo, la comparación se realizó \emph{por algoritmo} para aislar el efecto de la plataforma como único factor distinto entre las muestras. En este caso no existe pareo estadísticamente significativo entre corridas MATLAB y C++, por lo que se empleó la prueba de Mann--Whitney U sobre muestras independientes.
+El segundo enfoque comparó el rendimiento de cada algoritmo entre su implementación SNN (C++) y la implementación ANN original de PlatEMO/MATLAB. Dado que los resultados de ANN traen por corrida la exactitud de la mejor red, su complejidad y el HV del frente completo, la comparación se realizó \emph{por algoritmo} para aislar el efecto de la plataforma como único factor distinto entre las muestras. En este caso no existió pareo estadísticamente significativo entre corridas MATLAB y C++, por lo que se empleó la prueba de Mann-Whitney U sobre muestras independientes.
 
 \subsection{Otros experimentos}\label{sec:metodologia-otros}
 
-Además de los dos estudios anteriores, se realizaron experimentos adicionales que evalúan a cada algoritmo bajo condiciones específicas: el efecto del remuestreo sobre el HV, y el tiempo de cómputo bajo hiperparámetros compartidos y hardware equitativo.
+Además de los dos enfoques anteriores, se realizaron experimentos adicionales que evalúan a cada algoritmo bajo condiciones específicas: el efecto del remuestreo sobre el HV, y el tiempo de cómputo bajo hiperparámetros compartidos y hardware equitativo.
 
-\paragraph{Evaluación con remuestreo}
+\paragraph{Entrenamiento con remuestreo}
 
 El conjunto de \textit{remuestreo} usó los mismos hiperparámetros afinados que el conjunto de \textit{referencia}, pero usando remuestreo, calculando el fitness de cada individuo promediado sobre 10 remuestreos del 50\% del conjunto de entrenamiento por generación, en vez de una sola pasada completa. Esto para buscar una señal de fitness más robusta a generalización \cite{LoyolaJara2026evolvingsnn}. Dado el mismo conjunto de semillas, la comparación de HV se realizó mediante pruebas pareadas de Wilcoxon por algoritmo y dataset (ocho comparaciones en total).
 
@@ -616,8 +616,8 @@ Para comparar tiempo de cómputo se diseñó específicamente el conjunto de \te
 Se optó por utilizar pruebas no paramétricas como criterio principal, manteniendo la coherencia con las pruebas estadísticas empleadas en los estudios originales de ambos algoritmos evolutivos. De esta forma, cada enfoque de comparación utiliza el mismo tipo de test que en su publicación de referencia, adaptado al diseño pareado o no pareado descrito en la Tabla~\ref{tab:angulos-comparacion}.
 
 \begin{itemize}
-    \item \textbf{Tamaño del efecto.} Junto al p-valor se reportó sistemáticamente el tamaño de efecto \(\hat{A}_{12}\) de Vargha--Delaney, interpretado sobre \(|\hat{A}_{12} - 0.5|\) según los umbrales habituales: diferencias insignificantes (<0.06), pequeñas (0.06--0.14), medianas (0.14--0.21) o grandes (\(\geq\)0.21).
+    \item \textbf{Tamaño del efecto.} Junto al p-valor se reportó sistemáticamente el tamaño de efecto \(\hat{A}_{12}\) de Vargha-Delaney \cite{Vargha1998}, interpretado sobre \(|\hat{A}_{12} - 0.5|\) según los umbrales de la literatura: diferencias insignificantes (<0.06), pequeñas (0.06-0.14), medianas (0.14-0.21) o grandes (\(\geq\)0.21).
     \item \textbf{C-metric.} La métrica de cobertura \(C(A,B)\) se utilizó únicamente como indicador descriptivo al comparar frentes combinados, sin asociarle p-valores ni contrastes de hipótesis formales.
 \end{itemize}
 
-La corrección por comparaciones múltiples se realizó mediante el procedimiento Holm--Bonferroni, aplicado dentro de cada familia de tests relacionados, para controlar la tasa de error familiar manteniendo mayor potencia que el ajuste Bonferroni clásico.
+La corrección por comparaciones múltiples se realizó mediante el procedimiento Holm-Bonferroni, aplicado dentro de cada familia de tests relacionados, para controlar la tasa de error familiar manteniendo mayor potencia que el ajuste Bonferroni clásico.
