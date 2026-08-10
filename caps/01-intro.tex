@@ -41,7 +41,7 @@ Estos criterios permiten realizar una comparación adecuada para posteriormente 
 
 \textbf{Plasticidad dependiente del tiempo de disparo (STDP):} es una regla de aprendizaje local que modifica los pesos sinápticos según la relación temporal entre los disparos neuronales. Aunque es eficiente en hardware neuromórfico, su rendimiento en tareas de clasificación es inferior a las técnicas supervisadas modernas \cite{Liu2021SSTDP, Schuman2022Opportunities}. \\
 
-En la Tabla \ref{tab:enfoques-comp} del Anexo A se presenta una comparación entre los cinco enfoques, considerando los criterios antes mencionados.
+En la Tabla \ref{tab:enfoques-comp} del Anexo se presenta una comparación entre los cinco enfoques, considerando los criterios antes mencionados.
 
 \subsection{Justificación del enfoque seleccionado}
 Considerando los enfoques anteriores, se propone usar un enfoque evolutivo, implementando específicamente una variante de neuroevolución mediante optimización dispersa multiobjetivo a gran escala. La elección se justifica por las siguientes razones críticas para el proyecto:
@@ -79,9 +79,9 @@ Los alcances del proyecto se centrarán en:
 
 \section{Metodologías y herramientas utilizadas}
 
-Esta investigación se desarrolló siguiendo el método científico: a partir de la revisión bibliográfica se definió el problema de optimización de SNN esparsas, se implementó una propuesta experimental y se evaluó mediante experimentos reproducibles. La metodología consideró, de forma resumida, la selección de algoritmos evolutivos multiobjetivo, el diseño e implementación de una plataforma integrada para simular y optimizar SNN, el ajuste sistemático de hiperparámetros y la evaluación de los resultados en tareas de clasificación. El análisis se centró en el compromiso entre el desempeño predictivo y la complejidad estructural de las redes obtenidas.
+Esta investigación se desarrolló siguiendo el método científico: a partir de la revisión bibliográfica se definió el problema de optimización de SNN esparsas, se implementó una propuesta experimental y se evaluó mediante experimentos reproducibles. La metodología consideró, de forma resumida, la selección de algoritmos evolutivos, el diseño e implementación de una plataforma integrada para simular y optimizar SNN, el ajuste sistemático de hiperparámetros y la evaluación de los resultados en tareas de clasificación. El análisis se centró en el compromiso entre el desempeño predictivo y la complejidad estructural de las redes obtenidas.
 
-La implementación se realizó principalmente en \textbf{C++}, integrando los algoritmos evolutivos y el simulador de SNN en un mismo entorno. Para el desarrollo y depuración se utilizaron IDEs compatibles con C++, tales como Visual Studio Code, Cursor o Antigravity, junto con herramientas de análisis estático y extensiones de apoyo. El control de versiones y la gestión del código se realizaron mediante \textbf{Git} y \textbf{GitHub}, mientras que la redacción y gestión bibliográfica se efectuaron mediante \textbf{Overleaf} y \LaTeX{}.
+La implementación se realizó principalmente en C++, integrando los algoritmos evolutivos y el simulador de SNN en un mismo entorno. Para el desarrollo se utilizó Visual Studio Code, junto con Claude Code y extensiones de apoyo. El control de versiones y la gestión del código se realizaron mediante Git y GitHub, mientras que la redacción y gestión bibliográfica se efectuaron mediante Overleaf y \LaTeX{}.
 
 Las etapas de desarrollo, pruebas preliminares y análisis de resultados se ejecutaron en equipos personales con sistema operativo Ubuntu 24.04. Los experimentos de mayor demanda computacional se realizaron en el clúster del proyecto Fondecyt 1251455 del Departamento de Ingeniería Informática de la USACH, equipado con procesadores multinúcleo, 768 GB de memoria RAM y Ubuntu Server 24.04.x LTS. La utilización de control de versiones, la documentación de las configuraciones y la ejecución sistemática de experimentos buscan favorecer la trazabilidad y reproducibilidad de los resultados.
 

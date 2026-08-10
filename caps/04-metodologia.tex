@@ -204,7 +204,7 @@ El segundo objetivo $f_2(x)$ corresponde al error de clasificación obtenido sob
 
 En general, ambos objetivos son conflictivos entre sí, por esta razón, el propósito de los algoritmos multiobjetivo no es obtener una única solución óptima, sino aproximar el frente de Pareto que recoge los mejores compromisos entre precisión y simplicidad.
 
-Cada individuo de la población se representa mediante un vector real $x = (w_0,w_1,\ldots,w_{D-1})$ de dimensión $D$, donde cada componente $w_i$ corresponde al peso asociado a una sinapsis específica de la red. Los valores se encuentran acotados en el intervalo $[0,1]$, de manera que $w_i = 0$ indica que la conexión está inactiva y $w_i > 0$ representa una sinapsis excitatoria activa, cuya intensidad es proporcional al valor del peso. Esta codificación incorpora implícitamente la esparsidad en el genotipo: un mayor número de valores exactamente nulos se traduce en una red con una menor cantidad de conexiones activas.
+Cada individuo de la población se representa mediante un vector real $$x = (w_0,w_1,\ldots,w_{D-1})$$ de dimensión $D$, donde cada componente $w_i$ corresponde al peso asociado a una sinapsis específica de la red. Los valores se encuentran acotados en el intervalo $[0,1]$, de manera que $w_i = 0$ indica que la conexión está inactiva y $w_i > 0$ representa una sinapsis excitatoria activa, cuya intensidad es proporcional al valor del peso. Esta codificación incorpora implícitamente la esparsidad en el genotipo: un mayor número de valores exactamente nulos se traduce en una red con una menor cantidad de conexiones activas.
 
 Adicionalmente, se considera un factor de escala global $w_{\text{scale}}$, aplicado antes de la simulación. Por tanto, el peso efectivo utilizado por el simulador se define como $w_i^{\ast} = w_i \cdot w_{\text{scale}}$. La dimensión $D$ del espacio de decisión está determinada por la topología de la SNN y por el número de conexiones entrenables. Dicha dimensión se definió como
 
@@ -573,7 +573,7 @@ SNN vs. ANN                         & Plataforma        & ¿HV/complejidad mejor
 \end{tabular}
 \end{table}
 
-\subsection{Comparación de algoritmos en SNN (C++)}\label{sec:metodologia-estudio1}
+\subsection{Comparación de algoritmos en SNN}\label{sec:metodologia-estudio1}
 
 Este enfoque principal compara MOEA-CKF y S-NSGA-II, ambos ejecutados en SNN (C++) sobre el conjunto experimental de referencia, mediante tres experimentos complementarios: HV, frentes de Pareto y convergencia.
 
@@ -595,7 +595,7 @@ Dado que HV resume el frente de Pareto en un escalar, pero no describe de qué e
 
 Dado que ambos algoritmos consumen FE en distintas cantidades por generación, por lo que se aproximó el número de evaluaciones asumiendo consumo aproximadamente constante de FE por generación dentro de cada corrida. Con esta aproximación se construyeron curvas de convergencia de HV mediano con bandas P10-P90 versus \texttt{fe\_approx}, indicadores de velocidad de convergencia a partir del \texttt{fe\_approx} necesario para alcanzar por primera vez el \(95\%\) del HV final de cada corrida.
 
-\subsection{Plataforma SNN (C++) vs.\ ANN (MATLAB)}\label{sec:metodologia-estudio2}
+\subsection{Plataforma SNN vs.\ ANN}\label{sec:metodologia-estudio2}
 
 El segundo enfoque comparó el rendimiento de cada algoritmo entre su implementación SNN (C++) y la implementación ANN original de PlatEMO/MATLAB. Dado que los resultados de ANN traen por corrida la exactitud de la mejor red, su complejidad y el HV del frente completo, la comparación se realizó \emph{por algoritmo} para aislar el efecto de la plataforma como único factor distinto entre las muestras. En este caso no existió pareo estadísticamente significativo entre corridas MATLAB y C++, por lo que se empleó la prueba de Mann-Whitney U sobre muestras independientes.
 

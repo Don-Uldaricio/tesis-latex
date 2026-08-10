@@ -1,3 +1,222 @@
-\chapter{Otra porquería}
+\chapter{Pseudocódigo algoritmos evolutivos}\label{chap:anexo-pseudo}
 
-\lipsum[46-60]
+\section{MOEA-CKF}\label{sec:pseudo-moeackf}
+ 
+\begin{algorithm}[H]
+\caption{Framework de MOEA/CKF}
+\KwIn{$N$ (tamaño de población), $D$ (número de variables), $M$ (número de objetivos), $T$ (número de ciclos de muestreo)}
+\KwOut{$P$ (población final)}
+$pv \leftarrow \text{AnálisisPrevio}(D,T)$ \tcp*{Algoritmo 2}
+$P \leftarrow \text{Inicialización}(N, pv)$\;
+$\rho \leftarrow 0.5$ \tcp*{probabilidad de que un individuo entre a $P_1$}
+\While{no se agoten las evaluaciones de función}{
+    $[GSI, LSI, pv, Group, \eta] \leftarrow \text{AnálisisDeEsparsidad}(P, pv)$ \tcp*{Algoritmo 3}
+    \tcp{Dividir la población}
+    $P_1 \leftarrow \emptyset$, $P_2 \leftarrow \emptyset$\;
+    \ForEach{$p \in P$}{
+        \eIf{$rand < \rho$}{
+            $P_1 \leftarrow P_1 \cup \{p\}$\;
+        }{
+            $P_2 \leftarrow P_2 \cup \{p\}$\;
+        }
+    }
+    \tcp{Generar descendencia}
+    $O_1 \leftarrow \text{Reproducción1}(P_1, Group, GSI, LSI, \eta)$ \tcp*{Algoritmo 4}
+    $O_2 \leftarrow \text{Reproducción2}(P_2, Group)$ \tcp*{Algoritmo 5}
+    $P \leftarrow P \cup O_1 \cup O_2$\;
+    Eliminar soluciones duplicadas de $P$\;
+    $P \leftarrow \text{SelecciónAmbiental}(P, N)$\;
+}
+\Return{$P$}
+\end{algorithm}
+ 
+\begin{algorithm}[H]
+\caption{AnálisisPrevio$(D, T)$}
+\KwIn{$D$ (número de variables de decisión), $T$ (número de ciclos de muestreo)}
+\KwOut{$P$ (población inicializada), $pv$ (vector de conocimiento previo)}
+$score \leftarrow$ vector de ceros $1\times D$\;
+$pv \leftarrow$ vector de ceros $1\times D$\;
+\For{$i = 1$ \KwTo $T$}{
+    $XR \leftarrow$ matriz aleatoria $D\times D$\;
+    $XB \leftarrow$ matriz identidad $D\times D$\;
+    $Q \leftarrow$ población cuya $i$-ésima solución se genera con las $i$-ésimas filas de $XR$ y $XB$ según (1)\;
+    $[F_1, F_2, \dots] \leftarrow$ ordenamiento no dominado sobre $Q$\;
+    \For{$i = 1$ \KwTo $D$}{
+        $score_i \leftarrow k$, tal que $Q_i \in F_k$ \tcp*{$Q_i$ denota la $i$-ésima solución de $Q$}
+    }
+    $pv = pv + score$\;
+}
+\Return{$pv$}
+\end{algorithm}
+ 
+\begin{algorithm}[H]
+\caption{AnálisisDeEsparsidad$(P, pv)$}
+\KwIn{$P$ (población actual), $pv$ (vector de conocimiento previo)}
+\KwOut{$GSI$ (información de esparsidad global), $LSI$ (información de esparsidad local), $Group$ (agrupamiento por clustering), $pv$ (vector de conocimiento previo actualizado), $\eta$ (proporción de soluciones no dominadas en la población actual)}
+$AllOne \leftarrow$ conjunto de variables que valen uno en el vector binario $\mathbf{xb}$ de todas las soluciones de $P$\;
+$AllZero \leftarrow$ conjunto de variables que valen cero en $\mathbf{xb}$ de todas las soluciones de $P$\;
+$GSI \leftarrow [AllOne, AllZero]$\;
+$R \leftarrow$ todas las soluciones no dominadas de $P$\;
+$allone \leftarrow$ conjunto de variables que valen uno en $\mathbf{xb}$ de todas las soluciones de $R$\;
+$allzero \leftarrow$ conjunto de variables que valen cero en $\mathbf{xb}$ de todas las soluciones de $R$\;
+$LSI \leftarrow [allone, allzero]$\;
+$sv \leftarrow$ vector de ceros $1\times D$\;
+$sv \leftarrow$ actualizar $sv$ según (3)\;
+$\delta \leftarrow$ proporción de evaluaciones consumidas\;
+$\eta \leftarrow |R|/|P|$\;
+$pv \leftarrow$ actualizar $pv$ según (4)\;
+\tcp{Particionar las variables de decisión en dos clusters}
+$[S_1, S_2] \leftarrow$ aplicar $k$-means sobre $pv$ para clasificar las variables de decisión en dos clusters\;
+\eIf{el valor medio de $pv$ en el cluster $S_1$ es menor que el de las variables en $S_2$}{
+    $NSV \leftarrow S_1$; $SV \leftarrow S_2$\;
+}{
+    $NSV \leftarrow S_2$; $SV \leftarrow S_1$\;
+}
+$Group \leftarrow \{NSV, SV\}$\;
+\Return{$(GSI, LSI, pv, Group, \eta)$}
+\end{algorithm}
+ 
+\begin{algorithm}[H]
+\caption{Reproducción1$(P, Group, GSI, LSI, \eta)$}
+\KwIn{$P$ (subpoblación), $Group$ (grupos de variables), $GSI$ (información de esparsidad global), $LSI$ (información de esparsidad local), $\eta$ (proporción de soluciones no dominadas en la población original)}
+\KwOut{$O$ (descendencia)}
+$PR \leftarrow$ matriz $|P|\times D$ con los vectores reales de todas las soluciones de $P$\;
+$[u_1, u_2, \dots, u_D] \leftarrow$ usar PCA sobre $PR$ para calcular sus autovectores según sus autovalores en orden descendente\;
+$[NSV, SV] \leftarrow Group$\;
+$[AllOne, AllZero] \leftarrow GSI$\;
+$NSV' \leftarrow$ eliminar de $NSV$ las dimensiones que están en $AllOne$ y $AllZero$\;
+$K \leftarrow |AllOne| + |NSV'|$\;
+$U_{reduce} \leftarrow [u_1, u_2, \dots, u_K]$ \tcp*{seleccionar componentes principales con parámetro $K$}
+$[Front, CrowdDis] \leftarrow$ ordenamiento no dominado y cálculo de la distancia de aglomeración sobre $P$\;
+$Q \leftarrow$ seleccionar $2\times|P|$ padres mediante torneo binario según el número de frente no dominado y $CrowdDis$ de las soluciones de $P$\;
+$O \leftarrow \emptyset$ \tcp*{conjunto de descendencia}
+\While{$Q \neq \emptyset$}{
+    $[\mathbf{x}, \mathbf{y}] \leftarrow$ seleccionar aleatoriamente dos soluciones de $Q$\;
+    $Q \leftarrow Q \setminus \{\mathbf{x}, \mathbf{y}\}$\;
+    $\mathbf{ob} \leftarrow$ vector de ceros $1\times D$\;
+    \eIf{$rand < \eta$}{
+        $[Allone, Allzero] \leftarrow LSI$\;
+    }{
+        $[Allone, Allzero] \leftarrow GSI$\;
+    }
+    $NSV' \leftarrow$ eliminar de $NSV$ las dimensiones que están en $Allone$ y $Allzero$\;
+    $SV' \leftarrow$ eliminar de $SV$ las dimensiones que están en $Allone$ y $Allzero$\;
+    $\mathbf{ob}(NSV') \leftarrow \text{OperadoresBinarios}(\mathbf{xb}(NSV'), \mathbf{yb}(NSV'))$\;
+    $\mathbf{ob}(SV') \leftarrow \text{OperadoresBinarios}(\mathbf{xb}(SV'), \mathbf{yb}(SV'))$\;
+    $\mathbf{ob}(Allone) \leftarrow 1$\;
+    $[\mathbf{xr}_{reduce}, \mathbf{yr}_{reduce}] \leftarrow \mathbf{xr}\cdot U_{reduce}$ y $\mathbf{yr}\cdot U_{reduce}$\;
+    $\mathbf{or}_{reduce} \leftarrow$ aplicar SBX y PM sobre $\mathbf{xr}_{reduce}$ y $\mathbf{yr}_{reduce}$\;
+    $\mathbf{or} \leftarrow \mathbf{or}_{reduce}\cdot U_{reduce}^{T}$\;
+    $\mathbf{o} \leftarrow$ generar solución descendiente según (1) a partir de $\mathbf{ob}$ y $\mathbf{or}$\;
+    $O \leftarrow O \cup \{\mathbf{o}\}$\;
+}
+\Return{$O$}
+\end{algorithm}
+ 
+\begin{algorithm}[H]
+\caption{Reproducción2$(P, Group)$}
+\KwIn{$P$ (subpoblación), $Group$ (grupos de variables)}
+\KwOut{$O$ (población descendiente)}
+$[Front, CrowdDis] \leftarrow$ ordenamiento no dominado y cálculo de la distancia de aglomeración sobre $P$\;
+$Q \leftarrow$ seleccionar $2\times|P|$ padres mediante torneo binario según el número de frente no dominado y $CrowdDis$ de las soluciones de $P$\;
+$[NSV, SV] \leftarrow Group$\;
+$O \leftarrow \emptyset$\;
+\While{$Q \neq \emptyset$}{
+    $[\mathbf{x}, \mathbf{y}] \leftarrow$ seleccionar aleatoriamente dos soluciones de $Q$\;
+    $Q \leftarrow Q \setminus \{\mathbf{x}, \mathbf{y}\}$\;
+    $\mathbf{ob} \leftarrow$ vector de ceros $1\times D$\;
+    $\mathbf{ob}(NSV) \leftarrow \text{OperadoresBinarios}(\mathbf{xb}(NSV), \mathbf{yb}(NSV))$\;
+    $\mathbf{ob}(SV) \leftarrow \text{OperadoresBinarios}(\mathbf{xb}(SV), \mathbf{yb}(SV))$\;
+    $\mathbf{or} \leftarrow$ vector de ceros $1\times D$\;
+    $[nonzeros, zeros] \leftarrow \mathbf{ob}$\;
+    $\mathbf{or}(nonzeros) \leftarrow$ aplicar SBX y PM sobre $\mathbf{xr}(nonzeros)$ y $\mathbf{yr}(nonzeros)$\;
+    $\mathbf{or}(zeros) \leftarrow$ aplicar SBX y PM sobre $\mathbf{xr}(zeros)$ y $\mathbf{yr}(zeros)$\;
+    $\mathbf{o} \leftarrow$ generar solución descendiente según (1) a partir de $\mathbf{ob}$ y $\mathbf{or}$\;
+    $O \leftarrow O \cup \{\mathbf{o}\}$\;
+}
+\Return{$O$}
+\end{algorithm}
+
+\section{S-NSGA-II}\label{sec:pseudo-snsgaii}
+
+\begin{algorithm}[H]
+\caption{SSPS$(N, D, P_i, \mathbf{s})$}
+\KwIn{$N$ (tamaño de población), $D$ (número de variables de decisión), $P_i$ (población muestreada por defecto), $\mathbf{s}$ (vector de esparsidad objetivo de la población)}
+\KwOut{$P_s$ (población inicial)}
+\tcp{--- DETERMINAR LOS CICLOS ---}
+$\mathbf{w} \leftarrow$ determinar el ancho de las franjas para cada individuo multiplicando cada $s\in\mathbf{s}$ por $D$\;
+$\mathbf{c} \leftarrow$ inicializar un conjunto vacío de ciclos\;
+\tcp{Determinar el número de individuos por ciclo}
+$cycleStart \leftarrow 1$ \tcp*{individuo actual}
+\While{queden miembros de la población}{
+    $cycleEnd \leftarrow cycleStart + 1$ \tcp*{individuo al final del ciclo}
+    \tcp{¿Cuántas franjas caben en el ciclo actual?}
+    \While{suma de anchos entre $cycleStart$ y $cycleEnd$ $< D$}{
+        $cycleEnd$++ \tcp*{mover el final del ciclo un individuo más}
+    }
+    $\mathbf{c}$.append($\mathbf{w}[cycleStart:cycleEnd]$) \tcp*{agregar nuevo ciclo, o serie de anchos de franja}
+    $cycleStart \leftarrow cycleEnd + 1$ \tcp*{ir al inicio del siguiente ciclo}
+}
+\tcp{--- DIBUJAR LAS FRANJAS ---}
+$currentIndiv \leftarrow 1$ \tcp*{contador de individuos}
+$M_s \leftarrow$ inicializar una máscara de esparsidad vacía\;
+\ForEach{$currentCycle \in \mathbf{c}$}{
+    $stripeGap \leftarrow$ determinar si existe un vacío en $currentCycle$ (ver Fig.~3)\;
+    \eIf{es el último ciclo}{
+        $currentCycle \leftarrow$ espaciar las franjas dejando vacíos entre ellas para llenar $stripeGap$\;
+    }{
+        $currentCycle \leftarrow$ ensanchar las franjas de $currentCycle$ para llenar $stripeGap$\;
+    }
+    \ForEach{$currentStripe \in currentCycle$}{
+        $M_s[currentIndiv, currentStripe] \leftarrow 1$ \tcp*{``dibujar'' la franja}
+        $currentIndiv$++\;
+    }
+}
+$P_s \leftarrow P_i \circ M_s$\;
+\Return{$P_s$}
+\end{algorithm}
+ 
+\begin{algorithm}[H]
+\caption{S-SBX$(P_1, P_2, p_c, \eta_c)$}
+\KwIn{$P_1$ (padres a cruzar con $P_2$), $P_2$ (padres a cruzar con $P_1$), $p_c$ (probabilidad de cruce), $\eta_c$ (índice de distribución de la PDF de cruce)}
+\KwOut{$C_1$ (primer hijo de $P_1$ y $P_2$), $C_2$ (segundo hijo de $P_1$ y $P_2$)}
+\tcp{--- SBX EN POSICIONES 0/0 Y $\neq$0/$\neq$0 ---}
+$Mask_{n1} \leftarrow$ posiciones distintas de cero de $P_1$\;
+$Mask_{z1} \leftarrow$ posiciones iguales a cero de $P_1$\;
+$Mask_{n2} \leftarrow$ posiciones distintas de cero de $P_2$\;
+$Mask_{z2} \leftarrow$ posiciones iguales a cero de $P_2$\;
+\tcp{Posiciones que son ambas cero o ambas distintas de cero}
+$Mask_m = (Mask_{n1} \wedge Mask_{n2}) \vee (Mask_{z1} \wedge Mask_{z2})$\;
+\tcp{Ejecutar SBX en estas posiciones}
+$C_1[Mask_m], C_2[Mask_m] \leftarrow \text{SBX}(P_1[Mask_m], P_2[Mask_m], p_c, \eta_c)$\;
+\tcp{--- INTERCAMBIO ALEATORIO PARA EL RESTO DE VALORES ---}
+$Mask_{\neg m} \leftarrow \neg Mask_m$\;
+\tcp{El vector $v$ indica qué pares se intercambian}
+$v \leftarrow \mathbf{0}_{1,|Mask_{\neg m}|}$\;
+$v \leftarrow$ distribuir unos uniformemente en $v$ de modo que cada posición tenga 50\% de probabilidad de ser 1\;
+\tcp{Intercambiar genes según $v$}
+$C_1[Mask_{\neg m}], C_2[Mask_{\neg m}] \leftarrow$ intercambiar entre $P_1[Mask_{\neg m}]$ y $P_2[Mask_{\neg m}]$ según $v$\;
+\Return{$C_1, C_2$}
+\end{algorithm}
+ 
+\begin{algorithm}[H]
+\caption{S-PM$(P, p_m, \eta_m)$}
+\KwIn{$P$ (población de entrada), $p_m$ (probabilidad de mutación), $\eta_m$ (índice de distribución de la PDF de mutación)}
+\KwOut{$P_m$ (población mutada)}
+$P_m \leftarrow P$\;
+\tcp{--- MUTAR LOS VALORES DISTINTOS DE CERO CON PM ---}
+$Mask_n \leftarrow$ posiciones de $P$ distintas de cero\;
+$P_m[Mask_n] \leftarrow \text{PM}(P[Mask_n], p_m, \eta_m)$\;
+\tcp{--- MUTAR LA ESPARSIDAD ---}
+$\mathbf{s} \leftarrow$ calcular la esparsidad de cada individuo en $P$\;
+$\mathbf{s}_m \leftarrow \text{PM}(\mathbf{s}, p_m, \eta_m)$\;
+\ForEach{$i$-ésimo miembro de $P_m$}{
+    \If{$s_{m_i} < s_i$}{
+        $P_{m_i} \leftarrow$ cambiar suficientes valores no nulos a cero en $P_{m_i}$ para igualar $s_{m_i}$\;
+    }
+    \If{$s_{m_i} > s_i$}{
+        $P_{m_i} \leftarrow$ cambiar suficientes ceros a valores no nulos plausibles en $P_{m_i}$ para igualar $s_{m_i}$\;
+    }
+}
+\Return{$P_m$}
+\end{algorithm}

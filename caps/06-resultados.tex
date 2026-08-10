@@ -1,6 +1,6 @@
 \chapter{Resultados y discusión}\label{chapter:resultados}
 
-\section{Resultados de la selección del framework de simulación SNN}
+\section{Selección del framework de simulación SNN}
 \label{sec:benchmark-framework-resultados}
 
 En esta sección se presentan los resultados cuantitativos utilizados para comparar los frameworks \textit{ANNarchy}, \textit{NEST} y \textit{snn-simulator}, siguiendo el diseño experimental y el plan de análisis descritos en \ref{sec:benchmark-framework-metodologia}.
@@ -46,7 +46,7 @@ ds3\_h20 & -142.74 & $<0.0001$ & -3986.35 & $<0.0001$ \\
 \end{tabular}
 \end{table}
 
-El \textit{p-valor} indica que la diferencia no es producto del azar, pero no cuantifica qué tan grande es. Con $U=0$ y $n=30$ en cada muestra, de las 900 comparaciones posibles entre una medición de \textit{snn-simulator} y una del competidor ($30\times30$), \textit{snn-simulator} fue menor en las 900, sin un solo caso de solapamiento. No es un caso límite cercano a $p=0.05$, sino una diferencia que se sostiene en el 100\% de las 18 comparaciones. %(3 pares × 6 configs).
+El \textit{p-valor} indica que la diferencia no es producto del azar, pero no cuantifica qué tan grande es. De las 900 comparaciones posibles entre una medición de \textit{snn-simulator} y una del competidor ($30\times30$), \textit{snn-simulator} fue menor en las 900, sin un solo caso de solapamiento. No es un caso límite cercano a $p=0.05$, sino una diferencia que se sostiene en el 100\% de las 18 comparaciones. %(3 pares × 6 configs).
 
 \paragraph{Tiempo de construcción y escalabilidad de la red}
 
@@ -130,7 +130,7 @@ Con base en los resultados anteriores, se selecciona \textit{snn-simulator} como
 
 La principal desventaja de \textit{snn-simulator} es un consumo de memoria aproximadamente 9 MB superior al de ANNarchy en las configuraciones evaluadas, siendo esta diferencia irrelevante frente a la ventaja temporal de dos a tres órdenes de magnitud y frente al hecho de que la memoria de \textit{snn-simulator} se mantiene estable mientras que la de NEST crece con el número de evaluaciones.
 
-Las amenazas a la validez incluyen la anomalía confirmada de tendencia en NEST (crecimiento monótono del tiempo de evaluación al duplicar el número de repeticiones dentro del mismo proceso), y la realización de mediciones en una sola máquina y sesión diferente a donde se realizaron los experimentos finales lo que pudo haber afectado la aceleración de la evualiación mediante paralelismo.
+Las amenazas a la validez incluyen la anomalía confirmada de tendencia en NEST (crecimiento monótono del tiempo de evaluación al duplicar el número de repeticiones dentro del mismo proceso), y la realización de mediciones en una sola máquina y sesión diferente a donde se realizaron los experimentos finales lo que pudo haber afectado la aceleración de la evaluación mediante paralelismo.
 
 
 %---------------
@@ -146,11 +146,11 @@ La Tabla \ref{tab:hv_por_dataset_resultados} resume el HV medio de la mejor conf
 \begin{table}[htbp]
 \centering
 \small
-\caption{Mejor HV medio, promediado sobre configuraciones de 20, 40 y 80 neuronas, por algoritmo y conjunto de datos.}
+\caption{Mejor HV medio, promediado sobre configuraciones de 20, 40 y 80 neuronas, por algoritmo y conjunto de datos. La arquitectura es la seleccionada mediante la búsqueda de hiperparámetros.}
 \label{tab:hv_por_dataset_resultados}
 \begin{tabular}{ccclccl}
 \hline
-\textbf{Dataset}            & \textbf{Características}     & \textbf{maxFE}                    & \textbf{Algoritmo} & \textbf{HV medio} & \textbf{Trial}& \textbf{Codificador ganador} \\ \hline
+\textbf{Dataset}            & \textbf{Características}     & \textbf{maxFE}                    & \textbf{Algoritmo} & \textbf{HV medio} & \textbf{Trial}& \textbf{Arquitectura} \\ \hline
 \multirow{2}{*}{1} & \multirow{2}{*}{14} & \multirow{2}{*}{9\,900}  & MOEA-CKF  & 0.8704   & 55    & Poisson             \\
                    &                     &                          & S-NSGA-II & 0.8725   & 10    & TTFS                \\ \hline
 \multirow{2}{*}{2} & \multirow{2}{*}{18} & \multirow{2}{*}{11\,500} & MOEA-CKF  & 0.9279   & 42    & TTFS                \\

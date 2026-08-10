@@ -24,22 +24,22 @@
 \providecommand{\Atwelve}{\ensuremath{\hat{A}_{12}}}
 
 \title{Implementación de un algoritmo evolutivo basado en optimización esparsa multiobjetivo a gran escala para Redes Neuronales de Espigas}
-\author{Fulano de Tal \and Perengano los Palotes}
+\author{Nicolás Aguilera González}
 % La fecha de la portada solo requiere el año
 \date{\the\year}
 
-\keywordsEs{Prueba, Tesis, Ejemplo}
-\keywordsEn{Test, Thesis, Example}
+\keywordsEs{Redes Neuronales de Espigas, Computación Neuromórfica, Neuroevolución, Optimización Multiobjetivo Esparsa a Gran Escala, Modelo de Izhikevich, Algoritmos Evolutivos, Frente de Pareto, Hipervolumen}
+\keywordsEn{Spiking Neural Networks, Neuromorphic Computing, Neuroevolution, Large-Scale Sparse Multi-Objective Optimization, Izhikevich Model, Evolutionary Algorithms, Pareto Front, Hypervolume}
 
 % Acá el texto está en minúscula solo para probar la versalita en la portada
 %\universidad{universidad de santiago de chile}
-\subtitle{O la memoria, si es que es el caso\ldots}
+% \subtitle{O la memoria, si es que es el caso\ldots}
 
-\facultad{facultad de ingeniería}
+\facultad{Facultad de Ingeniería}
 \unidad{Departamento de Ingeniería Informática}
-\profesor{Mengano}
-\profesorco{Sutano}
-\propuesta{Tesis para optar al grado/título de\ldots}
+\profesor{Javier Baladron}
+\profesorco{Manuel Villalobos}
+\propuesta{Tesis para optar al título de Ingeniero Civil en Informática}
 \ciudad{Santiago}
 \pais{Chile}
 
@@ -67,28 +67,30 @@
 	%\makeatletter % convierte @ en letra, en vez de caracter especial
 	%\@openrightfalse % anula empezar capítulo en página derecha
 	\begin{resumenEs}
-		Este es un modelo de documento que permite mostrar cómo utilizar el \textit{template} de tesis con el procesador de texto \LaTeX, específicamente su motor \texttt{pdflatex} para producir un \textsc{pdf} de calidad idealmente con la menor cantidad de dolores de cabeza por formato.
+		Las Redes Neuronales de Espigas (SNN) son un paradigma de computación neuromórfica inspirado en el cerebro, donde la información se procesa mediante eventos discretos (espigas), lo que promete mayor eficiencia energética que las redes neuronales artificiales (ANN) convencionales. Sin embargo, su entrenamiento se ve limitado por la naturaleza no diferenciable de la función de disparo, que impide aplicar directamente \textit{Backpropagation}. Esta tesis aborda el problema mediante neuroevolución, empleando algoritmos evolutivos multiobjetivo esparsos a gran escala (SMOEA) que optimizan simultáneamente topología y pesos sinápticos de una SNN sin depender de gradientes, buscando equilibrar precisión de clasificación y esparsidad estructural.
 
-		La \textit{document class} ha sido construida pensando en que el formato sea el apropiado para la biblioteca de la Universidad de Santiago de Chile y que cualquier problema que ocasione el formato sea minimizado por el manejo de \LaTeX, en lugar de pelear con interfaces gráficas confusas.
+		A partir de una taxonomía de SMOEAs, se seleccionaron dos algoritmos, S-NSGA-II y MOEA-CKF, migrados desde PlatEMO (MATLAB) a una implementación propia en C++, integrada con un simulador de SNN basado en el modelo de Izhikevich, validado en este trabajo con desempeño estadísticamente superior a ANNarchy y NEST. El sistema se evaluó en cuatro \textit{datasets} de clasificación binaria del repositorio UCI (Statlog Australian, Climate, Statlog German y Connectionist Bench Sonar), mediante 31 corridas pareadas por semilla y análisis estadístico del Hipervolumen (HV), los frentes de Pareto y la velocidad de convergencia.
+
+		Los resultados muestran que S-NSGA-II y MOEA-CKF alcanzan un HV estadísticamente equivalente, con ventajas de S-NSGA-II en \textit{datasets} de menor dimensionalidad y de MOEA-CKF en el de mayor dimensionalidad, además de diferencias en tiempo de cómputo. Frente a la ANN (PlatEMO/MATLAB), esta superó a la SNN en HV y exactitud en las ocho combinaciones evaluadas, aunque la SNN resultó más esparsa. El análisis de conectividad reveló que, al no incorporar noción de topología, los operadores de dispersión generan una fracción relevante de soluciones estructuralmente incoherentes. Se concluye que el objetivo general se cumple parcialmente, con una plataforma funcional y validada estadísticamente, y líneas claras de trabajo futuro.
 	\end{resumenEs}
-	
-	\begin{resumenEn}
-		This is a document model intended to show how to use the template for thesis writing with the text processor \LaTeX, specifically its \texttt{pdflatex} engine in order to produce quality \textsc{pdf} output, ideally with as less of a headache as possible when dealing with formatting.
 
-		The document class has been built having in mind the required format for the library of the University of Santiago of Chile, and with the ideal that any problem that arises from formatting is minimized by the \LaTeX system handling, instead of struggling with confusing graphical user interfaces.
+	\begin{resumenEn}
+		Spiking Neural Networks (SNNs) are a neuromorphic computing paradigm inspired by the brain, in which information is processed through discrete events (spikes), promising greater energy efficiency than conventional artificial neural networks (ANNs). However, their training is hindered by the non-differentiable nature of the spiking function, which prevents the direct application of \textit{Backpropagation}. This thesis addresses the problem through neuroevolution, using large-scale sparse multi-objective evolutionary algorithms (SMOEAs) that simultaneously optimize the topology and synaptic weights of an SNN without relying on gradients, seeking to balance classification accuracy and structural sparsity.
+
+		Based on a taxonomy of SMOEAs, two algorithms, S-NSGA-II and MOEA-CKF, were selected and migrated from PlatEMO (MATLAB) to a custom C++ implementation, integrated with an SNN simulator based on the Izhikevich neuron model, validated in this work with statistically superior performance to ANNarchy and NEST. The system was evaluated on four binary classification datasets from the UCI repository (Statlog Australian, Climate, Statlog German, and Connectionist Bench Sonar), through 31 seed-paired runs and statistical analysis of Hypervolume (HV), the resulting Pareto fronts, and convergence speed.
+
+		Results show that S-NSGA-II and MOEA-CKF achieve statistically equivalent HV, with S-NSGA-II performing better on lower-dimensionality datasets and MOEA-CKF on the highest-dimensionality one, along with systematic differences in computation time. Compared to its ANN counterpart (PlatEMO/MATLAB), the latter outperformed the SNN in HV and accuracy across all eight evaluated combinations, although the SNN proved sparser. Connectivity analysis further revealed that, lacking any notion of topology, the sparsity operators generate a substantial fraction of structurally incoherent solutions. It is concluded that the general objective was only partially met, with a functional, statistically validated platform and clear directions for future work.
 	\end{resumenEn}
 	%\@openrighttrue % restaura empezar capítulo en página derecha
 	%\makeatother % restaura @ como carácter especial
 
 	% Para una dedicatoria de una línea o dos
-	\dedicatoriaSimple{A Lilith, señora de los desposeídos}
+	% \dedicatoriaSimple{A Lilith, señora de los desposeídos}
 	
 	\begin{agradecimiento}
-		Este es un ejemplo de hoja de agradecimientos, para poder explayarse en cuanto a quién se lleva la gratitud por haber hecho posible este trabajo.
-		
-		Es el lugar donde se agradece a la familia, seres queridos, profesores, profesoras, funcionarios, universidad, entidades que financiaron el proyecto, la banda que acompañó las noches insomnes de trabajo, los juegos que evitaron caer en la locura, la marca de café que mantuvo las noches insomnes, el equipo de los amores, etc.
+		Agradezco a todos quienes fueron parte no solamente de este trabajo sino a los que estuvieron en todo el camino recorrido hasta llegar aquí, a los que están y a los que ya no, a mi familia y mi pareja por siempre brindarme apoyo incondicional, y a mis amigos y compañeros por hacer de este camino, uno lleno de risas, de buenos y no tan buenos momentos, pero por sobre todo por estar y compartirme siempre un pedacito de ellos. A los buenos docentes que día a día se entregan en el aula, a los que no se rinden y tienen convicción de que una buena docencia es capaz de transformar desde adentro. A los conserjes del departamento por siempre recibirnos con una sonrisa y buena disposición para lo que fuera.
 
-		Adicionalmente, el ambiente \texttt{pagDedicatoria} es para esto mismo, pero una página personalizada de dedicatoria, en lugar de solo una línea.
+        A todos les agradezco y les puedo decir que al fin lo logré.
 	\end{agradecimiento}
 
 	% De acuerdo al formato, lo preliminar termina con las tablas

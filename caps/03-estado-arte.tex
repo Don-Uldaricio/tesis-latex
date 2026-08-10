@@ -1,6 +1,6 @@
 \chapter{Estado del arte}
 
-\section{Aprendizaje en redes neuronales de espigas (SNN)}
+\section{Aprendizaje en SNN}
 
 El aprendizaje en SNN se enfrenta a desafíos específicos derivados de la naturaleza binaria y asincrónica de los spikes, así como de la dinámica temporal explícita de las neuronas y sinapsis. \cite{Neftci2019SurrogateGradient, Zenke2021surrogatesnn}. En la literatura se han desarrollado principalmente cinco familias de enfoques: entrenamiento directo mediante gradientes (p. ej. gradientes sustitutos), conversión ANN–SNN, reglas de plasticidad sináptica tipo plasticidad dependiente del tiempo de disparo (Spike-Timing-Dependent Plasticity, STDP), computación de reservorio y métodos de neuroevolución que optimizan pesos y arquitectura \cite{Bittar2022surrogatespiking, Moisy2006snnsurvey}.
 
@@ -168,6 +168,8 @@ Los estudios experimentales reportados en la literatura muestran que S-NSGA-II a
 Por otro lado, \textit{Multiobjective Evolutionary Algorithm with Cross-Scale Knowledge Fusion} (MOEA-CKF) \cite{MOEA/CKF} representa una línea de trabajo que usa codificación bi-nivel, reforzando la interacción entre la capa binaria de esparsidad y la capa real de valores. Este algoritmo emplea estrategias de agrupamiento de variables y modelos auxiliares para guiar la búsqueda hacia subespacios donde las variables no nulas pueden optimizarse más intensamente, al tiempo que se mantiene el control sobre la esparsidad global del conjunto de soluciones.
 
 Los resultados reportados para MOEA-CKF en benchmarks de \textit{optimización esparsa multiobjetivo a gran escala} indican mejoras significativas frente a SparseEA y otros SMOEA en términos de convergencia y calidad de la relación entre esparsidad y desempeño. En particular, la capacidad de este algoritmo para aprovechar información aprendida sobre correlaciones entre variables permite dedicar más evaluaciones a refinar los valores de las variables activas, lo que es crucial cuando el número de evaluaciones disponibles es limitado.
+
+Para una revisión detallada, en el Anexo \ref{chap:anexo-pseudo} se encuentran los pseudocódigos de los algoritmos internos utilizados por MOEA-CKF y S-NSGA-II.
 
 % \textbf{REVISAR}
 % En este trabajo se consideran S-NSGA-II y MOEA-CKF como algoritmos evolutivos centrales, dado que ambos han sido diseñados específicamente para SMOPs de gran escala y han demostrado buen rendimiento en la generación de frentes de Pareto esparsos bajo recursos computacionales acotados. Su combinación con modelos de SNN permite estudiar de manera sistemática cómo los mecanismos de optimización esparsa multiobjetivo a gran escala afectan al entrenamiento de SNN, tanto en términos de precisión como de eficiencia estructural y potencial de resiliencia.
