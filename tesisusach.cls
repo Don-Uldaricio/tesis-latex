@@ -124,7 +124,9 @@
 \RequirePackage[autostyle]{csquotes}
 \RequirePackage[
     backend=biber,
-    style=ieee
+    bibstyle=ieee,
+    citestyle=numeric-comp,
+    sorting=none
 ]{biblatex}
 
 \DefineBibliographyStrings{spanish}{

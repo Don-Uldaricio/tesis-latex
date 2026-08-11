@@ -1,20 +1,5 @@
 \chapter{Resultados adicionales}
 
-\begin{table}[h]
-    \centering
-    \small
-\caption{Comparación de enfoques de solución.}
-\label{tab:enfoques-comp}
-    \begin{tabular}{>{\centering\arraybackslash}p{0.15\linewidth}>{\centering\arraybackslash}p{0.25\linewidth}>{\centering\arraybackslash}p{0.25\linewidth}>{\centering\arraybackslash}p{0.25\linewidth}}\toprule
-         \textbf{Enfoque}&  \textbf{Precisión (Clasificación)}& \textbf{ Costo de entrenamiento (Cómputo/Memoria)}& \textbf{Eficiencia Estructural (Sparsity/Topología)}\\\midrule
-         \textbf{Surrogate Gradient}&  Muy Alta (Estado del Arte)&  Muy Alto (Requiere BPTT y almacenar historial temporal)& Baja (Suele operar sobre arquitecturas fijas y densas)\\
-         \textbf{Neuroevolución}&  Media / Alta&  Alto (Requiere evaluar poblaciones completas)& Muy Alta (Permite optimizar topología explícitamente)\\
-        \textbf{ Mapeo ANN-a-SNN}&  Alta (Heredada de ANN)&  Medio (Entrenamiento estándar de ANN + Conversión)& Baja (Hereda la densidad de la ANN, alta latencia)\\
-         \textbf{Reservoir Computing}&  Baja / Media&  Bajo (Solo se entrena la capa de lectura)& Nula (Reservorio aleatorio, generalmente grande y redundante)\\
-         \textbf{STDP}&  Baja (En tareas complejas)&  Bajo (Regla local, sin gradientes globales)& Media (Induce sparsity biológica, pero difícil de controlar)\\\bottomrule
-    \end{tabular}
-\end{table}
-
 
 \begin{table}[htbp]
 \centering
