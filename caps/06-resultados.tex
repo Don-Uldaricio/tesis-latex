@@ -59,17 +59,6 @@ La Figura \ref{fig:build_s_by_config} muestra el tiempo de construcción de la r
     \label{fig:build_s_by_config}
 \end{figure}
 
-% \subsection{Escalabilidad de la evaluación batch}
-
-La Figura \ref{fig:batch_scalability} muestra la aceleración en los tiempos de evaluación de una población de soluciones al evaluarse de forma paralela usando OpenMP, variando el número de hilos. La eficiencia decrece de forma consistente a partir de cuatro hilos, lo que es esperable por overhead de sincronización y saturación de memoria o caché. El \textit{speedup} medido con ocho hilos, del orden de 4{.}4–4{.}6 veces, sigue siendo sustancial y constituye una capacidad exclusiva de \textit{snn-simulator} entre los frameworks evaluados. El resumen de los resultados se encuentra en la Tabla~\ref{tab:framework-batch-res} del Anexo.
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.8\linewidth]{images/plot_batch_scalability.png}
-    \caption{Aceleración (\textit{speedup}) de la evaluación de soluciones en paralelo.}
-    \label{fig:batch_scalability}
-\end{figure}
-
 % \subsection{Overhead puro del algoritmo evolutivo}
 
 % La Tabla~\ref{tab:framework-moea-overhead-res} resume el tiempo de ejecución de MOEA-CKF y S-NSGA-II sin simulador real (problema trivial), junto con la razón entre ambos.
@@ -95,42 +84,13 @@ La Figura \ref{fig:batch_scalability} muestra la aceleración en los tiempos de 
 
 % MOEA-CKF escala mucho peor con la dimensionalidad \(D\) del vector de pesos que S-NSGA-II, y este overhead se suma al costo de simulación independientemente del framework elegido.
 
-% \subsection{Proyección del costo total de una corrida completa}
-
-% Para la configuración de mayor dimensionalidad, \texttt{ds4\_h20} (\(D = 1240\)), se proyectó el costo de una corrida completa con \texttt{MAXFE} = 10\,000 evaluaciones combinando el tiempo medio de evaluación y el overhead de los algoritmos. La Tabla~\ref{tab:framework-proyeccion-res} presenta las estimaciones resultantes.
-
-% \begin{table}[htbp]
-% \centering
-% \small
-% \caption{Proyección del tiempo total para \texttt{ds4\_h20} con 10\,000 evaluaciones.}
-% \label{tab:framework-proyeccion-res}
-% \begin{tabular}{lrrr}
-% \toprule
-% Framework & Simulación (10\,000 evals) & + MOEACKF (222.2 s) & + SNSGAII (0.5 s) \\
-% \midrule
-% NEST                    & 10\,451.5 s (\(\approx 2.90\) h)      & \(\approx 10\,673.7\) s (\(\approx 2.97\) h) & \(\approx 10\,452.0\) s (\(\approx 2.90\) h) \\
-% ANNarchy                &    779.5 s (\(\approx 13.00\) min)    & \(\approx 1\,001.7\) s (\(\approx 16.69\) min) & \(\approx 780.0\) s (\(\approx 13.00\) min) \\
-% SNN-Simulator (serial)  &    460.0 s (\(\approx 7.67\) min)     & \(\approx 682.2\) s (\(\approx 11.37\) min)   & \(\approx 460.5\) s (\(\approx 7.68\) min) \\
-% SNN-Simulator (8 hilos) &    101.7 s (\(\approx 1.70\) min)     & \(\approx 323.9\) s (\(\approx 5.40\) min)    & \(\approx 102.2\) s (\(\approx 1.70\) min) \\
-% \bottomrule
-% \end{tabular}
-% \end{table}
-
-% Esta tabla se basa en la fórmula
-% \[
-% T_{\mathrm{total}} \approx \frac{\overline{t}_{\mathrm{eval}} \,\texttt{MAXFE}}{S_{\mathrm{batch}}} + T_{\mathrm{MOEA}},
-% \]
-% y constituye una estimación lineal, no una medición de extremo a extremo. Asume costo por evaluación constante e ignora la estructura generacional, por lo que en el caso de NEST —que acumula estado y memoria con el número de evaluaciones— sus valores deben interpretarse como cotas inferiores más que como sobreestimaciones.
-
-% Con evaluación batch paralela (\(S_{\mathrm{batch}} \approx 4{.}5\) para ocho hilos), \textit{snn-simulator} reduce el tiempo de simulación de la configuración más grande a del orden de minutos, frente a horas en el caso de NEST.
-
 \paragraph{Selección del framework}
 
-Con base en los resultados anteriores, se selecciona \textit{snn-simulator} como framework de simulación SNN para el pipeline de entrenamiento. La decisión se apoya en: (i) tiempos de evaluación significativamente menores en las seis configuraciones, con separación completa de las distribuciones frente a ANNarchy y NEST, (ii) tiempos de construcción varios órdenes de magnitud inferiores sin compilación adicional, y (iii) disponibilidad de evaluación batch paralela con \textit{speedup} sustancial.
+Con base en los resultados anteriores, se selecciona \textit{snn-simulator} como framework de simulación SNN para el pipeline de entrenamiento. La decisión se apoya en: (i) tiempos de evaluación significativamente menores en las seis configuraciones, con separación completa de las distribuciones frente a ANNarchy y NEST, y (ii) tiempos de construcción varios órdenes de magnitud inferiores sin compilación adicional.
 
 La principal desventaja de \textit{snn-simulator} es un consumo de memoria aproximadamente 9 MB superior al de ANNarchy en las configuraciones evaluadas, siendo esta diferencia irrelevante frente a la ventaja temporal de dos a tres órdenes de magnitud y frente al hecho de que la memoria de \textit{snn-simulator} se mantiene estable mientras que la de NEST crece con el número de evaluaciones.
 
-Las amenazas a la validez incluyen la anomalía confirmada de tendencia en NEST (crecimiento monótono del tiempo de evaluación al duplicar el número de repeticiones dentro del mismo proceso), y la realización de mediciones en una sola máquina y sesión diferente a donde se realizaron los experimentos finales lo que pudo haber afectado la aceleración de la evaluación mediante paralelismo.
+Las amenazas a la validez incluyen la anomalía confirmada de tendencia en NEST (crecimiento monótono del tiempo de evaluación al duplicar el número de repeticiones dentro del mismo proceso), y la realización de mediciones en una sola máquina y sesión diferente a donde se realizaron los experimentos finales.
 
 
 %---------------

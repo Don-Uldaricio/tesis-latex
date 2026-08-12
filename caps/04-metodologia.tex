@@ -63,7 +63,7 @@ La decisión de estudiar estos dos algoritmos se fundamentó en que, aunque el t
 
 %% ----------------------
 
-\section{Datos y preparación experimental}
+\section{Datos y preparación experimental}\label{sec:datos-preparacion}
 La presente investigación utilizó un conjunto de datos de clasificación previamente disponibles en el entorno experimental adoptado con el propósito de asegurar consistencia metodológica. En particular, la selección de los datasets se realizó considerando su pertinencia para el problema de entrenamiento de SNN, así como su disponibilidad en un formato ya integrado al ecosistema PlatEMO.
 
 Los experimentos se desarrollaron sobre cuatro conjuntos de datos de clasificación, provenientes del UCI Machine Learning Repository, un repositorio público que reúne conjuntos de datos reales ampliamente utilizados como referencia para evaluar y comparar algoritmos de aprendizaje automático. Estos datasets corresponden a problemas binarios con distintos niveles de dimensionalidad y se usaron como base para evaluar el desempeño de las arquitecturas SNN y de los algoritmos multiobjetivo considerados. En conjunto, permitieron cubrir escenarios de distinta complejidad estructural, bajo configuraciones con distinta dimensión del espacio de decisión y complejidad en la red.
@@ -90,7 +90,7 @@ La selección de los datasets respondió a criterios principalmente metodológic
 
 La selección tuvo como objetivo definir un conjunto acotado y reproducible para el análisis comparativo de la propuesta. En consecuencia, los datasets fueron elegidos por su adecuación al problema de entrenamiento de SNN, por su consistencia con antecedentes experimentales reportados en la literatura y por su disponibilidad inmediata en el entorno de trabajo adoptado.
 
-%----------------
+%---------------------
 
 \section{Metodología de selección del framework de simulación SNN}
 \label{sec:benchmark-framework-metodologia}
@@ -134,11 +134,11 @@ ds3\_h20 & 3 & 24 & 2 & 20 & 520  & 1000 & 800 & 30 \\
 \end{tabular}
 \end{table}
 
-El número de repeticiones se fijó en 30 para las seis configuraciones, igualando el tamaño de muestra y la potencia estadística entre todos los tests de comparación entre frameworks. Las métricas empleadas se definen en la Tabla~\ref{tab:framework-metricas-met}. Cada métrica se seleccionó en función de su relevancia dentro del ciclo evolutivo.
+El número de repeticiones se fijó en 30 para las seis configuraciones, igualando el tamaño de muestra y la potencia estadística entre todos los tests de comparación entre frameworks. La métrica empleada se define en la Tabla~\ref{tab:framework-metricas-met}, seleccionada en función de su relevancia dentro del ciclo evolutivo.
 
 \begin{table}[htbp]
 \centering
-\caption{Métricas utilizadas en el benchmark para la selección del framework.}
+\caption{Métrica utilizada en el benchmark para la selección del framework.}
 \label{tab:framework-metricas-met}
 \small
 \begin{tabular}{p{0.15\linewidth}p{0.4\linewidth}p{0.35\linewidth}}
@@ -147,9 +147,7 @@ Métrica & Definición & Relevancia \\
 \midrule
 \texttt{eval\_s} &
 Tiempo de una evaluación de \textit{fitness}: asignación de pesos, simulación y cálculo de \textit{accuracy} sobre $n_{\mathrm{train}}$ muestras. &
-Métrica dominante, ya que podría ejecutarse hasta 10\,000 veces por corrida del MOEA.\\
-\texttt{batch\_s} & Tiempo de evaluar una población completa en paralelo; sólo en simulador en C++.&
-El paralelismo nativo representa una ventaja estructural.\\ \hline
+Métrica dominante, ya que podría ejecutarse hasta 100\,000 veces por corrida del MOEA.\\ \hline
 \end{tabular}
 \end{table}
 
@@ -172,19 +170,9 @@ Como diagnóstico de independencia entre corridas se calcula la correlación de 
     \item $H_a$: $\rho \neq 0$, existe una correlación entre la iteración y el tiempo de evaluación.
 \end{itemize}
 
-% \subsection{Modelo de proyección del costo total}
-
-% Para dimensionar el impacto real de la elección de framework se utilizó una proyección lineal del costo total de una corrida completa con un máximo de evaluaciones \texttt{MAXFE}, combinando el tiempo medio de evaluación, el \textit{speedup} por evaluación en batch y el \texttt{moea\_overhead} del optimizador:
-% \[
-% T_{\mathrm{total}} \approx \frac{\overline{t}_{\mathrm{eval}} \,\texttt{MAXFE}}{S_{\mathrm{batch}}} + T_{\mathrm{MOEA}}
-% \]
-% donde \(\overline{t}_{\mathrm{eval}}\) es el tiempo medio de evaluación de \textit{fitness}, \(S_{\mathrm{batch}}\) es el \textit{speedup} medido al evaluar una población completa en paralelo (o \(S_{\mathrm{batch}} = 1\) en ejecución serial), y \(T_{\mathrm{MOEA}}\) corresponde al overhead propio del algoritmo evolutivo.
-
-% Esta estimación ignora la estructura generacional y asume un costo por evaluación constante, por lo que se interpreta como una aproximación basada en el \textit{speedup} empírico: dado que \texttt{POPSIZE} = 100 coincide con el tamaño de lote medido, el número de generaciones equivale al número de lotes paralelizables.
-
 % \subsection{Criterios de selección y limitaciones}
 
-El framework de simulación se seleccionó considerando: (i) tiempo de evaluación de \textit{fitness} significativamente menor en las configuraciones representativas, (ii) tiempo de construcción y ausencia de costos adicionales de inicialización o compilación y (iii) disponibilidad de evaluación batch paralela y \textit{speedup} alcanzable.
+El framework de simulación se seleccionó considerando: (i) tiempo de evaluación de \textit{fitness} significativamente menor en las configuraciones representativas, y (ii) tiempo de construcción y ausencia de costos adicionales de inicialización o compilación.
 
 % , y (iv) impacto combinado del costo de simulación y del overhead propio del MOEA.
 
