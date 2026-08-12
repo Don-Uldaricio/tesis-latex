@@ -160,7 +160,7 @@ Un estudio reciente \cite{Shao2025_SMOEA} clasifica los SMOEA en tres familias: 
 Más allá de esta representación, las tres familias se diferencian principalmente en el mecanismo que emplean para identificar y explotar las variables relevantes. La primera familia diseña operadores de variación que favorecen la activación y optimización de variables relevantes; la segunda proyecta la búsqueda hacia subespacios de menor dimensionalidad para reducir el costo computacional; y la tercera agrupa variables relacionadas para optimizarlas por subcomponentes \cite{Shao2025_SMOEA, TIAN2024-lsmoea}. Aunque emplean mecanismos distintos, las tres familias buscan distinguir las variables críticas de aquellas prescindibles y concentrar el esfuerzo evolutivo en las primeras. Por ello, los SMOEA son particularmente adecuados para entrenar SNN, donde es necesario equilibrar la calidad funcional de la red con la reducción de conexiones activas.
 
 
-\subsection{Algoritmos relevantes}
+\subsection{Algoritmos relevantes}\label{subsec:algoritmos_relevantes}
 Dentro de la familia de SMOEA basados en operadores de variación, S-NSGA-II se propone como una extensión de NSGA-II que incorpora operadores genéticos específicos para problemas esparsos de gran escala, mejorando la capacidad de detectar y mantener patrones de esparsidad en las soluciones óptimas \cite{10066873_S-NSGA-II, Shao2025_SMOEA}. A diferencia de los enfoques bi-nivel, S-NSGA-II no introduce una representación adicional para codificar la esparsidad: cada individuo se representa mediante un único vector real de decisión
 
 \begin{equation}

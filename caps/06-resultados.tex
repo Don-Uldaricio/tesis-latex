@@ -419,12 +419,12 @@ El análisis fANOVA en \texttt{ds4} muestra una repartición de importancia más
 \section{Resultados de comparación de algoritmos}
 \label{sec:resultados-discusion}
 
-Los resultados y el análisis se organizan en tres enfoques sobre cuatro conjuntos de datos, siguiendo el orden de la Sección~\ref{sec:metodologia-comparacion}. En todos los casos el análisis se realizó por cada dataset, dado que nunca se combinan en una misma prueba estadística. Se reportan los p-valores reportados en cada tabla de los test y su corrección, y se marcaron con \texttt{*} cuando resultaron significativos a $\alpha=0.05$. El veredicto final, obtenido tras aplicar la corrección de Holm-Bonferroni por familias (Sección \ref{subsec:pruebas-estadisticas-correccion}) se menciona en el texto como \textit{tras corrección}. Por último, las tablas reportaron mediana e IQR como estadístico principal, debido a que varios grupos no distribuyen normal, siendo consistente con los tests no paramétricos empleados en todo el documento y la literatura de los algoritmos. Para más detalles sobre los resultados, revisar el repositorio del proyecto en .
+Los resultados y el análisis se organizan en tres experimentos sobre cuatro conjuntos de datos, siguiendo el orden de la Sección~\ref{sec:metodologia-comparacion}. En todos los casos el análisis se realizó por cada dataset, dado que nunca se combinan en una misma prueba estadística. Se reportan los p-valores reportados en cada tabla de los test y su corrección, y se marcaron con \texttt{*} cuando resultaron significativos a $\alpha=0.05$. El veredicto final, obtenido tras aplicar la corrección de Holm-Bonferroni por familias (Sección \ref{subsec:pruebas-estadisticas-correccion}) se menciona en el texto como \textit{tras corrección}. Por último, las tablas reportaron mediana e IQR como estadístico principal, debido a que varios grupos no distribuyen normal, siendo consistente con los tests no paramétricos empleados en todo el documento y la literatura de los algoritmos. Para más detalles sobre los resultados, revisar el repositorio del proyecto en .
 
 \subsection{Comparación de algoritmos en SNN (C++)}
-\label{sec:enfoque1}
+\label{sec:experimento1}
 
-Esta sección compara MOEA-CKF y S-NSGA-II, ambos ejecutados en SNN (C++) sobre el conjunto experimental de referencia ($N=31$ corridas pareadas por semilla), mediante tres indicadores: hipervolumen (HV), frentes de Pareto y convergencia para los cuatro datasets.
+Esta sección compara MOEA-CKF y S-NSGA-II, ambos ejecutados en SNN (C++) sobre el conjunto experimental de referencia ($N=31$ corridas pareadas por semilla), mediante tres enfoques: hipervolumen (HV), frentes de Pareto y convergencia para los cuatro datasets.
 
 \subsubsection{Hipervolumen (HV)}\label{sec:hv}
 Los resultados descriptivos se resumen en la Tabla~\ref{tab:hv-summary} para los cuatro datasets. Se muestran la mediana y el IQR.
@@ -800,7 +800,7 @@ La diferencia en la convergencia es significativa tras corrección: el algoritmo
 % \end{table}
 
 \subsection{Plataforma SNN (C++) vs.\ ANN (MATLAB)}
-\label{sec:enfoque2}
+\label{sec:experimento2}
 
 Esta sección compara cada algoritmo entre su implementación SNN (C++) sobre el conjunto experimental de referencia y la implementación ANN original de PlatEMO/MATLAB, para los cuatro datasets.
 
@@ -977,10 +977,10 @@ Accuracy &  $0.7605\ [0.7365,\,0.7874]$ &  \cellcolor{gray!20}$0.9102\ [0.9042,\
 \end{tabular}
 \end{table}
 
-\subsection{Otros enfoques}
+\subsection{Otros experimentos}
 \label{sec:otros-resultados}
 
-Esta subsección agrupa dos enfoques adicionales (remuestreo vs.\ evaluación completa y tiempo de cómputo) cuyos resultados, al ser más acotados que los de las Secciones \ref{sec:enfoque1}-\ref{sec:enfoque2}, se presentan de forma consolidada para los cuatro datasets.
+Esta subsección agrupa dos enfoques adicionales (remuestreo vs.\ evaluación completa y tiempo de cómputo) cuyos resultados, al ser más acotados que los de las Secciones \ref{sec:experimento1}-\ref{sec:experimento2}, se presentan de forma consolidada para los cuatro datasets.
 
 \paragraph{Remuestreo vs.\ conjunto de referencia}
 \label{sec:otros-bootstrap}

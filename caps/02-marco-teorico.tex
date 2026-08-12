@@ -108,4 +108,13 @@ Dado que la convergencia y la diversidad no pueden inspeccionarse de forma senci
 
 Entre los indicadores de calidad más utilizados se encuentra el Hipervolumen (HV), que mide el volumen de la región del espacio objetivo que queda dominada por el conjunto aproximado con respecto a un punto de referencia dado \cite{Auger2009HV, AUGER2012hv}. Este indicador es estrictamente compatible con la dominancia de Pareto, es decir, si un conjunto de soluciones domina completamente a otro, entonces su hipervolumen es necesariamente mayor \cite{Zitzler2007HV_revisited, Auger2009HV}. Además, al integrar simultáneamente información de convergencia (al maximizar la región dominada cercana al frente verdadero) y de diversidad (al premiar conjuntos que cubren una mayor extensión del frente), el HV se considera un indicador global de la calidad del frente aproximado \cite{Jiang2015HVMEOA, Auger2009HV}.
 
+Formalmente, dado un conjunto de soluciones no dominadas $A=\{a_1,\ldots,a_n\}$ en el espacio de objetivos y un punto de referencia $r=(r_1,\ldots,r_m)$ dominado por cada $a_i\in A$, el hipervolumen se define como la medida de Lebesgue de la unión de los hiperrectángulos delimitados por cada solución y el punto de referencia \cite{Zitzler2007HV_revisited, Auger2009HV}:
+
+\begin{equation}
+    HV(A,r) = \Lambda\left(\bigcup_{a\in A}\left[f_1(a), r_1\right]\times\cdots\times\left[f_m(a), r_m\right]\right)
+    \label{eq:hipervolumen}
+\end{equation}
+
+donde $\Lambda(\cdot)$ denota la medida de Lebesgue en $\mathbb{R}^m$. En problemas biobjetivo como el abordado en este trabajo ($m=2$), esta región corresponde a la unión de rectángulos definidos por cada solución del frente y el punto de referencia, cuya área puede calcularse eficientemente ordenando las soluciones por uno de los objetivos e integrando franjas rectangulares no solapadas \cite{Zitzler2007HV_revisited}.
+
 En el contexto del entrenamiento de redes neuronales (incluidas las SNN), suele combinarse al menos una métrica de desempeño en la tarea, como la exactitud o el error de clasificación, con indicadores multiobjetivo como HV o IGD para evaluar la calidad del frente de Pareto obtenido por el algoritmo evolutivo \cite{Zitzler2007HV_revisited, RAVBER2017qualityindicatorsMOEA, Santos2018convergenceindicator}. De este modo, la evaluación no se limita a comparar un único modelo, sino que analiza el conjunto de soluciones que representan diferentes compromisos entre exactitud y complejidad estructural (por ejemplo, esparsidad de la red), permitiendo caracterizar de forma más completa la capacidad del algoritmo para aproximar frentes de Pareto relevantes para la aplicación \cite{RAVBER2017qualityindicatorsMOEA, Zitzler2007HV_revisited}.
