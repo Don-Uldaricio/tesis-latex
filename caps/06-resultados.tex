@@ -1,4 +1,4 @@
-\chapter{Resultados y discusión}\label{chapter:resultados}
+\chapter{Resultados}\label{chapter:resultados}
 
 \section{Selección del framework de simulación SNN}
 \label{sec:benchmark-framework-resultados}
@@ -1097,7 +1097,7 @@ A partir de esa clasificación se definió una \emph{conexión inútil} como tod
 \subsection{Resultados por dataset y algoritmo}
 \label{sec:conectividad-resultados-combo}
 
-La Tabla~\ref{tab:conectividad-combo} resume, para cada una de las ocho combinaciones de dataset y algoritmo, la exactitud media de la solución de mejor exactitud de cada una de las 31 corridas, el porcentaje de esas 31 redes con al menos una clase de salida desconectada, y el porcentaje medio de conexiones inútiles sobre el total de sinapsis activas.
+La Tabla~\ref{tab:conectividad-combo} resume, para cada una de las ocho combinaciones de dataset y algoritmo, la exactitud promedio de las mejores soluciones de cada corrida, el porcentaje de esas 31 redes con al menos una clase de salida desconectada, y el porcentaje medio de conexiones inútiles sobre el total de sinapsis activas.
 
 \begin{table}[htbp]
 \centering
@@ -1158,28 +1158,28 @@ Los siete paneles restantes ilustran fenómenos parecidos. La desconexión de un
 \begin{subfigure}[b]{0.23\textwidth}
     \centering
     \includegraphics[width=\textwidth]{images/conectividad_ds1_moeackf.png}
-    \caption{ds1-MOEA-CKF (corrida 5).}
+    \caption{ds1-MOEA-CKF (corrida 5). Fila 1 de la Tabla~\ref{tab:conectividad-combo}: ilustra el problema de conexiones inútiles (33.3\%), sin clases de salida desconectadas.}
     \label{fig:conectividad-ds1-ckf}
 \end{subfigure}
 \hfill
 \begin{subfigure}[b]{0.23\textwidth}
     \centering
     \includegraphics[width=\textwidth]{images/conectividad_ds1_snsgaii.png}
-    \caption{ds1-S-NSGA-II (corrida 7).}
+    \caption{ds1-S-NSGA-II (corrida 7). Fila 2 de la Tabla~\ref{tab:conectividad-combo}: ilustra el problema de conexiones inútiles (29.7\%), sin clases de salida desconectadas.}
     \label{fig:conectividad-ds1-nsga}
 \end{subfigure}
 \hfill
 \begin{subfigure}[b]{0.23\textwidth}
     \centering
     \includegraphics[width=\textwidth]{images/conectividad_ds2_moeackf.png}
-    \caption{ds2-MOEA-CKF (corrida 0).}
+    \caption{ds2-MOEA-CKF (corrida 0). Fila 3 de la Tabla~\ref{tab:conectividad-combo}: ilustra ambos problemas a la vez, clase de salida desconectada (61.3\% de las corridas) y conexiones inútiles (42.4\%).}
     \label{fig:conectividad-ds2-ckf}
 \end{subfigure}
 \hfill
 \begin{subfigure}[b]{0.23\textwidth}
     \centering
     \includegraphics[width=\textwidth]{images/conectividad_ds2_snsgaii.png}
-    \caption{ds2-S-NSGA-II (corrida 22).}
+    \caption{ds2-S-NSGA-II (corrida 22). Fila 4 de la Tabla~\ref{tab:conectividad-combo}: ilustra el problema de clase de salida desconectada (100\% de las corridas), sin conexiones inútiles (0.0\%).}
     \label{fig:conectividad-ds2-nsga}
 \end{subfigure}
 
@@ -1189,28 +1189,28 @@ Los siete paneles restantes ilustran fenómenos parecidos. La desconexión de un
 \begin{subfigure}[b]{0.23\textwidth}
     \centering
     \includegraphics[width=\textwidth]{images/conectividad_ds3_moeackf.png}
-    \caption{ds3-MOEA-CKF (corrida 9).}
+    \caption{ds3-MOEA-CKF (corrida 9). Fila 5 de la Tabla~\ref{tab:conectividad-combo}: red casi vacía que ilustra el problema de clase de salida desconectada (80.6\% de las corridas), junto con un alto porcentaje de conexiones inútiles (60.8\%).}
     \label{fig:conectividad-ds3-ckf}
 \end{subfigure}
 \hfill
 \begin{subfigure}[b]{0.23\textwidth}
     \centering
     \includegraphics[width=\textwidth]{images/conectividad_ds3_snsgaii.png}
-    \caption{ds3-S-NSGA-II (corrida 8).}
+    \caption{ds3-S-NSGA-II (corrida 8). Fila 6 de la Tabla~\ref{tab:conectividad-combo}: ilustra el problema de conexiones inútiles (47.7\%), sin clases de salida desconectadas (0.0\%).}
     \label{fig:conectividad-ds3-nsga}
 \end{subfigure}
 \hfill
 \begin{subfigure}[b]{0.23\textwidth}
     \centering
     \includegraphics[width=\textwidth]{images/conectividad_ds4_moeackf.png}
-    \caption{ds4-MOEA-CKF (corrida 26).}
+    \caption{ds4-MOEA-CKF (corrida 26). Fila 7 de la Tabla~\ref{tab:conectividad-combo}: ilustra el problema de conexiones inútiles (61.4\%), sin clases de salida desconectadas (0.0\%).}
     \label{fig:conectividad-ds4-ckf}
 \end{subfigure}
 \hfill
 \begin{subfigure}[b]{0.23\textwidth}
     \centering
     \includegraphics[width=\textwidth]{images/conectividad_ds4_snsgaii.png}
-    \caption{ds4-S-NSGA-II (corrida 8).}
+    \caption{ds4-S-NSGA-II (corrida 8). Fila 8 de la Tabla~\ref{tab:conectividad-combo}: ilustra principalmente el problema de conexiones inútiles (53.2\%), con un porcentaje bajo de clases de salida desconectadas (6.5\%).}
     \label{fig:conectividad-ds4-nsga}
 \end{subfigure}
 

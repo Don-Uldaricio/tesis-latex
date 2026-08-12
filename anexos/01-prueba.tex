@@ -49,7 +49,7 @@
 
 \begin{table}
 \centering
-\small
+\footnotesize
 \caption{Fidelidad de la migración a C++ de los operadores genéticos respecto de su implementación original en PlatEMO/MATLAB.}
 \label{tab:fidelidad_algoritmos}
 \begin{tabular}{p{5cm}p{2cm}p{6cm}}
@@ -60,7 +60,26 @@
 \texttt{ssbx} --- sparse SBX & Alta & Se implementó correctamente el manejo de posiciones \textit{zero/nonzero} y los intercambios aleatorios en casos de desajuste (\textit{mismatches}). \\
 \texttt{spm} --- sparse PM & Alta & Se implementó correctamente la mutación tanto de los valores como del nivel de esparsidad. \\
 \texttt{sm2target} & Alta & El comportamiento de este componente se mantuvo fiel al original. \\
-\texttt{EnvironmentalSelection \_NSGA2} & Alta & La traducción resultó fiel al original, incorporando además la corrección del error de conversión \textit{inf} $\rightarrow$ \textit{int}. \\
+\texttt{Environmental Selection \_NSGA2} & Alta & La traducción resultó fiel al original, incorporando además la corrección del error de conversión \textit{inf} $\rightarrow$ \textit{int}. \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}
+\centering
+\footnotesize
+\caption{Funciones y utilidades de MATLAB, nativas o de \textit{toolbox}, sin equivalente directo en la biblioteca estándar de C++ o Eigen, junto con la estrategia de reimplementación adoptada y el tipo de equivalencia que dicha estrategia garantiza.}
+\label{tab:funciones_sin_equivalente}
+\begin{tabular}{p{2.9cm}p{2.6cm}p{3.5cm}p{4cm}}
+\hline
+\textbf{Función / utilidad MATLAB} & \textbf{Uso en el algoritmo} & \textbf{Estrategia en C++} & \textbf{Naturaleza de la equivalencia} \\
+\hline
+\texttt{kmeans(X,2)} (Statistics and Machine Learning Toolbox) & \texttt{SparsityAnalysis} de MOEA-CKF: separa las variables de decisión en significativas (SV) y no significativas (NSV) según su \textit{fitness} acumulado. & Algoritmo de Lloyd propio, restringido a $k=2$ sobre datos 1D (\texttt{kmeans2}), con partición por mediana como respaldo si algún clúster queda vacío. & Algorítmica: ambas minimizan la misma función objetivo (varianza intra-clúster), pero \texttt{kmeans} de MATLAB ejecuta por defecto múltiples reinicios con inicialización \textit{k-means++}, mientras la versión en C++ ejecuta una única pasada determinista. \\
+\texttt{unique(A,'rows')} (núcleo de MATLAB) & \texttt{ENS\_SS}/\texttt{NDSort}, \texttt{TournamentSelection} y \texttt{Environmental Selection}: deduplica individuos u objetivos antes de ordenar o seleccionar. & \texttt{uniqueRows()}: tabla asociativa ordenada (\texttt{std::map}) para deduplicar más reconstrucción del vector de índices \texttt{loc}. & Exacta por construcción: misma definición de igualdad de fila y mismo orden lexicográfico de salida. \\
+\texttt{hist(Loc,1:max(Loc))} (Statistics and Machine Learning Toolbox) & \texttt{ENS\_SS}: cuenta cuántas veces aparece cada fila única para saber cuántos individuos ya fueron ordenados. & Conteo directo por acumulación sobre el vector \texttt{loc} (\texttt{Table[l]++}), sin necesidad de definir \textit{bins}. & Exacta: mismo resultado, caso particular más simple al coincidir cada \textit{bin} con un índice de fila única. \\
+\texttt{sortrows} / \texttt{sort(...,2)} (núcleo de MATLAB) & \texttt{TournamentSelection} (rango lexicográfico de \textit{fitness}) y truncamiento en \texttt{Environmental Selection} (orden de distancias). & \texttt{std::sort} con comparador lexicográfico sobre \texttt{std::vector<double>}. & Exacta: mismo orden total, mismo criterio de desempate. \\
+\texttt{pdist2(A,B)} (Statistics and Machine Learning Toolbox) & Truncamiento por distancia: matriz de distancias euclidianas entre individuos del último frente. & Doble bucle explícito que evalúa la norma euclidiana fila a fila. & Exacta: misma fórmula cerrada $\|a-b\|_2$, sin aproximación. \\
+\texttt{randi} / \texttt{randperm} / \texttt{unifrnd} (generador Mersenne Twister propio de MATLAB) & Inicialización de la población, mutación y selección estocásticas en ambos algoritmos. & Cabecera \texttt{<random>} de C++ & Ambos muestrean uniformemente de forma correcta, pero al tratarse de generadores pseudoaleatorios distintos las secuencias no coinciden aun fijando la misma semilla. \\
 \hline
 \end{tabular}
 \end{table}

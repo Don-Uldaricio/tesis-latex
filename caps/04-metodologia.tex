@@ -232,6 +232,51 @@ D = (n_{\text{Features}} + 1)\cdot n_{\text{Hidden}}
 
 donde $n_{\text{Features}}$ corresponde al número de características de entrada del conjunto de datos, $n_{\text{Hidden}}$ al número de neuronas de la capa oculta y $n_{\text{Outputs}}$ al número de neuronas de la capa de salida. El término adicional incorpora una neurona de sesgo (bias) conectada exclusivamente con la capa oculta.
 
+La Figura \ref{fig:topologia-sparse-snn} ilustra, de manera esquemática, la topología \textit{feedforward} totalmente conectada empleada por el problema Sparse SNN: una capa de entrada (más la neurona de sesgo), una capa oculta y una capa de salida con dos neuronas, correspondientes a las dos clases del problema de clasificación binaria.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    x=1.6cm, y=0.85cm,
+    neuron/.style={circle, draw, minimum size=0.7cm},
+    bias/.style={circle, draw, dashed, minimum size=0.7cm},
+    conn/.style={-, gray, opacity=0.5}
+]
+    % Capa de entrada
+    \foreach \i/\y in {1/2, 2/1, 3/0, 4/-1, 5/-2}
+        \node[neuron] (I\i) at (0,\y) {};
+    \node[bias] (B) at (0,-3) {$1$};
+
+    % Capa oculta
+    \foreach \i/\y in {1/2.5, 2/1.5, 3/0.5, 4/-0.5, 5/-1.5, 6/-2.5}
+        \node[neuron] (H\i) at (3,\y) {};
+
+    % Capa de salida
+    \node[neuron] (O1) at (6,0.75) {};
+    \node[neuron] (O2) at (6,-0.75) {};
+
+    % Conexiones entrada -> oculta (incluye bias)
+    \foreach \i in {1,...,5}
+        \foreach \j in {1,...,6}
+            \draw[conn] (I\i) -- (H\j);
+    \foreach \j in {1,...,6}
+        \draw[conn] (B) -- (H\j);
+
+    % Conexiones oculta -> salida
+    \foreach \j in {1,...,6}{
+        \draw[conn] (H\j) -- (O1);
+        \draw[conn] (H\j) -- (O2);
+    }
+
+    % Etiquetas de capas
+    \node[align=center] at (0,-4.3) {Entrada\\($n_{\text{Features}}$ + bias)};
+    \node[align=center] at (3,-4.3) {Capa oculta\\($n_{\text{Hidden}}$)};
+    \node[align=center] at (6,-4.3) {Salida\\(2 clases)};
+\end{tikzpicture}
+\caption{Topología esquemática de la red del problema Sparse SNN: capa de entrada con neurona de sesgo, capa oculta y capa de salida de dos neuronas para clasificación binaria.}
+\label{fig:topologia-sparse-snn}
+\end{figure}
+
 \section{Metodología de búsqueda de hiperparámetros}\label{sec:metodologia_busqueda_hiper}
 \subsection{Estrategia general, espacio de búsqueda e hiperparámetros}\label{subsec:estrategia_opti_externa}
 El rendimiento de un algoritmo evolutivo multiobjetivo aplicado al entrenamiento de SNN para clasificación, depende de la configuración del simulador, el comportamiento neuronal y de parámetros internos del algoritmo. Dado que estos elementos interactúan entre sí resulta adecuado buscarlos en vez de fijarlos a priori mediante criterios arbitrarios.
@@ -398,7 +443,9 @@ Además de los dos experimentos anteriores, se evaluó a cada algoritmo bajo con
 
 \paragraph{Entrenamiento con remuestreo}
 
-El conjunto de \textit{remuestreo} usó los mismos hiperparámetros afinados que el conjunto de \textit{referencia}, pero usando remuestreo, calculando el fitness de cada individuo promediado sobre 10 remuestreos del 50\% del conjunto de entrenamiento por generación, en vez de una sola pasada completa. Esto para buscar una señal de fitness más robusta a generalización \cite{LoyolaJara2026evolvingsnn}. Dado el mismo conjunto de semillas, la comparación de HV se realizó mediante pruebas pareadas de Wilcoxon por algoritmo y dataset (ocho comparaciones en total).
+El conjunto de \textit{remuestreo} usó los mismos hiperparámetros afinados que el conjunto de \textit{referencia}, pero modificó la forma en que se estima $f_2$ durante el entrenamiento. En la evaluación estándar (ecuación~\ref{eq:classification_error}), $\operatorname{Acc}(x)$ se calcula una única vez sobre el conjunto de entrenamiento completo. En la evaluación con remuestreo, en cambio, cada vez que se evalúa un individuo se generan diez submuestras \textit{bootstrap} del conjunto de entrenamiento —es decir, muestreadas \emph{con reemplazo}, de modo que un mismo ejemplo puede repetirse o quedar fuera de una submuestra dada—, cada una de tamaño igual al 50\,\% del conjunto de entrenamiento. El segundo objetivo se redefine entonces como el error promedio de la red sobre esas diez submuestras, en vez del error obtenido en una única pasada sobre el conjunto completo. Las submuestras se regeneran de forma independiente en cada evaluación, es decir, para cada individuo y en cada generación, por lo que dos evaluaciones del mismo genotipo en generaciones distintas pueden producir un valor de fitness distinto. El objetivo $f_1$ no se ve afectado por el remuestreo, pues depende únicamente del vector de decisión y no del conjunto de entrenamiento.
+
+Este esquema replica una técnica de remuestreo para la evolución de SNN \cite{LoyolaJara2026evolvingsnn}, donde se evalúa cada red candidata sobre subconjuntos de tamaño fijo muestreados con reemplazo a partir del conjunto de entrenamiento, promediando el desempeño obtenido en todos ellos como puntaje de fitness. En este trabajo se adaptaron los parámetros de la técnica original, usando diez submuestras de un 50\,\% del conjunto de entrenamiento cada una, en lugar de 50 submuestras de tamaño fijo para ajustarse al tamaño de los datasets y al presupuesto de cómputo disponible, manteniendo el mismo principio de muestreo con reemplazo y promediado del desempeño. La motivación de este esquema es que promediar el error sobre varias submuestras parciales entrega una señal de fitness menos dependiente de una única partición del conjunto de entrenamiento, en contraste con la evaluación estándar en que dicho error se calcula siempre sobre el mismo conjunto completo, a costa de un mayor costo computacional por evaluación. Dado el mismo conjunto de semillas, la comparación de HV se realizó mediante pruebas pareadas de Wilcoxon por algoritmo y dataset (ocho comparaciones en total).
 
 \paragraph{Tiempo de cómputo}
 
