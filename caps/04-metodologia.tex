@@ -120,7 +120,7 @@ Se definieron seis configuraciones, formadas por tres conjuntos de datos reales 
 \caption{Configuraciones consideradas en el benchmark de selección de framework.}
 \label{tab:framework-configuraciones-met}
 \small
-\begin{tabular}{llrrrrrrr}
+\begin{tabular}{lcrrrrrrr}
 \toprule
 Configuración & Dataset & $n_f$ & $n_c$ & $n_h$ & $D$ & $n$ & $n_{\mathrm{train}}$ & $K$ \\
 \midrule
@@ -277,7 +277,7 @@ El espacio de búsqueda considerado integra variables continuas, discretas y cat
 
 Por una parte, existen hiperparámetros continuos, cuyo efecto sobre el desempeño del sistema es suave o multiplicativo. En este grupo se incluyen los índices de distribución de cruzamiento y mutación, la escala de pesos sinápticos y, en las arquitecturas con codificación Poisson, la tasa máxima de disparo.
 
-Por otra parte, algunos parámetros están cuantizados por restricciones del simulador o por decisiones de implementación. El paso de integración $dt$, por ejemplo, se restringe a un conjunto discreto de valores previamente definidos, mientras que parámetros como el período refractario se modelan naturalmente como variables discretas en un rango pequeño.
+Por otra parte, algunos parámetros se modelan naturalmente como variables discretas en un rango pequeño, como el período refractario del codificador Poisson.
 
 Finalmente, existe un hiperparámetro categórico que representa la arquitectura de la red. En particular, la arquitectura combina el tipo de codificador y el número de neuronas de salida. Este hiperparámetro además condiciona la existencia de otros como \textit{max rate} y \textit{refractory period} que se usan solo cuando se emplea codificación Poisson.
 
@@ -310,12 +310,6 @@ La Tabla \ref{tab:espacio-busqueda-hiper} resume los hiperparámetros incluidos 
 \hline
 \texttt{wScale} & Simulación/red & Continuo & Factor de escala global aplicado a los pesos antes de simular la SNN. \\
 \hline
-\texttt{dt} & Simulación neuronal & Continuo & Paso de integración temporal de la simulación neuronal, en milisegundos. \\
-\hline
-\texttt{encoding\_duration} & Simulación neuronal & Continuo & Duración de la ventana de codificación de entrada, en milisegundos. \\
-\hline
-\texttt{extra\_eval} & Simulación neuronal & Continuo & Tiempo adicional de simulación tras la ventana de codificación (duración de evaluación $=$ \texttt{encoding\_duration} $+$ \texttt{extra\_eval}). \\
-\hline
 \texttt{max\_rate} & Codificador Poisson & Continuo & Tasa máxima de disparo del codificador Poisson, en Hz. Solo aplica cuando se usa este codificador. \\
 \hline
 \texttt{refractory\_period} & Codificador Poisson & Continuo & Período refractario del codificador Poisson, en milisegundos. Solo aplica cuando se usa este codificador. \\
@@ -325,7 +319,7 @@ La Tabla \ref{tab:espacio-busqueda-hiper} resume los hiperparámetros incluidos 
 
 \subsection{Configuración experimental, evaluación y presupuesto computacional}\label{subsec:configuracion_evaluacion_presupuesto}
 
-Para S-NSGA-II se mantuvieron fijos los componentes definidos en su formulación original, incluyendo la selección por torneo binario, la selección ambiental de NSGA-II y la probabilidad de cruzamiento unitaria. La optimización externa ajustó los parámetros asociados a los operadores S-SBX y S-PM, la esparsidad, la escala de pesos, la simulación y la arquitectura de codificación/decodificación. En MOEA-CKF se conservaron sus mecanismos internos de análisis, agrupamiento y reproducción, pues forman parte de la definición del algoritmo. Ambos métodos se evaluaron sobre el mismo espacio externo de hiperparámetros, de modo que las diferencias de desempeño se atribuyan principalmente a sus mecanismos evolutivos.
+Para S-NSGA-II se mantuvieron fijos los componentes definidos en su formulación original, incluyendo la selección por torneo binario, la selección ambiental de NSGA-II y la probabilidad de cruzamiento unitaria. La optimización externa ajustó los parámetros asociados a los operadores S-SBX y S-PM, la esparsidad, la escala de pesos y la arquitectura de codificación/decodificación. En MOEA-CKF se conservaron sus mecanismos internos de análisis, agrupamiento y reproducción, pues forman parte de la definición del algoritmo. Ambos métodos se evaluaron sobre el mismo espacio externo de hiperparámetros, de modo que las diferencias de desempeño se atribuyan principalmente a sus mecanismos evolutivos.
 
 % \paragraph{Evaluación de cada trial}
 Cada trial de Optuna se ejecutó para tres tamaños de capa oculta: 20, 40 y 80 neuronas. Las ejecuciones compartieron la misma configuración, semilla y presupuesto \texttt{maxFE}; solo varió el tamaño de la red y, por tanto, la dimensionalidad del problema. El valor retornado al optimizador externo correspondió al promedio del Hipervolumen (HV) de las tres ejecuciones. Así, se favorecieron configuraciones con desempeño robusto frente a cambios en la topología de la red.
@@ -341,9 +335,8 @@ El Algoritmo \ref{alg:optuna-objective} resume la función objetivo evaluada por
 \label{alg:optuna-objective}
 \KwIn{$trial$ (propuesta de hiperparámetros de Optuna); $\mathcal{H} = \{20, 40, 80\}$ (valores de \texttt{nHidden} evaluados); $\text{maxFE}$ (presupuesto de evaluaciones); $\mathcal{A}$ (SMOEA fijo: S-NSGA-II o MOEA-CKF)}
 \KwOut{$\overline{HV}$ (hipervolumen medio de la configuración propuesta)}
-$(arch, disC, disM, proM, disSM, proSM, sLower, sGap, wScale, dt, encDur, extraEval) \leftarrow trial.\text{suggest}(\ldots)$ \tcp*{arquitectura, operadores SMOEA, esparsidad inicial y simulación}
+$(arch, disC, disM, proM, disSM, proSM, sLower, sGap, wScale) \leftarrow trial.\text{suggest}(\ldots)$ \tcp*{arquitectura, operadores SMOEA, esparsidad inicial y escala de pesos}
 $sUpper \leftarrow \min(sLower + sGap,\ 1)$\;
-$evalDur \leftarrow encDur + extraEval$\;
 \If{$arch = $ Poisson}{
     $(maxRate, refractoryPeriod) \leftarrow trial.\text{suggest}(\ldots)$\;
 }

@@ -154,7 +154,6 @@ Ambos algoritmos alcanzan un HV medio muy similar en sus mejores configuraciones
             sLower & 0.52  & 0.57  & 0.78  & 0.84  & 0.91  & 0.61  & 0.62  & 0.59  \\
             sGap   & 0.12  & 0.05  & 0.06  & 0.28  & 0.12  & 0.16  & 0.19  & 0.27  \\
             wScale & 41.29 & 41.02 & 6.74  & 29.33 & 13.35 & 29.29 & 28.47 & 32.70 \\
-            dt (ms)& 1.0   & 0.1   & 0.1   & 1.0   & 2.0   & 0.1   & 0.1   & 0.1   \\
             \hline
         \end{tabular}%
     }
@@ -275,7 +274,7 @@ El análisis fANOVA en \texttt{ds2} muestra que la variable \texttt{architecture
 
 \subsubsection{Dataset 3: Statlog German}
 
-En este dataset S-NSGA-II supera a MOEA-CKF por el margen más amplio entre los cuatro datasets, con HV medio 0.7704 frente a 0.7540. Ambas configuraciones ganadoras emplean arquitecturas de dos salidas con exactitud y WTA, pero difieren en el codificador y en varios hiperparámetros continuos, incluyendo \texttt{wScale}, \texttt{dt} y los límites de esparsidad. La Tabla~\ref{tab:hiper_mejor_config} muestra que MOEA-CKF selecciona \texttt{dt} más grueso (2.0,ms) y bandas de esparsidad orientadas a redes muy esparsas (\texttt{sLower} cercana a 0.91), mientras que S-NSGA-II combina \texttt{dt} fino (0.1,ms) con bandas de esparsidad más densas.
+En este dataset S-NSGA-II supera a MOEA-CKF por el margen más amplio entre los cuatro datasets, con HV medio 0.7704 frente a 0.7540. Ambas configuraciones ganadoras emplean arquitecturas de dos salidas con exactitud y WTA, pero difieren en el codificador y en varios hiperparámetros continuos, incluyendo \texttt{wScale} y los límites de esparsidad. La Tabla~\ref{tab:hiper_mejor_config} muestra que MOEA-CKF selecciona bandas de esparsidad orientadas a redes muy esparsas (\texttt{sLower} cercana a 0.91), mientras que S-NSGA-II opta por bandas de esparsidad más densas.
 
 Las Figuras~\ref{fig:ds3_convergencia_ckf} y~\ref{fig:ds3_convergencia_nsga} ilustran las trayectorias de convergencia del HV medio por \emph{trial} en \texttt{ds3} para ambos algoritmos. Se observa que S-NSGA-II alcanzó valores de HV más altos y mantiene un rendimiento más estable en las últimas iteraciones.
 
@@ -324,7 +323,7 @@ En cuanto a la importancia de hiperparámetros, el análisis fANOVA en \texttt{d
 
 \subsubsection{Dataset 4: Connectionist Bench Sonar}
 
-En este dataset ambos algoritmos alcanzan HV medios cercanos, 0.8051 para MOEA-CKF y 0.8134 para S-NSGA-II, con trayectorias de convergencia similares entre sí. Las arquitecturas ganadoras tienen codificación TTFS en ambos casos, pero difieren en varios hiperparámetros continuos y discretos, incluyendo \texttt{wScale}, \texttt{dt} y los parámetros de esparsidad.
+En este dataset ambos algoritmos alcanzan HV medios cercanos, 0.8051 para MOEA-CKF y 0.8134 para S-NSGA-II, con trayectorias de convergencia similares entre sí. Las arquitecturas ganadoras tienen codificación TTFS en ambos casos, pero difieren en varios hiperparámetros continuos, incluyendo \texttt{wScale} y los parámetros de esparsidad.
 
 Las Figuras~\ref{fig:ds4_convergencia_ckf} y~\ref{fig:ds4_convergencia_nsga} muestran las curvas de HV medio por \emph{trial} en \texttt{ds4}, evidenciando que tanto MOEA-CKF como S-NSGA-II logran convergencias estables y valores de HV comparables en las últimas iteraciones.
 
@@ -348,7 +347,7 @@ Las Figuras~\ref{fig:ds4_convergencia_ckf} y~\ref{fig:ds4_convergencia_nsga} mue
     \label{fig:comparacion_hv_ds4}
 \end{figure}
 
-El análisis fANOVA en \texttt{ds4} muestra una repartición de importancia más equilibrada y divergente entre algoritmos: en MOEA-CKF domina \texttt{architecture} (34\%), seguido de \texttt{wScale} (22\%) y \texttt{dt} (10\%), mientras que en S-NSGA-II la mayor contribución corresponde a \texttt{sLower} (41\%), seguida de \texttt{wScale} (17\%) y \texttt{disC} (12\%). Estos patrones se visualizan en las Figuras~\ref{fig:ds4_fanova_ckf} y~\ref{fig:ds4_fanova_nsga}.
+El análisis fANOVA en \texttt{ds4} muestra una repartición de importancia más equilibrada y divergente entre algoritmos: en MOEA-CKF domina \texttt{architecture} (34\%), seguido de \texttt{wScale} (22\%), mientras que en S-NSGA-II la mayor contribución corresponde a \texttt{sLower} (41\%), seguida de \texttt{wScale} (17\%) y \texttt{disC} (12\%). Estos patrones se visualizan en las Figuras~\ref{fig:ds4_fanova_ckf} y~\ref{fig:ds4_fanova_nsga}.
 
 \begin{figure}[htbp]
     \centering
