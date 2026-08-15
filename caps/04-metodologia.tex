@@ -365,15 +365,13 @@ Ambos algoritmos se ejecutaron sobre el mismo problema de entrenamiento de SNN. 
     \item \textbf{Hiperparámetros fijos por combinación algoritmo-dataset.} Se utilizaron los hiperparámetros obtenidos mediante la búsqueda bayesiana de la Sección \ref{sec:metodologia_busqueda_hiper}, sin reajustarlos entre corridas de una misma combinación.
 \end{enumerate}
 
-Los resultados se organizaron en cuatro conjuntos experimentales, cada uno definido para responder una pregunta de comparación distinta: el conjunto de \textit{referencia}, que sustenta la comparación principal entre MOEA-CKF y S-NSGA-II sobre SNN; el conjunto \textit{con remuestreo}, que evalúa si estimar el fitness mediante remuestreo mejora o empeora el HV respecto de la evaluación estándar; el conjunto \textit{ANN}, que compara la plataforma SNN frente a la implementación ANN original de PlatEMO/MATLAB; y el conjunto de \textit{rendimiento temporal}, que mide el tiempo de cómputo de ambos algoritmos bajo condiciones controladas de hardware e hiperparámetros.
+Los resultados se organizaron en tres conjuntos experimentales, cada uno definido para responder una pregunta de comparación distinta: el conjunto de \textit{referencia}, que sustenta la comparación principal entre MOEA-CKF y S-NSGA-II sobre SNN, incluyendo su tiempo de cómputo; el conjunto \textit{con remuestreo}, que evalúa si estimar el fitness mediante remuestreo mejora o empeora el HV respecto de la evaluación estándar; y el conjunto \textit{ANN}, que compara la plataforma SNN frente a la implementación ANN original de PlatEMO/MATLAB.
 
-Los conjuntos de \textit{referencia} y \textit{con remuestreo} incluyeron 31 corridas por combinación, pareadas por semilla. Ambos registraron HV, frentes de Pareto y convergencia; se diferenciaron únicamente en que el segundo calculó el fitness mediante remuestreo, lo que permitió comparaciones pareadas.
+Los conjuntos de \textit{referencia} y \textit{con remuestreo} incluyeron 31 corridas por combinación, pareadas por semilla. Ambos registraron HV, frentes de Pareto y convergencia; se diferenciaron únicamente en que el segundo calculó el fitness mediante remuestreo, lo que permitió comparaciones pareadas. Todos los experimentos de ambos conjuntos corrieron bajo condiciones de hardware controladas (mismos procesos en paralelo e hilos OMP, sin otros procesos compitiendo por CPU), lo que habilitó adicionalmente, sobre el conjunto de referencia, una comparación de tiempo de cómputo entre MOEA-CKF y S-NSGA-II con los hiperparámetros efectivamente afinados por combinación.
 
 El conjunto experimental de \textit{ANN} incluyó igualmente 31 corridas por combinación y registró HV, complejidad y exactitud de la mejor red en la implementación ANN de PlatEMO/MATLAB. Como sus semillas y generador aleatorio no son equivalentes a los de la implementación C++, esta comparación no fue pareada.
 
-Finalmente, el conjunto experimental de \textit{rendimiento temporal} consideró 15 corridas por combinación, pareadas por semilla, y midió exclusivamente el tiempo de cómputo bajo hardware e hiperparámetros compartidos. En este caso, el HV no se interpretó como indicador de calidad, pues los hiperparámetros no fueron ajustados para maximizar el desempeño de optimización.
-
-El análisis se organizó en tres experimentos, cada uno con sus enfoques, los que se encuentran resumidos en la Tabla~\ref{tab:angulos-comparacion}. El primer experimento, el principal, compara MOEA-CKF y S-NSGA-II, ambos ejecutados en SNN, considerando tres enfoques: HV, frentes de Pareto y convergencia, todos sobre el conjunto experimental de referencia. El segundo experimento comparó cada algoritmo entre la plataforma SNN y la implementación ANN original (PlatEMO). Por último, los \textit{otros experimentos} evaluaron el efecto del remuestreo y el tiempo de cómputo, este último bajo hiperparámetros compartidos y condiciones de hardware equitativas entre algoritmos.
+El análisis se organizó en tres experimentos, cada uno con sus enfoques, los que se encuentran resumidos en la Tabla~\ref{tab:angulos-comparacion}. El primer experimento, el principal, compara MOEA-CKF y S-NSGA-II, ambos ejecutados en SNN, considerando cuatro enfoques: HV, frentes de Pareto, convergencia y tiempo de cómputo, todos sobre el conjunto experimental de referencia. El segundo experimento comparó cada algoritmo entre la plataforma SNN y la implementación ANN original (PlatEMO). Por último, el \textit{otro experimento} evaluó el efecto del remuestreo sobre el HV.
 
 \begin{table}[htbp]
 \centering
@@ -383,18 +381,18 @@ El análisis se organizó en tres experimentos, cada uno con sus enfoques, los q
 \begin{tabular}{lp{2.1cm}p{5cm}p{4.2cm}}
 \hline
 \textbf{Experimento} & \textbf{Enfoque}&\textbf{Pregunta}& \textbf{Fuente}  \\ \hline
-\multirow{3}{*}{SNN vs. SNN}        & Hipervolumen      & ¿Qué algoritmo tiene mejor frente de Pareto (SNN)?                         & \multirow{3}{*}{Conjunto de referencia}\\
+\multirow{4}{*}{SNN vs. SNN}        & Hipervolumen      & ¿Qué algoritmo tiene mejor frente de Pareto (SNN)?                         & \multirow{4}{*}{Conjunto de referencia}\\
 & Frentes de Pareto & ¿Cómo se reparten complejidad y error en las soluciones de cada algoritmo? &\\
-& Convergencia      & ¿Qué tan rápido converge cada algoritmo con el mismo presupuesto de FE?    &\\ \hline
+& Convergencia      & ¿Qué tan rápido converge cada algoritmo con el mismo presupuesto de FE?    &\\
+& Tiempo de cómputo & ¿Qué algoritmo es más rápido, con los hiperparámetros afinados por combinación y hardware controlado? &\\ \hline
 SNN vs. ANN                         & Plataforma        & ¿HV/complejidad mejor en SNN (C++) o en ANN (MATLAB original)?             & Conjunto experimental de referencia vs. Conjunto experimental ANN            \\ \hline
-\multirow{2}{*}{Otros exp.} & Remuestreo        & ¿El remuestreo mejora o empeora el HV?                                     & Conjunto experimental de referencia vs. Conjunto experimental con remuestreo \\
-& Tiempo            & ¿Qué algoritmo es más rápido en tiempo de reloj?                           & Conjunto experimental temporal \\\hline                                     
+Otro exp. & Remuestreo        & ¿El remuestreo mejora o empeora el HV?                                     & Conjunto experimental de referencia vs. Conjunto experimental con remuestreo \\\hline
 \end{tabular}
 \end{table}
 
 \subsection{Comparación de algoritmos en SNN}\label{sec:metodologia-estudio1}
 
-Este experimento principal compara MOEA-CKF y S-NSGA-II, ambos ejecutados en SNN (C++) sobre el conjunto experimental de referencia, mediante tres enfoques complementarios: HV, frentes de Pareto y convergencia.
+Este experimento principal compara MOEA-CKF y S-NSGA-II, ambos ejecutados en SNN (C++) sobre el conjunto experimental de referencia, mediante cuatro enfoques complementarios: HV, frentes de Pareto, convergencia y tiempo de cómputo.
 
 \paragraph{Hipervolumen}
 
@@ -414,23 +412,23 @@ Dado que HV resume el frente de Pareto en un escalar, pero no describe de qué e
 
 Dado que ambos algoritmos consumen FE en distintas cantidades por generación, por lo que se aproximó el número de evaluaciones asumiendo consumo aproximadamente constante de FE por generación dentro de cada corrida. Con esta aproximación se construyeron curvas de convergencia de HV mediano con bandas P10-P90 versus \texttt{fe\_approx}, indicadores de velocidad de convergencia a partir del \texttt{fe\_approx} necesario para alcanzar por primera vez el \(95\%\) del HV final de cada corrida.
 
+\paragraph{Tiempo de cómputo}
+
+Las 31 corridas por combinación del conjunto de referencia se realizaron bajo condiciones de hardware controladas (mismo número de procesos en paralelo e hilos OMP, sin otros procesos compitiendo por CPU), lo que hizo válida una comparación directa de tiempo de ejecución, pareada por semilla mediante Wilcoxon signed-rank.
+
 \subsection{Plataforma SNN vs.\ ANN}\label{sec:metodologia-estudio2}
 
 El segundo experimento comparó el rendimiento de cada algoritmo entre su implementación SNN (C++) y la implementación ANN original de PlatEMO/MATLAB. Dado que los resultados de ANN traen por corrida la exactitud de la mejor red, su complejidad y el HV del frente completo, la comparación se realizó \emph{por algoritmo} para aislar el efecto de la plataforma como único factor distinto entre las muestras. En este caso no existió pareo estadísticamente significativo entre corridas MATLAB y C++, por lo que se empleó la prueba de Mann-Whitney U sobre muestras independientes.
 
 \subsection{Otros experimentos}\label{sec:metodologia-otros}
 
-Además de los dos experimentos anteriores, se evaluó a cada algoritmo bajo condiciones adicionales: el efecto del remuestreo sobre el HV, y el tiempo de cómputo bajo hiperparámetros compartidos y hardware equitativo.
+Además de los dos experimentos anteriores, se evaluó a cada algoritmo bajo una condición adicional: el efecto del remuestreo sobre el HV.
 
 \paragraph{Entrenamiento con remuestreo}
 
 El conjunto de \textit{remuestreo} usó los mismos hiperparámetros afinados que el conjunto de \textit{referencia}, pero modificó la forma en que se estima $f_2$ durante el entrenamiento. En la evaluación estándar (ecuación~\ref{eq:classification_error}), $\operatorname{Acc}(x)$ se calcula una única vez sobre el conjunto de entrenamiento completo. En la evaluación con remuestreo, en cambio, cada vez que se evalúa un individuo se generan diez submuestras \textit{bootstrap} del conjunto de entrenamiento —es decir, muestreadas \emph{con reemplazo}, de modo que un mismo ejemplo puede repetirse o quedar fuera de una submuestra dada—, cada una de tamaño igual al 50\,\% del conjunto de entrenamiento. El segundo objetivo se redefine entonces como el error promedio de la red sobre esas diez submuestras, en vez del error obtenido en una única pasada sobre el conjunto completo. Las submuestras se regeneran de forma independiente en cada evaluación, es decir, para cada individuo y en cada generación, por lo que dos evaluaciones del mismo genotipo en generaciones distintas pueden producir un valor de fitness distinto. El objetivo $f_1$ no se ve afectado por el remuestreo, pues depende únicamente del vector de decisión y no del conjunto de entrenamiento.
 
 Este esquema replica una técnica de remuestreo para la evolución de SNN \cite{LoyolaJara2026evolvingsnn}, donde se evalúa cada red candidata sobre subconjuntos de tamaño fijo muestreados con reemplazo a partir del conjunto de entrenamiento, promediando el desempeño obtenido en todos ellos como puntaje de fitness. En este trabajo se adaptaron los parámetros de la técnica original, usando diez submuestras de un 50\,\% del conjunto de entrenamiento cada una, en lugar de 50 submuestras de tamaño fijo para ajustarse al tamaño de los datasets y al presupuesto de cómputo disponible, manteniendo el mismo principio de muestreo con reemplazo y promediado del desempeño. La motivación de este esquema es que promediar el error sobre varias submuestras parciales entrega una señal de fitness menos dependiente de una única partición del conjunto de entrenamiento, en contraste con la evaluación estándar en que dicho error se calcula siempre sobre el mismo conjunto completo, a costa de un mayor costo computacional por evaluación. Dado el mismo conjunto de semillas, la comparación de HV se realizó mediante pruebas pareadas de Wilcoxon por algoritmo y dataset (ocho comparaciones en total).
-
-\paragraph{Tiempo de cómputo}
-
-Para comparar tiempo de cómputo se diseñó específicamente el conjunto de \textit{rendimiento temporal}, con hiperparámetros compartidos entre algoritmos y condiciones de hardware controladas. Allí se comparan los tiempos de ejecución mediante Wilcoxon pareado por semilla.
 
 \subsection{Pruebas estadísticas y corrección por comparaciones múltiples}\label{subsec:pruebas-estadisticas-correccion}
 

@@ -150,3 +150,23 @@ ds3\_h20 & NEST          & 3.89 ms  & 138.08 MB \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+%-------------------------------------
+\section{Conectividad de las redes --- Dataset 4 (Sonar)}
+\label{sec:anexo-conectividad-ds4}
+
+Las Figuras~\ref{fig:anexo-conectividad-ds4-ckf} y~\ref{fig:anexo-conectividad-ds4-nsga} muestran, para MOEA-CKF y S-NSGA-II respectivamente, la solución de mejor exactitud de una corrida representativa de \texttt{ds4} (Sonar), seleccionada con el mismo criterio y bajo la misma convención de colores que la Figura~\ref{fig:conectividad-ejemplo} del Capítulo~\ref{chapter:resultados} (verde: viva; roja: muerta; naranjo: sumidero; amarillo: fuente; estrellas rojas: neuronas de salida). Se presentan por separado y a mayor tamaño, en vez de como subfiguras agrupadas, debido a que \texttt{ds4} tiene 60 características de entrada —más del doble que cualquier otro dataset del estudio (Tabla~\ref{tab:datasets_resumen})—, lo que hace ilegible una versión reducida con las 60 etiquetas de entrada.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{images/conectividad_ds4_moeackf.png}
+\caption{ds4-MOEA-CKF (corrida 14). Fila 7 de la Tabla~\ref{tab:conectividad-combo}: ilustra el problema de conexiones inútiles (100\% en esta corrida, 63.9\% en promedio) junto con clase de salida desconectada.}
+\label{fig:anexo-conectividad-ds4-ckf}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{images/conectividad_ds4_snsgaii.png}
+\caption{ds4-S-NSGA-II (corrida 2). Fila 8 de la Tabla~\ref{tab:conectividad-combo}: ilustra principalmente el problema de conexiones inútiles (60.1\% en esta corrida, 57.0\% en promedio), sin clases de salida desconectadas.}
+\label{fig:anexo-conectividad-ds4-nsga}
+\end{figure}
