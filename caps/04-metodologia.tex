@@ -196,7 +196,7 @@ f_1(\mathbf{x}) =
 
 donde $\|x\|_0$ corresponde a la cantidad de pesos no nulos de la red, y $\|x\|$ corresponde a la cantidad total de pesos de la red. El valor de $f_1(x)$ se encuentra acotado en el intervalo $[0,1]$. Un valor cercano a cero describe una solución altamente esparsa, mientras que un valor cercano a uno representa una red densa.
 
-El segundo objetivo, $f_2$, corresponde al error de clasificación obtenido sobre el conjunto de entrenamiento, y depende del proceso de simulación y decodificación de la respuesta de la SNN. Para cada muestra del conjunto de entrenamiento, el vector de entrada, previamente normalizado al intervalo $[0,1]$, se transforma en trenes de \textit{espigas} mediante el esquema de codificación seleccionado, ya sea \textit{Poisson} o \textit{TTFS}. La red se simula durante una ventana temporal de duración fija y la predicción final se obtiene a partir de la actividad de las neuronas de salida, mediante el decodificador WTA. Para problemas multiclase, la clase predicha se asigna a la neurona de salida que presenta mayor actividad durante la ventana de evaluación. El objetivo se define como el complemento de una métrica de desempeño, donde $\operatorname{Acc}(x)$ representa la exactitud en la tarea de clasificación:
+El segundo objetivo, $f_2$, corresponde al error de clasificación obtenido sobre el conjunto de entrenamiento, y depende del proceso de simulación y decodificación de la respuesta de la SNN. Para cada muestra del conjunto de entrenamiento, el vector de entrada, previamente normalizado al intervalo $[0,1]$, se transforma en trenes de \textit{espigas} mediante el esquema de codificación seleccionado, ya sea \textit{Poisson} o \textit{TTFS}. La red se simula durante una ventana temporal de duración fija y la predicción final se obtiene a partir de la actividad de las neuronas de salida, mediante el decodificador \textit{Rate argmax}. Para problemas multiclase, la clase predicha se asigna a la neurona de salida que presenta mayor actividad durante la ventana de evaluación. El objetivo se define como el complemento de una métrica de desempeño, donde $\operatorname{Acc}(x)$ representa la exactitud en la tarea de clasificación:
 
 \begin{equation}
 f_2(x) =
@@ -292,7 +292,7 @@ La Tabla \ref{tab:espacio-busqueda-hiper} resume los hiperparámetros incluidos 
 \hline
 \textbf{Hiperparámetro} & \textbf{Bloque} & \textbf{Tipo} & \textbf{Descripción} \\
 \hline
-\texttt{architecture} & Arquitectura & Categórico & Selecciona la combinación de codificador de entrada y decodificador de salida (Poisson o TTFS con decodificación WTA). \\
+\texttt{architecture} & Arquitectura & Categórico & Selecciona la combinación de codificador de entrada y decodificador de salida (Poisson o TTFS con decodificación \textit{Rate argmax}). \\
 \hline
 \texttt{disC} & Operadores SMOEA & Continuo & Índice de distribución del cruce SBX; controla cuánto se dispersan los hijos respecto de los padres. \\
 \hline
