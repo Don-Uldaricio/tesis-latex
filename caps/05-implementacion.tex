@@ -8,7 +8,7 @@ El sistema propuesto se organizó en dos módulos principales: un \textit{framew
 La arquitectura completa se puede describir como una secuencia de transformación desde la codificación del individuo hasta la evaluación de sus objetivos y el retorno al algoritmo evolutivo la cual se puede observar en la Figura \ref{fig:pipeline_snn_evo}.
 
 \begin{itemize}
-    \item Codificación: cada solución candidata se representa como un vector real de dimensión $D$, donde cada componente corresponde al peso de una sinapsis en el intervalo $[0,1]$.
+    \item Codificación: cada solución candidata se representa como un vector real de dimensión $D$ (Ecuación~\ref{eq:decision_dimension}), donde cada componente corresponde al peso de una sinapsis en el intervalo $[0,1]$.
 
     \item Construcción/decodificación de la SNN: el vector de pesos se proyecta sobre una topología fija.
 

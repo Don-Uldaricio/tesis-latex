@@ -16,7 +16,7 @@ Uno de los principales obstáculos técnicos para entrenar las SNN es que las fu
     \item Optimicen no solo los pesos sinápticos, sino también la arquitectura (topología) para crear redes eficientes.
 \end{enumerate}
 
-Se propone la siguiente pregunta de investigación: ¿cómo entrenar SNN sin depender de gradientes, aprovechando la naturaleza discreta de los \textit{spikes}, modificando simultáneamente la estructura y los pesos de la red, para minimizar la cantidad de conexiones activas y el error en tareas de clasificación, equilibrando ambos objetivos sin sacrificar significativamente el rendimiento?
+A partir de lo anterior se propone la siguiente pregunta de investigación: ¿cómo entrenar SNN sin depender de gradientes, aprovechando la naturaleza discreta de los \textit{spikes}, modificando simultáneamente la estructura y los pesos de la red, para minimizar la cantidad de conexiones activas y el error en tareas de clasificación, equilibrando ambos objetivos sin sacrificar significativamente el rendimiento?
 
 \section{Solución propuesta}
 \subsection{Enfoques de solución}
@@ -88,10 +88,10 @@ A continuación se enumeran los objetivos específicos necesarios para cumplir c
 \end{enumerate}
 
 \subsection{Alcances del proyecto}
-Los alcances del proyecto se centrarán en: 
+Los alcances del proyecto se centran en: 
 \begin{enumerate}
-    \item Lograr la convergencia del algoritmo y su capacidad para reducir el número de conexiones (\textit{sparsity}) sin sacrificar excesiva precisión en comparación con el método implementado para ANN
-    \item Resolver al menos tres tareas en \textit{datasets} de tareas particulares
+    \item Lograr la convergencia del algoritmo y su capacidad para reducir el número de conexiones (\textit{sparsity}) sin sacrificar excesiva precisión en comparación con el método implementado para ANN.
+    \item Resolver al menos tres tareas en \textit{datasets} de tareas particulares.
     \item Aplicar estrategias de codificación y decodificación para controlar la forma en que la información entra y sale de las neuronas \cite{Luu2025HybridLA}.
 \end{enumerate}
 
