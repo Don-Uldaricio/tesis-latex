@@ -11,7 +11,7 @@ Para la primera etapa se consideró la preselección de uno o dos SMOEAs de cada
 \begin{table}
     \centering
     \small
-    \caption{Preselección de SMOEAs para resolución de SMOPs y entrenamiento de SNN.}
+    \caption{Preselección de SMOEAs para resolución de SMOPs y entrenamiento de SNN. Fuente: Adaptado de \cite{Shao2025_SMOEA}}
     \label{tab:preseleccion_algoritmos}
     \begin{tabular}{p{5.5cm}lp{5cm}}\hline
          \textbf{Familia principal}&  \textbf{Subcategoría}& \textbf{Algoritmos}\\\hline
@@ -22,13 +22,15 @@ Para la primera etapa se consideró la preselección de uno o dos SMOEAs de cada
     \end{tabular}
 \end{table}
 
-Para la segunda etapa se tomaron en consideración los siguientes criterios de selección: 
+Para la segunda etapa se definieron criterios de selección que se aplicaron de forma jerárquica, de modo que el orden de aplicación determina el peso de cada criterio dentro de la decisión. En primer lugar se aplicaron tres \textit{criterios de eliminación}, que operan de manera conjunta: un algoritmo que no cumpliese alguno de ellos quedaba descartado, sin posibilidad de compensación entre ellos.
 
 \begin{itemize}
-    \item Disponibilidad del código del algoritmo para facilitar su posterior implementación en SNN.
-    \item Disponibilidad de los \textit{datasets} para la realización de experimentos.
-    \item Resolución de tareas de entrenamiento de redes neuronales y problemas de optimización.
+    \item \textbf{C1:} disponibilidad del código del algoritmo para facilitar su posterior implementación en SNN.
+    \item \textbf{C2:} resolución de tareas de entrenamiento de redes neuronales dentro de su estudio original.
+    \item \textbf{C3:} disponibilidad de los \textit{datasets} y del protocolo experimental (tareas y parámetros) reportados de forma clara.
 \end{itemize}
+
+Sobre el subconjunto de algoritmos que superó los tres criterios de eliminación se aplicó, en segundo lugar, un criterio de desempate basado en antigüedad, privilegiando las publicaciones más recientes con tal de que los algoritmos representen el estado actual de la familia correspondiente. A diferencia de los criterios de eliminación, este criterio no descarta por sí solo: únicamente ordena a los candidatos que ya cumplían con los requisitos previos.
 
 Para esto se utilizó la plataforma PlatEMO \cite{8065138_platEMO} como entorno de referencia para la selección de algoritmos debido a que constituye un \textit{framework} abierto desarrollado en MATLAB que integra algoritmos evolutivos, problemas, operadores e indicadores de desempeño en un entorno unificado, lo que facilita la ejecución de experimentos comparativos bajo condiciones homogéneas y reproducibles. Asimismo, la plataforma permite configurar parámetros relevantes del proceso de optimización y obtener resultados estandarizados, lo que resulta útil para establecer una base experimental consistente.
 
@@ -36,24 +38,23 @@ Además, se utilizó esta plataforma como base para una posterior implementació
 
 Adicionalmente, se privilegió el uso de algoritmos, cuyos estudios definieran de forma clara los \textit{datasets}, tareas de entrenamiento y parámetros usados \cite{MOEA/CKF, Yue2025CNEA, 10066873_S-NSGA-II}, de manera que la comparación entre la implementación en ANN y SNN pudiera realizarse sobre una base metodológicamente consistente. Bajo este enfoque, la comparación buscó identificar diferencias de comportamiento y posibles mejoras asociadas al cambio de paradigma neuronal, y no evaluar complejidad computacional ni velocidad de ejecución como objetivo principal.
 
-Como resultado de la selección final, se identificó que S-NSGA-II \cite{10066873_S-NSGA-II} y MOEA-CKF \cite{MOEA/CKF} cumplían de mejor manera con los criterios definidos. En particular, S-NSGA-II aparece asociado a entrenamiento de redes neuronales en problemas del mundo real (\textit{Real World NN training}) y SMOPs en PlatEMO 3.4, mientras que MOEA-CKF presenta la misma cobertura en PlatEMO 3.5. En contraste, otros algoritmos fueron descartados por no contar con código en PlatEMO (como CNEA \cite{Yue2025CNEA} y MOEA-ESD), por no reportar tareas de entrenamiento de redes neuronales o no presentar los \textit{datasets} usados para la resolución de estas tareas.
+Como resultado de la aplicación de la regla de decisión, S-NSGA-II \cite{10066873_S-NSGA-II} y MOEA-CKF \cite{MOEA/CKF} fueron los únicos algoritmos de la preselección que superaron los tres criterios de eliminación. En particular, S-NSGA-II aparece asociado a entrenamiento de redes neuronales en problemas del mundo real (\textit{Real World NN training}) y SMOPs en PlatEMO 3.4, mientras que MOEA-CKF presenta la misma cobertura en PlatEMO 3.5. En contraste, los demás algoritmos de la preselección quedaron descartados en los criterios de eliminación: MOEA-ESD por no contar con código en PlatEMO (C1), y LRMOEA y SCEA por no reportar tareas de entrenamiento de redes neuronales (C2). CNEA \cite{Yue2025CNEA}, identificada en la revisión de literatura pero no incluida en la preselección, también fue descartada por no contar con código disponible (C1). SparseEA2, en cambio, superó los tres criterios de eliminación, al contar con código en PlatEMO, resolver \textit{Real World NN training} y presentar sus \textit{datasets}; sin embargo, al ser una publicación de 2021, quedó por debajo de S-NSGA-II y MOEA-CKF, ambos de 2024, al aplicarse el criterio de desempate por antigüedad. El resultado completo de la aplicación de los criterios se resume en la Tabla \ref{tab:algo_seleccion_final}.
 
-La decisión de estudiar estos dos algoritmos se fundamentó en que, aunque el trabajo de título no busca comparar complejidad computacional ni tiempos de ejecución entre algoritmos, los tiempos relativamente acotados de S-NSGA-II en la ejecución de experimentos hacen viable su incorporación junto con MOEA-CKF en la fase experimental. El resumen de los criterios de selección final de los algoritmos se puede observar en la Tabla \ref{tab:algo_seleccion_final}.
+Además de los criterios de selección, el experimento estaba sujeto a una \textbf{restricción de viabilidad computacional/}: en el escenario más exigente, cada corrida realiza hasta 100\,000 evaluaciones de función (ver Subsección \ref{subsec:configuracion_evaluacion_presupuesto}). La selección de los algoritmos no se ponderó en función de su tiempo de ejecución, pues la comparación de desempeño se centra en la calidad del frente de Pareto y no en complejidad ni velocidad; no obstante, se verificó que ambos algoritmos seleccionados pudiesen completar el número de corridas requerido dentro del presupuesto de cómputo disponible. Esta verificación operó como condición previa de factibilidad experimental, y no como criterio de mérito.
 
 \begin{table}[htbp]
     \centering
     \small
-    \caption{Criterios de selección final de SMOEAs.}
-    \begin{tabular}{cp{4cm}p{2cm}p{2cm}p{2cm}}
+    \caption{Matriz de decisión de la selección final de SMOEAs. Los criterios de eliminación C1--C3 se aplican de forma conjunta y sin compensación; el criterio de desempate se aplica solo a los algoritmos que superan los tres filtros. Fuente: Elaborada en base a \cite{8065138_platEMO}.}
+    \begin{tabular}{lccc l}
     \hline
-         \textbf{Nombre}&  \textbf{\textit{Datasets} NN}&  \textbf{Código}&  \textbf{Problemas}&  \textbf{\textit{Benchmarks}}\\ \hline
-         MOEA-ESD&  Statlog (German), Connectionist&  No&  No resuelve NN \textit{training}& No presenta \\\hline
-         LRMOEA&  No realiza entrenamiento NN&  PlatEMO&  PO&  LRMOP 1-8\\\hline
-         S-SNGA-II&  Statlog Australian, Climate, Statlog (German)&  PlatEMO 3.4&  \textit{Real World NN training}&  SMOP 1-8\\\hline
-         SCEA&  No realiza entrenamiento NN&  PlatEMO&  No resuelve NN \textit{training}&  SMOP 1-8\\\hline
-         MOEA-CKF&  Connectionist, Bench Sonar, SetapProduct, LSVT Voice Rehabilitation&  PlatEMO 3.5&  \textit{Real world NN training}&  SMOP 1-8\\\hline
-         SparseEA2&  Connectionist, Bench Sonar, Hill Valley, LSVT Voice Rehabilitation&  PlatEMO&  \textit{Real world NN training}&  SMOP 1-8\\\hline
-         CNEA&  No disponibles&  No&  Tareas sin especificar&  \textit{Task} 1-9\\\hline
+         \textbf{Algoritmo}&  \textbf{C1: código}&  \textbf{C2: NN \textit{training}}&  \textbf{C3: \textit{datasets}}&  \textbf{Resultado}\\ \hline
+         MOEA-ESD&  $\times$&  $\times$&  ---&  Descartado (C1)\\
+         LRMOEA&  $\checkmark$&  $\times$&  ---&  Descartado (C2)\\
+         S-NSGA-II&  $\checkmark$&  $\checkmark$&  $\checkmark$&  \textbf{Seleccionado}\\
+         SCEA&  $\checkmark$&  $\times$&  ---&  Descartado (C2)\\
+         MOEA-CKF&  $\checkmark$&  $\checkmark$&  $\checkmark$&  \textbf{Seleccionado}\\
+         SparseEA2&  $\checkmark$&  $\checkmark$&  $\checkmark$&  Descartado (desempate)\\ \hline
     \end{tabular}
     \label{tab:algo_seleccion_final}
 \end{table}
