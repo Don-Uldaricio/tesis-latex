@@ -156,7 +156,7 @@ Métrica dominante, ya que podría ejecutarse hasta 100\,000 veces por corrida d
 
 \subsection{Plan de análisis estadístico}
 
-La comparación formal entre \textit{frameworks} se realizó mediante la prueba no paramétrica de Mann-Whitney $U$, dado que no se garantizó normalidad en los tiempos de ejecución y se detectó una violación del supuesto de independencia entre iteraciones en NEST. Para cada configuración se reportan tamaño muestral, media, desviación estándar, mediana, mínimos y máximos. La inferencia comparativa se basa en Mann-Whitney. Dada la comparación entre dos \textit{frameworks} A y B, las hipótesis nula y alternativa fueron las siguientes:
+La comparación formal entre \textit{frameworks} se realizó mediante la prueba no paramétrica de Mann-Whitney $U$, sustentada en dos consideraciones sobre los supuestos de la prueba. En primer lugar, no se asumió normalidad en los tiempos de evaluación: al ser mediciones de ejecución sujetas a ruido del sistema operativo y a la geometría particular de cada \textit{framework}, su distribución puede presentar asimetría y valores atípicos, y Mann-Whitney no requiere el supuesto de normalidad, a diferencia de una prueba $t$. En segundo lugar, el diagnóstico de independencia descrito en este mismo plan detectó una tendencia significativa entre el número de iteración y el tiempo de evaluación en NEST, lo que indica que sus mediciones no constituyen muestras independientes; una prueba basada en rangos es más robusta frente a esta situación que una basada en medias. Para cada configuración se reportan tamaño muestral, media, desviación estándar, mediana, mínimos y máximos. La inferencia comparativa se basa en Mann-Whitney. Dada la comparación entre dos \textit{frameworks} A y B, las hipótesis nula y alternativa fueron las siguientes:
 
 \begin{itemize}
     \item $H_0$: $\operatorname{mediana}(A)=\operatorname{mediana(B)}$, las dos poblaciones de las que provienen las muestras tienen la misma distribución.
@@ -165,12 +165,14 @@ La comparación formal entre \textit{frameworks} se realizó mediante la prueba 
 
 La decisión de qué \textit{framework} es más rápido se tomó en dos pasos: el \textit{test} rechaza $H_0$ ($p<0.05$) en favor de $H_a$ y luego se observó la dirección de esa diferencia para determinar qué \textit{framework} es más veloz en términos de evaluación.
 
-Como diagnóstico de independencia entre corridas se calcula la correlación de Spearman entre el número de iteración y el tiempo de evaluación, marcando como \textit{tendencia} aquellas configuraciones con \(p < 0.05\). Este criterio se utiliza como aviso de validez, es decir, no se descartan mediciones a partir de él. Las hipótesis nula y alternativa fueron las siguientes: 
+Como diagnóstico de independencia se calculó la correlación de Spearman entre el número de iteración y el tiempo de evaluación \texttt{eval\_s} dentro de cada corrida, para los tres \textit{frameworks}, marcando como \textit{tendencia} aquellas configuraciones con \(p < 0.05\). Este criterio se utiliza como aviso de validez, es decir, no se descartan mediciones a partir de él. Las hipótesis nula y alternativa fueron las siguientes: 
 
 \begin{itemize}
     \item $H_0$: $\rho = 0$, no existe correlación monótona entre la iteración y el tiempo de evaluación.
     \item $H_a$: $\rho \neq 0$, existe una correlación entre la iteración y el tiempo de evaluación.
 \end{itemize}
+
+Un $\rho$ significativo y cercano a uno indica que el tiempo de evaluación no fluctúa de manera estable alrededor de un valor, sino que crece o decrece de forma monótona a lo largo de la corrida, rompiendo la independencia de las muestras. El diagnóstico detectó tendencia en las seis configuraciones de NEST ($\rho \approx 0.999$--$1.000$, $p \ll 0.001$ en todos los casos), y de forma marginal en algunas configuraciones de ANNarchy y del simulador propio. El caso de NEST se confirmó con evidencia causal adicional: al duplicar el número de repeticiones $K$ de 15 a 30 en la configuración \texttt{ds3}, la memoria pico de NEST se duplicó proporcionalmente (de 66{.}6 a 137{.}7\,MB en \texttt{ds3\_h10} y de 66{.}9 a 138{.}1\,MB en \texttt{ds3\_h20}), mientras que en las configuraciones con $K$ sin cambios la memoria se mantuvo idéntica. Esto confirma que NEST acumula estado entre evaluaciones sucesivas dentro de un mismo proceso en lugar de mantener un costo constante, lo que constituye una violación directa del supuesto de independencia. Este hallazgo no altera la conclusión del \textit{benchmark}, pues incluso el valor mínimo medido de NEST sigue siendo entre 12 y 17 veces mayor que el mínimo de la implementación propia; sin embargo, implica que los tiempos reportados para NEST son, si acaso, una subestimación de su costo en corridas largas.
 
 % \subsection{Criterios de selección y limitaciones}
 
@@ -280,15 +282,11 @@ El rendimiento de un algoritmo evolutivo multiobjetivo aplicado al entrenamiento
 
 Se definió una optimización externa sobre la optimización evolutiva interna. En el bucle externo, un optimizador bayesiano implementado con Optuna \cite{akiba2019optuna} y el muestreador \textit{Tree-structured Parzen Estimator} (TPE) propone una configuración de hiperparámetros. Luego, dicha configuración se utiliza para ejecutar completamente el SMOEA correspondiente hasta agotar su presupuesto de evaluaciones. El resultado de esa corrida, expresado como un frente de Pareto final, se resume en un único escalar mediante el hipervolumen (HV), que actúa como función objetivo del proceso externo.
 
-En este esquema, el optimizador externo maximiza el HV medio obtenido por el algoritmo interno, mientras que el SMOEA continúa resolviendo el problema multiobjetivo. En consecuencia, la búsqueda de hiperparámetros no altera la naturaleza del problema de optimización resuelto por el algoritmo evolutivo, sino que determina la configuración con la cual dicho algoritmo puede explorar de forma más eficaz el espacio de soluciones.
+En este esquema, el optimizador externo maximiza el HV medio obtenido por el algoritmo interno, mientras que el SMOEA continúa resolviendo el problema multiobjetivo. Por lo tanto, la búsqueda de hiperparámetros no altera la naturaleza del problema resuelto por el algoritmo evolutivo, sino que determina la configuración con la que este explora de forma más eficaz el espacio de soluciones.
 
-El espacio de búsqueda considerado integra variables continuas, discretas y categóricas. Esta decisión responde a la naturaleza de los hiperparámetros involucrados y evita imponer una representación artificial sobre variables que no comparten la misma semántica. 
+El espacio de búsqueda integra variables continuas, discretas y categóricas, lo que responde a la naturaleza de cada hiperparámetro y evita imponer una representación artificial sobre variables que no comparten la misma semántica. Los hiperparámetros continuos, cuyo efecto sobre el desempeño es suave o multiplicativo, incluyen los índices de distribución de cruzamiento y mutación, la escala de pesos sinápticos y, en las arquitecturas con codificación Poisson, la tasa máxima de disparo. Por su parte, algunos parámetros se modelan naturalmente como variables discretas en un rango pequeño, como el período refractario del codificador Poisson.
 
-Por una parte, existen hiperparámetros continuos, cuyo efecto sobre el desempeño del sistema es suave o multiplicativo. En este grupo se incluyen los índices de distribución de cruzamiento y mutación, la escala de pesos sinápticos y, en las arquitecturas con codificación Poisson, la tasa máxima de disparo.
-
-Por otra parte, algunos parámetros se modelan naturalmente como variables discretas en un rango pequeño, como el período refractario del codificador Poisson.
-
-Finalmente, existe un hiperparámetro categórico que representa la arquitectura de la red. En particular, la arquitectura combina el tipo de codificador y el número de neuronas de salida. Este hiperparámetro además condiciona la existencia de otros como \textit{max rate} y \textit{refractory period} que se usan solo cuando se emplea codificación Poisson.
+Finalmente, la arquitectura de la red se representa mediante un hiperparámetro categórico que selecciona el tipo de codificador de entrada, \textit{Poisson} o \textit{TTFS}. El decodificador no forma parte de la búsqueda: en ambos casos es \textit{Rate argmax} sobre dos neuronas de salida, una por clase. Este hiperparámetro además condiciona la existencia de otros, como \textit{max rate} y \textit{refractory period}, que solo se usan cuando se emplea codificación Poisson.
 
 La Tabla \ref{tab:espacio-busqueda-hiper} resume los hiperparámetros incluidos en la búsqueda, junto con su categoría, tipo y una pequeña descripción. Esta parametrización permite que cada variable sea tratada conforme a su naturaleza experimental.
 
@@ -301,7 +299,7 @@ La Tabla \ref{tab:espacio-busqueda-hiper} resume los hiperparámetros incluidos 
 \hline
 \textbf{Hiperparámetro} & \textbf{Bloque} & \textbf{Tipo} & \textbf{Descripción} \\
 \hline
-\texttt{architecture} & Arquitectura & Categórico & Selecciona la combinación de codificador de entrada y decodificador de salida (Poisson o TTFS con decodificación \textit{Rate argmax}). \\
+\texttt{architecture} & Arquitectura & Categórico & Selecciona el codificador de entrada (Poisson o TTFS). El decodificador es fijo: \textit{Rate argmax} con dos neuronas de salida. \\
 \hline
 \texttt{disC} & Operadores SMOEA & Continuo & Índice de distribución del cruce SBX; controla cuánto se dispersan los hijos respecto de los padres. \\
 \hline
@@ -321,14 +319,14 @@ La Tabla \ref{tab:espacio-busqueda-hiper} resume los hiperparámetros incluidos 
 \hline
 \texttt{max\_rate} & Codificador Poisson & Continuo & Tasa máxima de disparo del codificador Poisson, en Hz. Solo aplica cuando se usa este codificador. \\
 \hline
-\texttt{refractory\_period} & Codificador Poisson & Continuo & Período refractario del codificador Poisson, en milisegundos. Solo aplica cuando se usa este codificador. \\
+\texttt{refractory\_period} & Codificador Poisson & Discreto & Período refractario del codificador Poisson, en milisegundos. Solo aplica cuando se usa este codificador. \\
 \hline
 \end{tabularx}
 \end{table}
 
 \subsection{Configuración experimental, evaluación y presupuesto computacional}\label{subsec:configuracion_evaluacion_presupuesto}
 
-Para S-NSGA-II se mantuvieron fijos los componentes definidos en su formulación original, incluyendo la selección por torneo binario, la selección ambiental de NSGA-II y la probabilidad de cruzamiento unitaria. La optimización externa ajustó los parámetros asociados a los operadores S-SBX y S-PM, la esparsidad, la escala de pesos y la arquitectura de codificación/decodificación. En MOEA-CKF se conservaron sus mecanismos internos de análisis, agrupamiento y reproducción, pues forman parte de la definición del algoritmo. Ambos métodos se evaluaron sobre el mismo espacio externo de hiperparámetros, de modo que las diferencias de desempeño se atribuyan principalmente a sus mecanismos evolutivos.
+Para S-NSGA-II se mantuvieron fijos los componentes definidos en su formulación original, incluyendo la selección por torneo binario, la selección ambiental de NSGA-II y la probabilidad de cruzamiento unitaria. La optimización externa ajustó los parámetros asociados a los operadores S-SBX y S-PM, la esparsidad, la escala de pesos y el tipo de codificador de entrada (Poisson o TTFS). En MOEA-CKF se conservaron sus mecanismos internos de análisis, agrupamiento y reproducción, pues forman parte de la definición del algoritmo. Ambos métodos se evaluaron sobre el mismo espacio externo de hiperparámetros, de modo que las diferencias de desempeño se atribuyan principalmente a sus mecanismos evolutivos.
 
 % \paragraph{Evaluación de cada trial}
 Cada \textit{trial} de Optuna se ejecutó para tres tamaños de capa oculta: 20, 40 y 80 neuronas. Las ejecuciones compartieron la misma configuración, semilla y presupuesto \texttt{maxFE}; solo varió el tamaño de la red y, por tanto, la dimensionalidad del problema. El valor retornado al optimizador externo correspondió al promedio del Hipervolumen (HV) de las tres ejecuciones. Así, se favorecieron configuraciones con desempeño robusto frente a cambios en la topología de la red.
