@@ -934,6 +934,32 @@ El remuestreo mejora el HV de forma significativa y con efecto grande para ambos
 \end{tabular}
 \end{table}
 
+\subsection{Verificación de supuestos y análisis de sensibilidad}
+\label{sec:verificacion-supuestos}
+
+Esta subsección contrasta con los datos la elección de pruebas no paramétricas descrita en la Subsección~\ref{subsec:pruebas-estadisticas-correccion}. La Tabla~\ref{tab:supuestos-resumen} resume, para cada experimento, la proporción de comparaciones en las que se rechaza la normalidad ($\alpha=0.05$) y en las que la decisión de significancia tras la corrección de Holm-Bonferroni coincide entre la prueba no paramétrica utilizada y su contraparte paramétrica. El detalle de cada comparación, incluyendo los p-valores de las pruebas de normalidad y de homogeneidad de varianzas, se encuentra en el repositorio \texttt{platemo-cpp} (Anexo~\ref{chap:anexo-repos}), en \texttt{comparison/assumptions}.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Verificación de supuestos y sensibilidad a la elección de la prueba. En las comparaciones pareadas, la normalidad se evalúa sobre las diferencias pareadas; en las independientes, se cuenta cuántas comparaciones tienen al menos un grupo con rechazo de normalidad.}
+\label{tab:supuestos-resumen}
+\begin{tabular}{p{4.2cm}p{2.9cm}cccc}
+\toprule
+\textbf{Experimento} & \textbf{Prueba usada (alternativa)} & \textbf{Comp.} & \textbf{Rechazo normalidad} & \textbf{Varianzas distintas} & \textbf{Misma decisión} \\
+\midrule
+SNN vs.\ SNN (HV, mejor red, convergencia) & Wilcoxon ($t$ pareada) & 20 & 12/20 & --- & 20/20 \\
+SNN vs.\ SNN (tiempo de cómputo) & Wilcoxon ($t$ pareada) & 4 & 3/4 & --- & 4/4 \\
+Remuestreo vs.\ referencia (HV) & Wilcoxon ($t$ pareada) & 8 & 2/8 & --- & 8/8 \\
+SNN vs.\ ANN (HV, complejidad, exactitud) & Mann-Whitney (Welch) & 24 & 21/24 & 17/24 & 22/24 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Los resultados respaldan la elección de forma desigual según el diseño. En la comparación entre plataformas, que usa muestras independientes, se rechaza la normalidad en al menos un grupo en 21 de 24 comparaciones y la homogeneidad de varianzas en 17 de 24, de modo que ni el supuesto de normalidad ni el de varianzas iguales se sostienen de forma general. En las comparaciones pareadas el panorama es mixto: se rechaza la normalidad de las diferencias en 17 de 32 casos. El rechazo es sistemático en la complejidad de la mejor red (12 de 12 comparaciones, entre pareadas e independientes), frecuente en el tiempo de cómputo (3 de 4) y menos frecuente en el HV pareado (2 de 4) y en el remuestreo (2 de 8). Por esta razón no se afirma que los datos sean no normales en general, sino que no es posible garantizar la normalidad, y que la regla uniforme basada en el diseño es la opción más segura.
+
+En cuanto a la sensibilidad, la prueba no paramétrica y su contraparte paramétrica llevan a la misma decisión en 54 de las 56 comparaciones. Todas las comparaciones pareadas (32 de 32) coinciden, por lo que en ellas las conclusiones no dependen de la prueba elegida. Las dos discrepancias ocurren en la complejidad de la mejor red en la comparación entre plataformas, indicador de colas pesadas, y en ambas la media es poco representativa de la corrida típica. En \texttt{ds3} con MOEA-CKF, Mann-Whitney detecta una diferencia significativa ($p$ corregido $=1.8\times10^{-6}$; medianas $0.012$ en SNN y $0.041$ en ANN), pero la prueba de Welch no ($p$ corregido $=0.50$), porque unas pocas corridas SNN con redes más densas (hasta $0.28$) elevan su media a $0.041$, cercana a la de ANN ($0.051$). En \texttt{ds4} con S-NSGA-II ocurre lo inverso: Welch detecta diferencia significativa ($p$ corregido $=2.6\times10^{-5}$) y Mann-Whitney no ($p$ corregido $=0.064$), porque la distribución de ANN es muy dispersa, con mediana $0.15$, media $0.46$ y corridas con redes completamente densas, mientras que la de SNN se concentra en valores bajos (mediana $0.039$). En ambos casos las medias resumen mal la distribución, lo que respalda el uso de pruebas basadas en rangos y de la mediana como medida descriptiva. Como la significancia de estas dos comparaciones depende de la prueba elegida, sus conclusiones se interpretan con cautela.
+
 %---------------
 
 
