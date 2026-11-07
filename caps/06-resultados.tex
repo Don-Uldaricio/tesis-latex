@@ -90,7 +90,11 @@ Con base en los resultados anteriores, se selecciona \textit{snn-simulator} como
 
 La principal desventaja de \textit{snn-simulator} es un consumo de memoria aproximadamente 9 MB superior al de ANNarchy en las configuraciones evaluadas, siendo esta diferencia irrelevante frente a la ventaja temporal de dos a tres órdenes de magnitud y frente al hecho de que la memoria de \textit{snn-simulator} se mantiene estable mientras que la de NEST crece con el número de evaluaciones.
 
-Las amenazas a la validez incluyen la anomalía confirmada de tendencia en NEST (crecimiento monótono del tiempo de evaluación al duplicar el número de repeticiones dentro del mismo proceso), y la realización de mediciones en una sola máquina y sesión diferente a donde se realizaron los experimentos finales.
+\paragraph{Diagnóstico de independencia entre iteraciones}
+
+El diagnóstico descrito en la Sección~\ref{sec:benchmark-framework-metodologia} detectó, en las seis configuraciones de NEST, una tendencia monótona creciente del tiempo de evaluación con el número de iteración ($\rho \geq 0.998$, $p \ll 0.001$). Dentro de una misma corrida, el tiempo de NEST se multiplica entre 2.8 y 5.5 veces entre la primera y la última iteración. En ANNarchy y en el simulador propio solo se detectaron tendencias en tres de las doce combinaciones, de signo negativo y menor magnitud ($|\rho| \leq 0.52$). Además, al duplicar $K$ de 15 a 30 en \texttt{ds3}, la memoria pico de NEST se duplicó aproximadamente (de 66.6 a 137.7\,MB en \texttt{ds3\_h10} y de 66.9 a 138.1\,MB en \texttt{ds3\_h20}), mientras que la del simulador propio se mantuvo constante. Estos resultados son consistentes con que NEST acumula estado entre evaluaciones sucesivas dentro de un mismo proceso y, por tanto, con una violación del supuesto de independencia entre iteraciones. El detalle por configuración se presenta en el Anexo~\ref{sec:anexo-independencia}.
+
+Las amenazas a la validez incluyen la tendencia creciente del tiempo de evaluación de NEST dentro de cada corrida, que implica que sus mediciones no son independientes entre iteraciones y que los tiempos reportados son, si acaso, una subestimación de su costo en corridas largas. Esto no altera la conclusión, pues el valor mínimo de NEST, que corresponde a su primera iteración, sigue siendo entre 12 y 17 veces mayor que el del simulador propio. A ello se suma la realización de mediciones en una sola máquina y sesión diferente a donde se realizaron los experimentos finales.
 
 
 %---------------

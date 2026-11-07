@@ -90,11 +90,11 @@
 \begin{table}[htbp]
 \centering
 \small
-\caption{Tiempo de evaluación de \textit{fitness} en milisegundos con \(K = 30\).}
+\caption{Tiempo de evaluación de \textit{fitness} en milisegundos con \(K = 30\). La columna \textit{Tendencia} indica si la correlación de Spearman entre iteración y tiempo fue significativa ($p<0.05$); el detalle se encuentra en la Sección~\ref{sec:anexo-independencia}.}
 \label{tab:framework-evals-res}
 \begin{tabular}{llrrrl}
 \toprule
-Config & Framework & \(n\) & Media \(\pm\) DE (ms) & Mediana (ms) & $p<0.05$ \\
+Config & Framework & \(n\) & Media \(\pm\) DE (ms) & Mediana (ms) & Tendencia \\
 \midrule
 ds1\_h10 & snn-simulator & 30 & 44.40 \(\pm\) 1.15   & 44.09 & sí \\
 ds1\_h10 & ANNarchy      & 30 & 158.52 \(\pm\) 2.40  & 157.95 & no \\
@@ -150,6 +150,85 @@ ds3\_h20 & NEST          & 3.89 ms  & 138.08 MB \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+%-------------------------------------
+\section{Diagnóstico de independencia entre iteraciones en el \textit{benchmark} de \textit{frameworks}}
+\label{sec:anexo-independencia}
+
+Esta sección detalla los resultados del diagnóstico de independencia descrito en la Sección~\ref{sec:benchmark-framework-metodologia}. Para cada combinación de configuración y \textit{framework} se calculó la correlación de Spearman $\rho$ entre el número de iteración (0 a 29) y el tiempo de evaluación \texttt{eval\_s}, marcando como \textit{tendencia} los casos con $p<0.05$. Los resultados se presentan en la Tabla~\ref{tab:anexo-spearman}.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Correlación de Spearman entre el número de iteración y el tiempo de evaluación ($n=30$ por celda). Se marca \textit{tendencia} cuando $p<0.05$. En las dos celdas de NEST con $\rho=1.000$ el valor $p$ calculado es numéricamente nulo.}
+\label{tab:anexo-spearman}
+\begin{tabular}{llrrl}
+\toprule
+Config & Framework & $\rho$ & $p$ & Tendencia \\
+\midrule
+ds1\_h10 & snn-simulator & $-0.515$ & $3.6\times10^{-3}$  & sí \\
+ds1\_h10 & ANNarchy      & $-0.156$ & $0.409$             & no \\
+ds1\_h10 & NEST          & $0.9996$ & $2.9\times10^{-44}$ & sí \\ \hline
+ds1\_h20 & snn-simulator & $-0.399$ & $0.029$             & sí \\
+ds1\_h20 & ANNarchy      & $-0.031$ & $0.869$             & no \\
+ds1\_h20 & NEST          & $0.9991$ & $4.8\times10^{-40}$ & sí \\ \hline
+ds4\_h10 & snn-simulator & $0.093$  & $0.624$             & no \\
+ds4\_h10 & ANNarchy      & $-0.121$ & $0.525$             & no \\
+ds4\_h10 & NEST          & $0.9987$ & $1.4\times10^{-37}$ & sí \\ \hline
+ds4\_h20 & snn-simulator & $0.061$  & $0.750$             & no \\
+ds4\_h20 & ANNarchy      & $0.117$  & $0.537$             & no \\
+ds4\_h20 & NEST          & $0.9991$ & $4.8\times10^{-40}$ & sí \\ \hline
+ds3\_h10 & snn-simulator & $-0.253$ & $0.177$             & no \\
+ds3\_h10 & ANNarchy      & $-0.372$ & $0.043$             & sí \\
+ds3\_h10 & NEST          & $1.000$  & $\approx 0$         & sí \\ \hline
+ds3\_h20 & snn-simulator & $-0.294$ & $0.115$             & no \\
+ds3\_h20 & ANNarchy      & $-0.070$ & $0.715$             & no \\
+ds3\_h20 & NEST          & $1.000$  & $\approx 0$         & sí \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La tendencia de NEST es de signo positivo y de magnitud casi perfecta en las seis configuraciones, mientras que las tendencias detectadas en el simulador propio (\texttt{ds1\_h10} y \texttt{ds1\_h20}) y en ANNarchy (\texttt{ds3\_h10}) son de signo negativo y moderadas ($|\rho|\leq 0.52$). La Tabla~\ref{tab:anexo-nest-crecimiento} cuantifica el crecimiento de NEST: entre la primera y la última iteración de una misma corrida, el tiempo de evaluación se multiplica entre 2.8 y 5.5 veces. En las seis configuraciones el mínimo de NEST coincide con su primera iteración, es decir, el momento en que aún no se ha acumulado estado, y aun así es entre 12 y 17 veces mayor que el mínimo del simulador propio.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Crecimiento del tiempo de evaluación de NEST dentro de una corrida y comparación del mínimo de NEST con el del \textit{snn-simulator}.}
+\label{tab:anexo-nest-crecimiento}
+\begin{tabular}{lrrrr}
+\toprule
+Config & Iteración 0 (ms) & Iteración 29 (ms) & Factor de crecimiento & Mín.\ NEST / mín.\ \textit{snn-simulator} \\
+\midrule
+ds1\_h10 &  752.6 & 4106.7 & 5.46 & 17.1 \\
+ds1\_h20 &  859.9 & 4210.5 & 4.90 & 14.4 \\
+ds4\_h10 &  502.9 & 1547.3 & 3.08 & 12.9 \\
+ds4\_h20 &  540.9 & 1511.5 & 2.79 & 12.0 \\
+ds3\_h10 & 1345.5 & 6620.7 & 4.92 & 15.0 \\
+ds3\_h20 & 1485.2 & 6523.8 & 4.39 & 13.0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Como evidencia complementaria sobre el origen de la tendencia, se comparó la memoria pico de NEST entre dos corridas del mismo \textit{benchmark} que diferían únicamente en el número de repeticiones $K$. En una corrida previa, las configuraciones \texttt{ds3} se habían ejecutado con $K=15$ para acotar el tiempo total de medición, y posteriormente se aumentaron a $K=30$ para igualar el tamaño de muestra entre todas las configuraciones. Los valores de $K=15$ provienen del registro de esa corrida previa. En las configuraciones \texttt{ds1} y \texttt{ds4}, donde $K$ no cambió, la memoria de NEST se mantuvo idéntica entre ambas corridas. La Tabla~\ref{tab:anexo-nest-memoria} resume la comparación para \texttt{ds3}.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Memoria pico de NEST en las configuraciones \texttt{ds3} al duplicar el número de repeticiones $K$.}
+\label{tab:anexo-nest-memoria}
+\begin{tabular}{lrrr}
+\toprule
+Config & Memoria con $K=15$ (MB) & Memoria con $K=30$ (MB) & Factor \\
+\midrule
+ds3\_h10 & 66.55 & 137.68 & 2.07 \\
+ds3\_h20 & 66.94 & 138.08 & 2.06 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La memoria de NEST creció de forma aproximadamente proporcional a $K$, mientras que la del \textit{snn-simulator} se mantuvo constante (13.35 MB, Tabla~\ref{tab:framework-build-memory-res}). Este patrón sugiere que NEST acumula estado entre evaluaciones sucesivas dentro de un mismo proceso, lo que es coherente con el aumento monótono del tiempo observado en la Tabla~\ref{tab:anexo-spearman}.
+
+\paragraph{Alcance y limitaciones.} La correlación de Spearman detecta tendencias monótonas, pero no otras formas de dependencia serial (por ejemplo, autocorrelación sin tendencia), por lo que el diagnóstico se interpreta como un aviso de validez y no como una prueba formal de independencia. Del mismo modo, el crecimiento de la memoria es una evidencia indirecta: respalda la existencia de acumulación de estado, pero no se identificó qué componente de NEST la produce ni se probó que sea la causa única del aumento del tiempo. En conjunto, los resultados son consistentes con una violación del supuesto de independencia entre iteraciones en NEST. Dado que el tiempo crece a lo largo de la corrida, los tiempos de NEST reportados son, si acaso, una subestimación de su costo en corridas largas, sin alterar la conclusión del \textit{benchmark}. Aislar el efecto, por ejemplo mediante un proceso nuevo de NEST por iteración, queda como trabajo futuro.
 
 %-------------------------------------
 \section{Conectividad de las redes --- Dataset 4 (Sonar)}
